@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer Complete!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .notification-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .icon {
+      font-size: 5em;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    h1 {
+      color: #1f2937;
+      font-size: 2em;
+      margin-bottom: 15px;
+    }
+
+    .message {
+      color: #6b7280;
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .next-phase {
+      color: #667eea;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+      transform: translateY(-2px);
+    }
+
+    .pomodoro-count {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #e5e7eb;
+      color: #9ca3af;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-card">
+    <div class="icon" id="icon">⏰</div>
+    <h1 id="title">Timer Complete!</h1>
+    <div class="message" id="message">Your timer has finished.</div>
+    <div class="next-phase" id="nextPhase"></div>
+    <div class="buttons">
+      <button class="btn btn-primary" onclick="startNext()">Start Next Phase</button>
+      <button class="btn btn-secondary" onclick="closeWindow()">Close</button>
+    </div>
+    <div class="pomodoro-count" id="pomodoroCount"></div>
+  </div>
+
+  <script>
+    // Use relative URL or construct from current origin
+    const API_URL = window.location.origin.includes('localhost:3000') 
+      ? 'http://localhost:5001/api'
+      : '/api';
+    
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const completedMode = urlParams.get('mode') || 'work';
+    const nextMode = urlParams.get('next') || 'short_break';
+    const pomodoros = urlParams.get('pomodoros') || '0';
+    
+    // Set content based on what completed
+    const iconEl = document.getElementById('icon');
+    const titleEl = document.getElementById('title');
+    const messageEl = document.getElementById('message');
+    const nextPhaseEl = document.getElementById('nextPhase');
+    const pomodoroCountEl = document.getElementById('pomodoroCount');
+    
+    if (completedMode === 'work') {
+      iconEl.textContent = '🍅';
+      titleEl.textContent = 'Pomodoro Complete!';
+      messageEl.textContent = `Great work! You've completed a work session.`;
+      if (nextMode === 'long_break') {
+        nextPhaseEl.textContent = 'Next: Long Break 🌴';
+      } else {
+        nextPhaseEl.textContent = 'Next: Short Break ☕';
+      }
+      pomodoroCountEl.textContent = `Total Pomodoros Completed: ${pomodoros}`;
+    } else if (completedMode === 'short_break') {
+      iconEl.textContent = '☕';
+      titleEl.textContent = 'Break Finished!';
+      messageEl.textContent = 'Your short break is over.';
+      nextPhaseEl.textContent = 'Next: Work Session 💼';
+    } else if (completedMode === 'long_break') {
+      iconEl.textContent = '🌴';
+      titleEl.textContent = 'Long Break Finished!';
+      messageEl.textContent = 'Your long break is over.';
+      nextPhaseEl.textContent = 'Next: Work Session 💼';
+    }
+    
+    async function startNext() {
+      try {
+        // Start the timer
+        const response = await fetch(`${API_URL}/timer/start`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          // Play sound notification
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+          } catch (audioError) {
+            console.log('Audio not available:', audioError);
+          }
+          
+          // Close window after a short delay
+          setTimeout(() => {
+            window.close();
+          }, 500);
+        } else {
+          throw new Error('Failed to start timer');
+        }
+      } catch (error) {
+        console.error('Error starting timer:', error);
+        alert('Failed to start timer. The main app may need to be refreshed. Error: ' + error.message);
+      }
+    }
+    
+    function closeWindow() {
+      window.close();
+    }
+    
+    // Play notification sound when window opens
+    window.addEventListener('load', () => {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Play double beep
+      [0, 300].forEach((delay) => {
+        setTimeout(() => {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 800;
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        }, delay);
+      });
+    });
+    
+    // Try to focus the window
+    window.focus();
+    
+    // Flash title if window loses focus
+    let flashCount = 0;
+    const originalTitle = document.title;
+    setInterval(() => {
+      if (!document.hasFocus() && flashCount < 20) {
+        document.title = flashCount % 2 === 0 ? '⏰ Timer Complete!' : originalTitle;
+        flashCount++;
+      } else if (document.hasFocus()) {
+        document.title = originalTitle;
+        flashCount = 0;
+      }
+    }, 500);
+  </script>
+</body>
+</html>
+
