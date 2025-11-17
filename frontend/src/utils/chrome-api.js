@@ -13,7 +13,8 @@ const chromeAPI = {
             data: {
               ...response.timerState,
               settings: response.settings
-            }
+            },
+            downTime: response.downTime
           })
         } else {
           reject(new Error(response?.error || 'Unknown error'))

@@ -48,6 +48,10 @@
         <span class="stat-label">Completed</span>
         <span class="stat-value">{{ completedPomodoros }}</span>
       </div>
+      <div class="stat-item">
+        <span class="stat-label">Down Time</span>
+        <span class="stat-value">{{ formattedDownTime }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -75,6 +79,10 @@ export default {
       default: false
     },
     completedPomodoros: {
+      type: Number,
+      default: 0
+    },
+    downTime: {
       type: Number,
       default: 0
     },
@@ -133,6 +141,18 @@ export default {
       return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
     })
     
+    const formattedDownTime = computed(() => {
+      const hours = Math.floor(props.downTime / 3600)
+      const minutes = Math.floor((props.downTime % 3600) / 60)
+      const seconds = props.downTime % 60
+      
+      if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+      } else {
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+      }
+    })
+    
     const modeText = computed(() => {
       switch (props.mode) {
         case 'work':
@@ -178,6 +198,7 @@ export default {
       circumference,
       progressOffset,
       formattedTime,
+      formattedDownTime,
       modeText,
       modeIcon,
       modeClass

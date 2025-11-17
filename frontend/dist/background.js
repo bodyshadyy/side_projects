@@ -10,6 +10,11 @@ const defaultTimerState = {
   completed_pomodoros: 0
 }
 
+// Down time tracking
+let downTime = 0
+let downTimeStartTime = null
+let downTimeInterval = null
+
 // Default settings
 const defaultSettings = {
   work_duration: 25 * 60, // seconds
@@ -21,7 +26,7 @@ const defaultSettings = {
 
 // Initialize storage with defaults
 async function initializeStorage() {
-  const result = await chrome.storage.local.get(['timerState', 'settings'])
+  const result = await chrome.storage.local.get(['timerState', 'settings', 'downTime', 'downTimeStartTime'])
   
   if (!result.timerState) {
     await chrome.storage.local.set({ timerState: defaultTimerState })
@@ -29,6 +34,14 @@ async function initializeStorage() {
   
   if (!result.settings) {
     await chrome.storage.local.set({ settings: defaultSettings })
+  }
+  
+  // Load down time
+  if (result.downTime !== undefined) {
+    downTime = result.downTime || 0
+  }
+  if (result.downTimeStartTime) {
+    downTimeStartTime = result.downTimeStartTime
   }
 }
 
@@ -51,7 +64,20 @@ async function saveSettings(settings) {
   await chrome.storage.local.set({ settings })
 }
 
-// Update badge with remaining minutes
+// Format down time for badge
+function formatDownTimeForBadge(seconds) {
+  if (seconds < 60) {
+    return seconds.toString()
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60)
+    return minutes.toString() + 'm'
+  } else {
+    const hours = Math.floor(seconds / 3600)
+    return hours.toString() + 'h'
+  }
+}
+
+// Update badge with remaining minutes or down time
 async function updateBadge(timerState) {
   if (timerState.is_running && !timerState.is_paused) {
     const minutes = Math.ceil(timerState.remaining_seconds / 60)
@@ -69,9 +95,80 @@ async function updateBadge(timerState) {
     }
     chrome.action.setBadgeBackgroundColor({ color: badgeColor })
   } else {
-    // Clear badge when timer is not running
-    chrome.action.setBadgeText({ text: '' })
+    // Show down time when timer is not running
+    const currentDownTime = await getCurrentDownTime(timerState)
+    if (currentDownTime > 0) {
+      const badgeText = formatDownTimeForBadge(currentDownTime)
+      chrome.action.setBadgeText({ text: badgeText })
+      chrome.action.setBadgeBackgroundColor({ color: '#6b7280' }) // gray for down time
+    } else {
+      chrome.action.setBadgeText({ text: '' })
+    }
   }
+}
+
+// Get current down time
+async function getCurrentDownTime(timerState) {
+  if (timerState.is_running || timerState.is_paused) {
+    return 0
+  }
+  
+  if (downTimeStartTime) {
+    const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
+    return downTime + elapsed
+  }
+  
+  return downTime
+}
+
+// Start down time tracking
+async function startDownTimeTracking() {
+  if (downTimeInterval) {
+    return
+  }
+  
+  const { timerState } = await loadTimerState()
+  if (!timerState.is_running && !timerState.is_paused) {
+    if (!downTimeStartTime) {
+      downTimeStartTime = Date.now()
+      await chrome.storage.local.set({ downTimeStartTime })
+    }
+    
+    downTimeInterval = setInterval(async () => {
+      const { timerState } = await loadTimerState()
+      if (!timerState.is_running && !timerState.is_paused) {
+        const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
+        downTime = (await chrome.storage.local.get(['downTime'])).downTime || 0
+        const currentDownTime = downTime + elapsed
+        await updateBadge(timerState)
+      } else {
+        stopDownTimeTracking()
+      }
+    }, 1000)
+  }
+}
+
+// Stop down time tracking
+async function stopDownTimeTracking() {
+  if (downTimeInterval) {
+    clearInterval(downTimeInterval)
+    downTimeInterval = null
+  }
+  
+  if (downTimeStartTime) {
+    const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
+    downTime = (downTime + elapsed) || 0
+    downTimeStartTime = null
+    await chrome.storage.local.set({ downTime, downTimeStartTime: null })
+  }
+}
+
+// Reset down time
+async function resetDownTime() {
+  downTime = 0
+  downTimeStartTime = null
+  await chrome.storage.local.set({ downTime: 0, downTimeStartTime: null })
+  stopDownTimeTracking()
 }
 
 // Update timer every second
@@ -86,6 +183,9 @@ async function startTimerUpdate() {
     const { timerState, settings } = await loadTimerState()
     
     if (timerState.is_running && !timerState.is_paused) {
+      // Stop down time tracking when timer is running
+      await stopDownTimeTracking()
+      
       if (timerState.remaining_seconds > 0) {
         timerState.remaining_seconds -= 1
         await saveTimerState(timerState)
@@ -95,9 +195,11 @@ async function startTimerUpdate() {
         
         // Notify popup if open
         try {
+          const currentDownTime = await getCurrentDownTime(timerState)
           chrome.runtime.sendMessage({
             type: 'TIMER_UPDATE',
-            timerState
+            timerState,
+            downTime: currentDownTime
           }).catch(() => {
             // Popup might not be open, ignore error
           })
@@ -130,8 +232,11 @@ async function startTimerUpdate() {
         
         await saveTimerState(timerState)
         
-        // Clear badge
-        chrome.action.setBadgeText({ text: '' })
+        // Start down time tracking when timer completes
+        await startDownTimeTracking()
+        
+        // Update badge (will show down time)
+        await updateBadge(timerState)
         
         // Open new tab when timer completes
         openTimerCompleteTab(previousMode, timerState.current_mode, timerState.completed_pomodoros)
@@ -141,10 +246,12 @@ async function startTimerUpdate() {
         
         // Notify popup
         try {
+          const currentDownTime = await getCurrentDownTime(timerState)
           chrome.runtime.sendMessage({
             type: 'TIMER_COMPLETE',
             timerState,
-            previousMode
+            previousMode,
+            downTime: currentDownTime
           }).catch(() => {
             // Popup might not be open, ignore error
           })
@@ -310,11 +417,18 @@ async function handleMessage(message, sender, sendResponse) {
     switch (message.type) {
       case 'GET_TIMER_STATE':
         const { timerState, settings } = await loadTimerState()
-        sendResponse({ success: true, timerState, settings })
+        const currentDownTime = await getCurrentDownTime(timerState)
+        // Start down time tracking if timer is not running
+        if (!timerState.is_running && !timerState.is_paused) {
+          await startDownTimeTracking()
+        }
+        sendResponse({ success: true, timerState, settings, downTime: currentDownTime })
         break
         
       case 'START_TIMER':
         const startData = await loadTimerState()
+        // Reset down time when timer starts
+        await resetDownTime()
         if (startData.timerState.is_paused) {
           startData.timerState.is_paused = false
         } else {
@@ -339,6 +453,7 @@ async function handleMessage(message, sender, sendResponse) {
         if (pauseData.timerState.is_running && !pauseData.timerState.is_paused) {
           pauseData.timerState.is_paused = true
           await saveTimerState(pauseData.timerState)
+          await stopDownTimeTracking()
           await updateBadge(pauseData.timerState)
         }
         sendResponse({ success: true, timerState: pauseData.timerState })
@@ -368,6 +483,7 @@ async function handleMessage(message, sender, sendResponse) {
         }
         
         await saveTimerState(skipData.timerState)
+        await startDownTimeTracking()
         await updateBadge(skipData.timerState)
         sendResponse({ success: true, timerState: skipData.timerState })
         break
@@ -379,6 +495,7 @@ async function handleMessage(message, sender, sendResponse) {
         resetData.timerState.current_mode = 'work'
         resetData.timerState.remaining_seconds = resetData.settings.work_duration
         await saveTimerState(resetData.timerState)
+        await startDownTimeTracking()
         await updateBadge(resetData.timerState)
         sendResponse({ success: true, timerState: resetData.timerState })
         break
@@ -443,6 +560,10 @@ chrome.notifications.onClicked.addListener((notificationId) => {
 // Initialize badge on startup
 async function initializeBadge() {
   const { timerState } = await loadTimerState()
+  // Start down time tracking if timer is not running
+  if (!timerState.is_running && !timerState.is_paused) {
+    await startDownTimeTracking()
+  }
   await updateBadge(timerState)
 }
 

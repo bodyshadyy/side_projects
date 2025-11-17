@@ -13,6 +13,7 @@
             :is-paused="timerState.is_paused"
             :completed-pomodoros="timerState.completed_pomodoros"
             :settings="settings"
+            :down-time="downTime"
             @timer-complete="handleTimerComplete"
           />
           
@@ -87,7 +88,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import chromeAPI from './utils/chrome-api.js'
 import TimerDisplay from './components/TimerDisplay.vue'
 import SettingsPanel from './components/SettingsPanel.vue'
@@ -125,10 +126,14 @@ export default {
     const showNotification = ref(false)
     const notificationMessage = ref('')
     const notificationType = ref('success')
+    const downTime = ref(0) // Down time in seconds
     let pollInterval = null
+    let downTimeInterval = null
     let previousRemaining = 25 * 60
     let previousMode = 'work'
     let previousCompleted = 0
+    let wasRunning = false
+    let isInitialLoad = true // Track if this is the first load
     
     const showToast = (message, type = 'success') => {
       notificationMessage.value = message
@@ -142,6 +147,21 @@ export default {
     const fetchTimerState = async () => {
       try {
         const response = await chromeAPI.getTimerState()
+        
+        // On initial load, just set the state without triggering notifications
+        if (isInitialLoad) {
+          previousRemaining = response.data.remaining_seconds
+          previousMode = response.data.current_mode
+          previousCompleted = response.data.completed_pomodoros
+          wasRunning = response.data.is_running
+          timerState.value = response.data
+          // Load down time from response if available
+          if (response.downTime !== undefined) {
+            downTime.value = response.downTime
+          }
+          isInitialLoad = false
+          return
+        }
         
         // Check if timer just completed or mode switched
         const modeChanged = previousMode !== response.data.current_mode
@@ -203,6 +223,8 @@ export default {
     const startTimer = async () => {
       try {
         await chromeAPI.startTimer()
+        // Down time is reset in background script
+        downTime.value = 0
         fetchTimerState()
       } catch (error) {
         console.error('Error starting timer:', error)
@@ -298,14 +320,67 @@ export default {
       }, 300)
     }
     
+    // Manage down time stopwatch - sync with background script
+    const updateDownTime = async () => {
+      // Only count down time when timer is not running and not paused
+      if (!timerState.value.is_running && !timerState.value.is_paused) {
+        try {
+          const response = await chromeAPI.getTimerState()
+          if (response.downTime !== undefined) {
+            downTime.value = response.downTime
+          }
+        } catch (error) {
+          // Ignore errors, just increment locally
+          downTime.value++
+        }
+      }
+    }
+
+    // Watch timer state to manage down time
+    watch(() => [timerState.value.is_running, timerState.value.is_paused], ([isRunning, isPaused]) => {
+      // If timer just started (was not running, now is running), reset down time
+      if (!wasRunning && isRunning) {
+        downTime.value = 0
+      }
+      wasRunning = isRunning
+
+      // Start/stop down time interval
+      if (!isRunning && !isPaused) {
+        // Timer is stopped, start counting down time
+        if (!downTimeInterval) {
+          // Sync with background script first
+          chromeAPI.getTimerState().then(response => {
+            if (response.downTime !== undefined) {
+              downTime.value = response.downTime
+            }
+          })
+          downTimeInterval = setInterval(updateDownTime, 1000)
+        }
+      } else {
+        // Timer is running or paused, stop counting down time
+        if (downTimeInterval) {
+          clearInterval(downTimeInterval)
+          downTimeInterval = null
+        }
+      }
+    })
+
     // Listen for messages from background script
     const setupMessageListener = () => {
       if (chrome && chrome.runtime && chrome.runtime.onMessage) {
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (message.type === 'TIMER_UPDATE') {
             timerState.value = message.timerState
+            // Sync down time on timer updates
+            if (message.downTime !== undefined) {
+              downTime.value = message.downTime
+            }
           } else if (message.type === 'TIMER_COMPLETE') {
             timerState.value = message.timerState
+            // Down time starts tracking when timer completes (handled by background)
+            if (message.downTime !== undefined) {
+              downTime.value = message.downTime
+            }
             playNotificationSound()
             // Show toast notification
             if (message.timerState.current_mode === 'work') {
@@ -327,16 +402,27 @@ export default {
       }
     }
     
-    onMounted(() => {
-      fetchTimerState()
-      fetchSettings()
+    onMounted(async () => {
+      await fetchTimerState()
+      await fetchSettings()
       pollInterval = setInterval(fetchTimerState, 1000)
       setupMessageListener()
+      
+      // Initialize wasRunning based on current state
+      wasRunning = timerState.value.is_running
+      
+      // Start down time interval if timer is not running and not paused
+      if (!timerState.value.is_running && !timerState.value.is_paused) {
+        downTimeInterval = setInterval(updateDownTime, 1000)
+      }
     })
     
     onUnmounted(() => {
       if (pollInterval) {
         clearInterval(pollInterval)
+      }
+      if (downTimeInterval) {
+        clearInterval(downTimeInterval)
       }
     })
     
@@ -347,6 +433,7 @@ export default {
       showNotification,
       notificationMessage,
       notificationType,
+      downTime,
       startTimer,
       pauseTimer,
       skipTimer,
