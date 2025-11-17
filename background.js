@@ -163,6 +163,33 @@ async function startTimerUpdate() {
   }, 1000)
 }
 
+// Store tab IDs for timer completion tabs
+let timerCompleteTabIds = new Set()
+
+// Listen for tab updates to inject script into timer completion tabs
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (timerCompleteTabIds.has(tabId) && changeInfo.status === 'complete') {
+    // Inject script to handle button click
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      func: () => {
+        const button = document.getElementById('startTimerBtn');
+        if (button) {
+          button.addEventListener('click', function() {
+            chrome.runtime.sendMessage({ type: 'START_TIMER' }, function(response) {
+              window.close();
+            });
+          });
+        }
+      }
+    }).catch((error) => {
+      console.log('Script injection failed:', error);
+    });
+    // Remove from set after injection
+    timerCompleteTabIds.delete(tabId);
+  }
+});
+
 // Open a new tab when timer completes
 function openTimerCompleteTab(completedMode, nextMode, pomodoros) {
   // Create HTML content for the completion page
@@ -258,6 +285,33 @@ function openTimerCompleteTab(completedMode, nextMode, pomodoros) {
     <p>${message}</p>
     <button class="button" id="startTimerBtn">Start Timer & Close</button>
   </div>
+  <script>
+    // Fallback script in case injection doesn't work
+    (function() {
+      function setupButton() {
+        const button = document.getElementById('startTimerBtn');
+        if (button && !button.dataset.setup) {
+          button.dataset.setup = 'true';
+          button.addEventListener('click', function() {
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+              chrome.runtime.sendMessage({ type: 'START_TIMER' }, function(response) {
+                window.close();
+              });
+            } else {
+              // If chrome.runtime is not available, try to close anyway
+              window.close();
+            }
+          });
+        }
+      }
+      
+      // Try immediately
+      setupButton();
+      
+      // Also try after a short delay in case DOM isn't ready
+      setTimeout(setupButton, 100);
+    })();
+  </script>
 </body>
 </html>`
   
@@ -269,40 +323,10 @@ function openTimerCompleteTab(completedMode, nextMode, pomodoros) {
     url: dataUrl,
     active: true
   }, (tab) => {
-    // Wait for tab to load, then inject script
-    const checkTab = (tabId) => {
-      chrome.tabs.get(tabId, (currentTab) => {
-        if (chrome.runtime.lastError) {
-          return;
-        }
-        if (currentTab.status === 'complete') {
-          // Inject script to handle button click
-          chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            func: () => {
-              // Set up button click handler
-              const button = document.getElementById('startTimerBtn');
-              if (button) {
-                button.addEventListener('click', () => {
-                  chrome.runtime.sendMessage({ type: 'START_TIMER' }, (response) => {
-                    // Close the tab after starting the timer
-                    window.close();
-                  });
-                });
-              }
-            }
-          }).catch((error) => {
-            console.log('Script injection failed:', error);
-          });
-        } else {
-          // Tab not ready yet, check again
-          setTimeout(() => checkTab(tabId), 100);
-        }
-      });
-    };
-    
-    // Start checking when tab is ready
-    checkTab(tab.id);
+    // Store tab ID so we can inject script when it loads
+    if (tab && tab.id) {
+      timerCompleteTabIds.add(tab.id);
+    }
   })
 }
 
