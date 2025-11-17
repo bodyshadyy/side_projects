@@ -40,6 +40,7 @@
         >
           {{ todo.text }}
         </span>
+        <span class="todo-date">{{ formatDate(todo.date) }}</span>
         <button @click="deleteTodo(index)" class="btn-delete">×</button>
       </div>
       <div v-if="todos.length === 0" class="empty-state">
@@ -63,16 +64,41 @@ export default {
     const editInput = ref(null)
     let nextId = 1
 
+    // Format date like "2nd August"
+    const formatDate = (dateString) => {
+      if (!dateString) return ''
+      const date = new Date(dateString)
+      const day = date.getDate()
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December']
+      
+      // Get ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+      const getOrdinalSuffix = (n) => {
+        const s = ['th', 'st', 'nd', 'rd']
+        const v = n % 100
+        return n + (s[(v - 20) % 10] || s[v] || s[0])
+      }
+      
+      return `${getOrdinalSuffix(day)} ${monthNames[date.getMonth()]}`
+    }
+
     // Load todos from localStorage
     const loadTodos = () => {
       const saved = localStorage.getItem('pomodoro-todos')
       if (saved) {
         try {
           todos.value = JSON.parse(saved)
+          // Add date to todos that don't have one (backward compatibility)
+          todos.value.forEach(todo => {
+            if (!todo.date) {
+              todo.date = new Date().toISOString()
+            }
+          })
           // Find max ID
           if (todos.value.length > 0) {
             nextId = Math.max(...todos.value.map(t => t.id || 0)) + 1
           }
+          saveTodos() // Save updated todos with dates
         } catch (e) {
           console.error('Error loading todos:', e)
         }
@@ -90,7 +116,8 @@ export default {
           id: nextId++,
           text: newTodo.value.trim(),
           completed: false,
-          editing: false
+          editing: false,
+          date: new Date().toISOString()
         })
         newTodo.value = ''
         saveTodos()
@@ -153,7 +180,8 @@ export default {
       startEditing,
       finishEditing,
       cancelEditing,
-      saveTodos
+      saveTodos,
+      formatDate
     }
   }
 }
@@ -227,6 +255,14 @@ export default {
   background: #f9fafb;
   border-radius: 8px;
   transition: background 0.2s ease;
+}
+
+.todo-date {
+  font-size: 0.85em;
+  color: #6b7280;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: 8px;
 }
 
 .todo-item:hover {

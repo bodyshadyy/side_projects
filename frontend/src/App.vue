@@ -1,12 +1,9 @@
 <template>
   <div class="app-container">
+    <div class="version-indicator">v1.0.0</div>
     <h1 class="app-title">🍅 Pomodoro Timer</h1>
     
     <div class="main-grid">
-      <div class="todo-column">
-        <ToDoList />
-      </div>
-      
       <div class="pomodoro-column">
         <div class="pomodoro-app">
           <TimerDisplay 
@@ -69,6 +66,10 @@
             @update-settings="updateSettings"
           />
         </div>
+      </div>
+      
+      <div class="todo-column">
+        <ToDoList />
       </div>
       
       <div class="notes-column">
@@ -363,6 +364,14 @@ export default {
   min-height: 100%;
   padding: 20px;
   overflow-y: auto;
+}
+
+.version-indicator {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75em;
+  margin-bottom: 5px;
+  font-weight: 400;
 }
 
 .app-title {
