@@ -14,6 +14,7 @@ const defaultTimerState = {
 let downTime = 0
 let downTimeStartTime = null
 let downTimeInterval = null
+let lastNotifiedMultiple = 0 // Track the last multiple of max_down_time that was notified (0 = first time, 1 = second time, etc.)
 
 // Default settings
 const defaultSettings = {
@@ -21,7 +22,8 @@ const defaultSettings = {
   short_break: 5 * 60, // seconds
   long_break: 15 * 60, // seconds
   short_breaks_until_long: 4,
-  auto_switch: false
+  auto_switch: false,
+  max_down_time: 15 * 60 // 15 minutes in seconds
 }
 
 // Initialize storage with defaults
@@ -121,25 +123,135 @@ async function getCurrentDownTime(timerState) {
   return downTime
 }
 
+// Open down time exceeded tab
+function openDownTimeExceededTab(maxDownTime, currentMultiple) {
+  const minutes = Math.floor(maxDownTime / 60)
+  const seconds = maxDownTime % 60
+  const maxTimeText = seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`
+  
+  // Calculate the actual time that was exceeded
+  const exceededTime = maxDownTime * currentMultiple
+  const exceededMinutes = Math.floor(exceededTime / 60)
+  const exceededSeconds = exceededTime % 60
+  const exceededTimeText = exceededSeconds > 0 ? `${exceededMinutes}m ${exceededSeconds}s` : `${exceededMinutes}m`
+  
+  const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Down Time Exceeded</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+    }
+    .emoji {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    h1 {
+      color: #1f2937;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #6b7280;
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .button {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .button:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="emoji">⏰</span>
+    <h1>Down Time Exceeded!</h1>
+    <p>The down time has reached ${exceededTimeText} (${currentMultiple}x the maximum of ${maxTimeText}). Time to get back to work!</p>
+    <button class="button" onclick="window.close()">Close</button>
+  </div>
+</body>
+</html>`
+  
+  // Create a data URL from the HTML
+  const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent)
+  
+  // Open the new tab
+  chrome.tabs.create({
+    url: dataUrl,
+    active: true
+  })
+}
+
 // Start down time tracking
 async function startDownTimeTracking() {
   if (downTimeInterval) {
     return
   }
   
-  const { timerState } = await loadTimerState()
+  const { timerState, settings } = await loadTimerState()
   if (!timerState.is_running && !timerState.is_paused) {
+    // Reset notification tracking when starting to track
+    lastNotifiedMultiple = 0
+    
     if (!downTimeStartTime) {
       downTimeStartTime = Date.now()
       await chrome.storage.local.set({ downTimeStartTime })
     }
     
     downTimeInterval = setInterval(async () => {
-      const { timerState } = await loadTimerState()
+      const { timerState, settings } = await loadTimerState()
       if (!timerState.is_running && !timerState.is_paused) {
         const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
         downTime = (await chrome.storage.local.get(['downTime'])).downTime || 0
         const currentDownTime = downTime + elapsed
+        
+        // Check if down time has crossed a new multiple of max_down_time
+        const maxDownTime = settings.max_down_time || (15 * 60)
+        if (maxDownTime > 0) {
+          const currentMultiple = Math.floor(currentDownTime / maxDownTime)
+          // Only notify when we cross into a new multiple (e.g., 15, 30, 45 minutes)
+          if (currentMultiple > lastNotifiedMultiple && currentDownTime >= maxDownTime) {
+            lastNotifiedMultiple = currentMultiple
+            openDownTimeExceededTab(maxDownTime, currentMultiple)
+          }
+        }
+        
         await updateBadge(timerState)
       } else {
         stopDownTimeTracking()
@@ -167,6 +279,7 @@ async function stopDownTimeTracking() {
 async function resetDownTime() {
   downTime = 0
   downTimeStartTime = null
+  lastNotifiedMultiple = 0
   await chrome.storage.local.set({ downTime: 0, downTimeStartTime: null })
   stopDownTimeTracking()
 }
@@ -523,6 +636,9 @@ async function handleMessage(message, sender, sendResponse) {
         }
         if (newSettings.auto_switch !== undefined) {
           updateData.settings.auto_switch = Boolean(newSettings.auto_switch)
+        }
+        if (newSettings.max_down_time !== undefined) {
+          updateData.settings.max_down_time = Math.max(1, parseInt(newSettings.max_down_time))
         }
         
         // Update current timer if not running

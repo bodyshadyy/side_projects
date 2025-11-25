@@ -98,6 +98,34 @@
         />
       </div>
       
+      <div class="duration-group">
+        <label class="duration-label">Max Down Time</label>
+        <div class="time-inputs">
+          <div class="time-input-group">
+            <input
+              id="max-down-minutes"
+              type="number"
+              v-model.number="maxDownMinutes"
+              min="0"
+              max="120"
+              placeholder="0"
+            />
+            <label for="max-down-minutes">Min</label>
+          </div>
+          <div class="time-input-group">
+            <input
+              id="max-down-seconds"
+              type="number"
+              v-model.number="maxDownSeconds"
+              min="0"
+              max="59"
+              placeholder="0"
+            />
+            <label for="max-down-seconds">Sec</label>
+          </div>
+        </div>
+      </div>
+      
       <div class="setting-item toggle-item">
         <label class="toggle-label">
           <input
@@ -138,6 +166,8 @@ export default {
     const shortSeconds = ref((localSettings.value.short_break || 0) % 60)
     const longMinutes = ref(Math.floor((localSettings.value.long_break || 0) / 60))
     const longSeconds = ref((localSettings.value.long_break || 0) % 60)
+    const maxDownMinutes = ref(Math.floor((localSettings.value.max_down_time || 15 * 60) / 60))
+    const maxDownSeconds = ref((localSettings.value.max_down_time || 15 * 60) % 60)
     
     watch(() => props.settings, (newSettings) => {
       localSettings.value = { ...newSettings }
@@ -148,6 +178,8 @@ export default {
       shortSeconds.value = (newSettings.short_break || 0) % 60
       longMinutes.value = Math.floor((newSettings.long_break || 0) / 60)
       longSeconds.value = (newSettings.long_break || 0) % 60
+      maxDownMinutes.value = Math.floor((newSettings.max_down_time || 15 * 60) / 60)
+      maxDownSeconds.value = (newSettings.max_down_time || 15 * 60) % 60
     }, { deep: true })
     
     const saveSettings = () => {
@@ -157,6 +189,7 @@ export default {
         work_duration: (workMinutes.value || 0) * 60 + (workSeconds.value || 0),
         short_break: (shortMinutes.value || 0) * 60 + (shortSeconds.value || 0),
         long_break: (longMinutes.value || 0) * 60 + (longSeconds.value || 0),
+        max_down_time: (maxDownMinutes.value || 0) * 60 + (maxDownSeconds.value || 0),
         auto_switch: localSettings.value.auto_switch || false
       }
       
@@ -164,6 +197,7 @@ export default {
       if (settingsToSave.work_duration < 1) settingsToSave.work_duration = 1
       if (settingsToSave.short_break < 1) settingsToSave.short_break = 1
       if (settingsToSave.long_break < 1) settingsToSave.long_break = 1
+      if (settingsToSave.max_down_time < 1) settingsToSave.max_down_time = 1
       
       emit('update-settings', settingsToSave)
     }
@@ -176,6 +210,8 @@ export default {
       shortSeconds,
       longMinutes,
       longSeconds,
+      maxDownMinutes,
+      maxDownSeconds,
       saveSettings
     }
   }

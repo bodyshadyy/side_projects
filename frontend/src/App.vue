@@ -119,7 +119,8 @@ export default {
       short_break: 5 * 60,  // in seconds
       long_break: 15 * 60,  // in seconds
       short_breaks_until_long: 4,
-      auto_switch: false
+      auto_switch: false,
+      max_down_time: 15 * 60  // 15 minutes in seconds
     })
     
     const showSettings = ref(false)
@@ -213,7 +214,8 @@ export default {
           short_break: response.data.short_break,  // already in seconds
           long_break: response.data.long_break,  // already in seconds
           short_breaks_until_long: response.data.short_breaks_until_long,
-          auto_switch: response.data.auto_switch || false
+          auto_switch: response.data.auto_switch || false,
+          max_down_time: response.data.max_down_time || (15 * 60)  // default 15 minutes
         }
       } catch (error) {
         console.error('Error fetching settings:', error)
@@ -267,7 +269,8 @@ export default {
           short_break: response.data.short_break,
           long_break: response.data.long_break,
           short_breaks_until_long: response.data.short_breaks_until_long,
-          auto_switch: response.data.auto_switch || false
+          auto_switch: response.data.auto_switch || false,
+          max_down_time: response.data.max_down_time || (15 * 60)
         }
         if (response.timerState) {
           timerState.value = response.timerState
