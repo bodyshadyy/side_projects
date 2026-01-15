@@ -126,6 +126,19 @@
         </div>
       </div>
       
+      <div class="setting-item">
+        <label for="max-downtime-reminders">Max Downtime Reminders</label>
+        <input
+          id="max-downtime-reminders"
+          type="number"
+          v-model.number="localSettings.max_downtime_reminders"
+          min="0"
+          max="100"
+          placeholder="0"
+        />
+        <span class="setting-hint">After this many reminders, downtime tracking will pause (0 = unlimited)</span>
+      </div>
+      
       <div class="setting-item toggle-item">
         <label class="toggle-label">
           <input
@@ -135,6 +148,36 @@
           />
           <span class="toggle-text">Auto-switch to next phase when timer completes</span>
         </label>
+      </div>
+      
+      <div class="setting-item">
+        <label for="work-sound">Work Completion Sound (MP3)</label>
+        <div class="file-input-group">
+          <input
+            id="work-sound"
+            type="file"
+            accept="audio/mpeg,audio/mp3"
+            @change="handleWorkSoundChange"
+            class="file-input"
+          />
+          <div v-if="workSoundFileName" class="file-name">{{ workSoundFileName }}</div>
+          <button v-if="workSoundFileName" @click="clearWorkSound" class="btn-clear">Clear</button>
+        </div>
+      </div>
+      
+      <div class="setting-item">
+        <label for="break-sound">Break Completion Sound (MP3)</label>
+        <div class="file-input-group">
+          <input
+            id="break-sound"
+            type="file"
+            accept="audio/mpeg,audio/mp3"
+            @change="handleBreakSoundChange"
+            class="file-input"
+          />
+          <div v-if="breakSoundFileName" class="file-name">{{ breakSoundFileName }}</div>
+          <button v-if="breakSoundFileName" @click="clearBreakSound" class="btn-clear">Clear</button>
+        </div>
       </div>
       
       <button @click="saveSettings" class="btn-save">
@@ -169,6 +212,10 @@ export default {
     const maxDownMinutes = ref(Math.floor((localSettings.value.max_down_time || 15 * 60) / 60))
     const maxDownSeconds = ref((localSettings.value.max_down_time || 15 * 60) % 60)
     
+    // Sound file handling
+    const workSoundFileName = ref(localSettings.value.work_sound_file_name || '')
+    const breakSoundFileName = ref(localSettings.value.break_sound_file_name || '')
+    
     watch(() => props.settings, (newSettings) => {
       localSettings.value = { ...newSettings }
       // Update time inputs when settings change
@@ -180,7 +227,63 @@ export default {
       longSeconds.value = (newSettings.long_break || 0) % 60
       maxDownMinutes.value = Math.floor((newSettings.max_down_time || 15 * 60) / 60)
       maxDownSeconds.value = (newSettings.max_down_time || 15 * 60) % 60
+      workSoundFileName.value = newSettings.work_sound_file_name || ''
+      breakSoundFileName.value = newSettings.break_sound_file_name || ''
     }, { deep: true })
+    
+    const handleWorkSoundChange = (event) => {
+      const file = event.target.files[0]
+      if (file) {
+        if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3' && !file.name.endsWith('.mp3')) {
+          alert('Please select an MP3 file')
+          event.target.value = ''
+          return
+        }
+        
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          localSettings.value.work_sound = e.target.result // base64 data URL
+          workSoundFileName.value = file.name
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+    
+    const handleBreakSoundChange = (event) => {
+      const file = event.target.files[0]
+      if (file) {
+        if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3' && !file.name.endsWith('.mp3')) {
+          alert('Please select an MP3 file')
+          event.target.value = ''
+          return
+        }
+        
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          localSettings.value.break_sound = e.target.result // base64 data URL
+          breakSoundFileName.value = file.name
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+    
+    const clearWorkSound = () => {
+      localSettings.value.work_sound = null
+      localSettings.value.work_sound_file_name = ''
+      workSoundFileName.value = ''
+      // Reset file input
+      const input = document.getElementById('work-sound')
+      if (input) input.value = ''
+    }
+    
+    const clearBreakSound = () => {
+      localSettings.value.break_sound = null
+      localSettings.value.break_sound_file_name = ''
+      breakSoundFileName.value = ''
+      // Reset file input
+      const input = document.getElementById('break-sound')
+      if (input) input.value = ''
+    }
     
     const saveSettings = () => {
       // Convert minutes and seconds back to total seconds
@@ -190,7 +293,11 @@ export default {
         short_break: (shortMinutes.value || 0) * 60 + (shortSeconds.value || 0),
         long_break: (longMinutes.value || 0) * 60 + (longSeconds.value || 0),
         max_down_time: (maxDownMinutes.value || 0) * 60 + (maxDownSeconds.value || 0),
-        auto_switch: localSettings.value.auto_switch || false
+        auto_switch: localSettings.value.auto_switch || false,
+        work_sound: localSettings.value.work_sound || null,
+        work_sound_file_name: workSoundFileName.value || '',
+        break_sound: localSettings.value.break_sound || null,
+        break_sound_file_name: breakSoundFileName.value || ''
       }
       
       // Ensure minimum 1 second
@@ -212,6 +319,12 @@ export default {
       longSeconds,
       maxDownMinutes,
       maxDownSeconds,
+      workSoundFileName,
+      breakSoundFileName,
+      handleWorkSoundChange,
+      handleBreakSoundChange,
+      clearWorkSound,
+      clearBreakSound,
       saveSettings
     }
   }
@@ -250,6 +363,14 @@ export default {
   font-weight: 600;
   color: #374151;
   font-size: 0.95em;
+}
+
+.setting-hint {
+  font-size: 0.85em;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 4px;
+  display: block;
 }
 
 .setting-item input {
@@ -351,6 +472,51 @@ export default {
 .btn-save:hover {
   background: #5568d3;
   transform: translateY(-2px);
+}
+
+.file-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-input {
+  padding: 8px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.file-name {
+  font-size: 0.9em;
+  color: #6b7280;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.btn-clear {
+  padding: 8px 16px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.btn-clear:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
 }
 </style>
 

@@ -165,6 +165,16 @@ def update_settings():
             timer_state['settings']['short_breaks_until_long'] = int(data['short_breaks_until_long'])
         if 'auto_switch' in data:
             timer_state['settings']['auto_switch'] = bool(data['auto_switch'])
+        if 'work_sound' in data:
+            timer_state['settings']['work_sound'] = data['work_sound']
+        if 'work_sound_file_name' in data:
+            timer_state['settings']['work_sound_file_name'] = data['work_sound_file_name']
+        if 'break_sound' in data:
+            timer_state['settings']['break_sound'] = data['break_sound']
+        if 'break_sound_file_name' in data:
+            timer_state['settings']['break_sound_file_name'] = data['break_sound_file_name']
+        if 'max_downtime_reminders' in data:
+            timer_state['settings']['max_downtime_reminders'] = max(0, int(data['max_downtime_reminders']))
         
         # Update current timer if not running
         if not timer_state['is_running']:

@@ -1,0 +1,13 @@
+{
+  "name": "pomodoro-timer",
+  "version": "1.0.0",
+  "description": "Pomodoro Timer - Windows Desktop App",
+  "main": "electron/main.js",
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "dev:electron": "cd frontend && npm run electron:dev",
+    "build:electron": "cd frontend && npm run build:electron",
+    "dist:electron": "cd frontend && npm run electron:dist"
+  }
+}
+

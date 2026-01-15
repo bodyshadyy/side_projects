@@ -1,13 +1,38 @@
-// Chrome Extension API wrapper
-// Replaces axios calls with Chrome messaging
+// Cross-platform API wrapper
+// Supports Electron (Windows app) and Chrome Extension
+
+// Detect if running in Electron
+const isElectron = typeof window !== 'undefined' && window.electronAPI
+
+// Electron API wrapper (will be set dynamically)
+let electronAPI = null
+
+// Detect browser API (for Chrome extension)
+const browserAPI = (typeof browser !== 'undefined' && browser.runtime) 
+  ? browser 
+  : (typeof chrome !== 'undefined' ? chrome : null)
 
 const chromeAPI = {
   // Get timer state
   async getTimerState() {
+    // Use Electron API if available
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.getTimerState()
+    }
+    
+    // Fallback to Chrome extension API
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'GET_TIMER_STATE' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'GET_TIMER_STATE' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({
             data: {
@@ -25,10 +50,22 @@ const chromeAPI = {
 
   // Get settings
   async getSettings() {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.getSettings()
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'GET_SETTINGS' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'GET_SETTINGS' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ data: response.settings })
         } else {
@@ -40,10 +77,22 @@ const chromeAPI = {
 
   // Start timer
   async startTimer() {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.startTimer()
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'START_TIMER' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'START_TIMER' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ data: response.timerState })
         } else {
@@ -55,10 +104,22 @@ const chromeAPI = {
 
   // Pause timer
   async pauseTimer() {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.pauseTimer()
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'PAUSE_TIMER' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'PAUSE_TIMER' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ data: response.timerState })
         } else {
@@ -70,10 +131,22 @@ const chromeAPI = {
 
   // Skip timer
   async skipTimer() {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.skipTimer()
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'SKIP_TIMER' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'SKIP_TIMER' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ data: response.timerState })
         } else {
@@ -85,10 +158,22 @@ const chromeAPI = {
 
   // Reset timer
   async resetTimer() {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.resetTimer()
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ type: 'RESET_TIMER' }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+      browserAPI.runtime.sendMessage({ type: 'RESET_TIMER' }, (response) => {
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ data: response.timerState })
         } else {
@@ -100,13 +185,25 @@ const chromeAPI = {
 
   // Update settings
   async updateSettings(settings) {
+    if (isElectron) {
+      if (!electronAPI) {
+        const module = await import('./electron-api.js')
+        electronAPI = module.default
+      }
+      return electronAPI.updateSettings(settings)
+    }
+    
+    if (!browserAPI || !browserAPI.runtime) {
+      throw new Error('Browser runtime API not available')
+    }
+    
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ 
+      browserAPI.runtime.sendMessage({ 
         type: 'UPDATE_SETTINGS', 
         settings 
       }, (response) => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message))
+        if (browserAPI.runtime.lastError) {
+          reject(new Error(browserAPI.runtime.lastError.message))
         } else if (response && response.success) {
           resolve({ 
             data: response.settings,

@@ -23,7 +23,12 @@ const defaultSettings = {
   long_break: 15 * 60, // seconds
   short_breaks_until_long: 4,
   auto_switch: false,
-  max_down_time: 15 * 60 // 15 minutes in seconds
+  max_down_time: 15 * 60, // 15 minutes in seconds
+  max_downtime_reminders: 0, // 0 = unlimited reminders
+  work_sound: null,
+  work_sound_file_name: '',
+  break_sound: null,
+  break_sound_file_name: ''
 }
 
 // Initialize storage with defaults
@@ -243,11 +248,21 @@ async function startDownTimeTracking() {
         
         // Check if down time has crossed a new multiple of max_down_time
         const maxDownTime = settings.max_down_time || (15 * 60)
+        const maxReminders = settings.max_downtime_reminders !== undefined ? parseInt(settings.max_downtime_reminders) : 0
+        
         if (maxDownTime > 0) {
           const currentMultiple = Math.floor(currentDownTime / maxDownTime)
           // Only notify when we cross into a new multiple (e.g., 15, 30, 45 minutes)
           if (currentMultiple > lastNotifiedMultiple && currentDownTime >= maxDownTime) {
             lastNotifiedMultiple = currentMultiple
+            
+            // Check if we've reached the max reminders (0 = unlimited)
+            if (maxReminders > 0 && lastNotifiedMultiple >= maxReminders) {
+              // Pause downtime tracking after max reminders reached
+              stopDownTimeTracking()
+              return
+            }
+            
             openDownTimeExceededTab(maxDownTime, currentMultiple)
           }
         }
@@ -639,6 +654,18 @@ async function handleMessage(message, sender, sendResponse) {
         }
         if (newSettings.max_down_time !== undefined) {
           updateData.settings.max_down_time = Math.max(1, parseInt(newSettings.max_down_time))
+        }
+        if (newSettings.work_sound !== undefined) {
+          updateData.settings.work_sound = newSettings.work_sound
+        }
+        if (newSettings.work_sound_file_name !== undefined) {
+          updateData.settings.work_sound_file_name = newSettings.work_sound_file_name
+        }
+        if (newSettings.break_sound !== undefined) {
+          updateData.settings.break_sound = newSettings.break_sound
+        }
+        if (newSettings.break_sound_file_name !== undefined) {
+          updateData.settings.break_sound_file_name = newSettings.break_sound_file_name
         }
         
         // Update current timer if not running

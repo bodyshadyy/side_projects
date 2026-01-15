@@ -120,7 +120,12 @@ export default {
       long_break: 15 * 60,  // in seconds
       short_breaks_until_long: 4,
       auto_switch: false,
-      max_down_time: 15 * 60  // 15 minutes in seconds
+      max_down_time: 15 * 60,  // 15 minutes in seconds
+      max_downtime_reminders: 0,  // 0 = unlimited reminders
+      work_sound: null,
+      work_sound_file_name: '',
+      break_sound: null,
+      break_sound_file_name: ''
     })
     
     const showSettings = ref(false)
@@ -170,7 +175,7 @@ export default {
         
         if (modeChanged) {
           // Mode switched (timer completed and moved to next phase)
-          playNotificationSound()
+          playNotificationSound(previousMode).catch(err => console.error('Error playing notification sound:', err))
           
           // Show notification based on what phase we're entering
           if (response.data.current_mode === 'work') {
@@ -191,7 +196,7 @@ export default {
           }
         } else if (pomodoroCompleted && !modeChanged) {
           // Edge case: pomodoro count increased without mode change (work just completed)
-          playNotificationSound()
+          playNotificationSound('work').catch(err => console.error('Error playing notification sound:', err))
           const message = `Pomodoro ${response.data.completed_pomodoros} completed! 🍅`
           showToast(message, 'success')
         }
@@ -215,7 +220,11 @@ export default {
           long_break: response.data.long_break,  // already in seconds
           short_breaks_until_long: response.data.short_breaks_until_long,
           auto_switch: response.data.auto_switch || false,
-          max_down_time: response.data.max_down_time || (15 * 60)  // default 15 minutes
+          max_down_time: response.data.max_down_time || (15 * 60),  // default 15 minutes
+          work_sound: response.data.work_sound || null,
+          work_sound_file_name: response.data.work_sound_file_name || '',
+          break_sound: response.data.break_sound || null,
+          break_sound_file_name: response.data.break_sound_file_name || ''
         }
       } catch (error) {
         console.error('Error fetching settings:', error)
@@ -244,9 +253,10 @@ export default {
     
     const skipTimer = async () => {
       try {
+        const previousMode = timerState.value.current_mode
         await chromeAPI.skipTimer()
         fetchTimerState()
-        playNotificationSound()
+        playNotificationSound(previousMode).catch(err => console.error('Error playing notification sound:', err))
       } catch (error) {
         console.error('Error skipping timer:', error)
       }
@@ -270,7 +280,14 @@ export default {
           long_break: response.data.long_break,
           short_breaks_until_long: response.data.short_breaks_until_long,
           auto_switch: response.data.auto_switch || false,
-          max_down_time: response.data.max_down_time || (15 * 60)
+          max_down_time: response.data.max_down_time || (15 * 60),
+          max_downtime_reminders: response.data.max_downtime_reminders !== undefined 
+            ? parseInt(response.data.max_downtime_reminders) || 0 
+            : 0,
+          work_sound: response.data.work_sound || null,
+          work_sound_file_name: response.data.work_sound_file_name || '',
+          break_sound: response.data.break_sound || null,
+          break_sound_file_name: response.data.break_sound_file_name || ''
         }
         if (response.timerState) {
           timerState.value = response.timerState
@@ -282,45 +299,133 @@ export default {
       }
     }
     
-    const handleTimerComplete = () => {
-      playNotificationSound()
+    const handleTimerComplete = (previousMode) => {
+      playNotificationSound(previousMode || 'work').catch(err => console.error('Error playing notification sound:', err))
     }
     
-    const playNotificationSound = () => {
-      // Use Web Audio API to generate a beep sound
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      const oscillator = audioContext.createOscillator()
-      const gainNode = audioContext.createGain()
+    const playNotificationSound = async (previousMode) => {
+      // Determine which sound to play based on what just finished
+      const isWorkCompletion = previousMode === 'work'
+      const soundData = isWorkCompletion 
+        ? settings.value.work_sound 
+        : settings.value.break_sound
       
-      oscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
+      // If custom sound is available, play it
+      if (soundData) {
+        try {
+          const audio = new Audio(soundData)
+          // Set volume
+          audio.volume = 0.7
+          
+          // Try to play the audio
+          const playPromise = audio.play()
+          
+          if (playPromise !== undefined) {
+            await playPromise.catch(async (err) => {
+              console.error('Error playing custom sound:', err)
+              // If autoplay was prevented, try to resume AudioContext and play again
+              if (err.name === 'NotAllowedError' || err.name === 'NotSupportedError') {
+                // Fallback to default beep
+                await playDefaultBeep()
+              } else {
+                // Other errors, try default beep
+                await playDefaultBeep()
+              }
+            })
+          }
+          return
+        } catch (err) {
+          console.error('Error creating audio from sound data:', err)
+          // Fallback to default beep
+          await playDefaultBeep()
+          return
+        }
+      }
       
-      oscillator.frequency.value = 800
-      oscillator.type = 'sine'
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
-      
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.5)
-      
-      // Play a second beep after a short delay
-      setTimeout(() => {
-        const oscillator2 = audioContext.createOscillator()
-        const gainNode2 = audioContext.createGain()
+      // Default beep sound if no custom sound is set
+      await playDefaultBeep()
+    }
+    
+    const playDefaultBeep = async () => {
+      try {
+        // Cross-browser AudioContext detection
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext
         
-        oscillator2.connect(gainNode2)
-        gainNode2.connect(audioContext.destination)
+        if (!AudioContextClass) {
+          console.warn('Web Audio API not supported in this browser')
+          return
+        }
         
-        oscillator2.frequency.value = 800
-        oscillator2.type = 'sine'
+        // Use Web Audio API to generate a beep sound
+        const audioContext = new AudioContextClass()
         
-        gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime)
-        gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+        // Resume AudioContext if it's suspended (required by browser autoplay policies)
+        if (audioContext.state === 'suspended') {
+          try {
+            await audioContext.resume()
+          } catch (resumeErr) {
+            console.warn('Could not resume AudioContext:', resumeErr)
+            return
+          }
+        }
         
-        oscillator2.start(audioContext.currentTime)
-        oscillator2.stop(audioContext.currentTime + 0.5)
-      }, 300)
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+        
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+        
+        oscillator.frequency.value = 800
+        oscillator.type = 'sine'
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+        
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.5)
+        
+        // Play a second beep after a short delay
+        setTimeout(async () => {
+          try {
+            // Check if context is still valid
+            if (audioContext.state === 'closed') {
+              return
+            }
+            
+            // Resume if suspended
+            if (audioContext.state === 'suspended') {
+              await audioContext.resume()
+            }
+            
+            const oscillator2 = audioContext.createOscillator()
+            const gainNode2 = audioContext.createGain()
+            
+            oscillator2.connect(gainNode2)
+            gainNode2.connect(audioContext.destination)
+            
+            oscillator2.frequency.value = 800
+            oscillator2.type = 'sine'
+            
+            gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime)
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+            
+            oscillator2.start(audioContext.currentTime)
+            oscillator2.stop(audioContext.currentTime + 0.5)
+          } catch (err) {
+            console.error('Error playing second beep:', err)
+          }
+        }, 300)
+      } catch (err) {
+        console.error('Error creating AudioContext for beep:', err)
+        // Last resort: try using HTML5 Audio API as fallback
+        try {
+          const beepAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoX')
+          beepAudio.volume = 0.3
+          await beepAudio.play().catch(() => {})
+        } catch (fallbackErr) {
+          console.error('All audio methods failed:', fallbackErr)
+        }
+      }
     }
     
     // Manage down time stopwatch - sync with background script
@@ -368,8 +473,49 @@ export default {
       }
     })
 
-    // Listen for messages from background script
+    // Listen for messages from background script - cross-platform
     const setupMessageListener = () => {
+      // Check if Electron
+      if (window.electronAPI) {
+        // Electron IPC listeners
+        window.electronAPI.onTimerUpdate((data) => {
+          timerState.value = data.timerState
+          if (data.downTime !== undefined) {
+            downTime.value = data.downTime
+          }
+        })
+        
+        window.electronAPI.onTimerComplete((data) => {
+          timerState.value = data.timerState
+          if (data.downTime !== undefined) {
+            downTime.value = data.downTime
+          }
+          playNotificationSound(data.previousMode).catch(err => console.error('Error playing notification sound:', err))
+          
+          // Show toast notification
+          if (data.timerState.current_mode === 'work') {
+            if (data.previousMode === 'long_break') {
+              showToast('Long break finished! Ready for more work? 💼', 'info')
+            } else {
+              showToast('Break finished! Time to get back to work! 💼', 'info')
+            }
+          } else if (data.timerState.current_mode === 'short_break') {
+            const msg = `Pomodoro ${data.timerState.completed_pomodoros} completed! Take a break ☕`
+            showToast(msg, 'success')
+          } else if (data.timerState.current_mode === 'long_break') {
+            const msg = `Amazing! ${data.timerState.completed_pomodoros} pomodoros completed! Enjoy your long break 🌴`
+            showToast(msg, 'success')
+          }
+        })
+        
+        window.electronAPI.onPlaySound((data) => {
+          playNotificationSound(data.type)
+        })
+        
+        return
+      }
+      
+      // Chrome extension API listeners
       if (chrome && chrome.runtime && chrome.runtime.onMessage) {
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           if (message.type === 'TIMER_UPDATE') {
@@ -384,7 +530,7 @@ export default {
             if (message.downTime !== undefined) {
               downTime.value = message.downTime
             }
-            playNotificationSound()
+            playNotificationSound(message.previousMode).catch(err => console.error('Error playing notification sound:', err))
             // Show toast notification
             if (message.timerState.current_mode === 'work') {
               if (message.previousMode === 'long_break') {

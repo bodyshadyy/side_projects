@@ -1,6 +1,11 @@
 // Background service worker for Pomodoro Timer Extension
 // Replaces the Flask backend functionality
 
+// Cross-browser API detection
+const browserAPI = (typeof browser !== 'undefined' && browser.storage) 
+  ? browser 
+  : (typeof chrome !== 'undefined' ? chrome : null)
+
 // Default timer state
 const defaultTimerState = {
   is_running: false,
@@ -16,26 +21,94 @@ let downTimeStartTime = null
 let downTimeInterval = null
 let lastNotifiedMultiple = 0 // Track the last multiple of max_down_time that was notified (0 = first time, 1 = second time, etc.)
 
-// Default settings
+// Default settings - ensure all fields are present for consistency
 const defaultSettings = {
   work_duration: 25 * 60, // seconds
   short_break: 5 * 60, // seconds
   long_break: 15 * 60, // seconds
   short_breaks_until_long: 4,
   auto_switch: false,
-  max_down_time: 15 * 60 // 15 minutes in seconds
+  max_down_time: 15 * 60, // 15 minutes in seconds
+  max_downtime_reminders: 0, // 0 = unlimited reminders
+  work_sound: null,
+  work_sound_file_name: '',
+  break_sound: null,
+  break_sound_file_name: ''
+}
+
+// Merge settings with defaults to ensure consistency
+function mergeSettingsWithDefaults(settings) {
+  const merged = { ...defaultSettings }
+  if (settings) {
+    // Only copy valid settings that exist in defaults
+    Object.keys(defaultSettings).forEach(key => {
+      if (settings[key] !== undefined) {
+        // Type validation and conversion
+        if (key === 'work_duration' || key === 'short_break' || key === 'long_break' || key === 'max_down_time') {
+          merged[key] = Math.max(1, parseInt(settings[key]) || defaultSettings[key])
+        } else if (key === 'short_breaks_until_long' || key === 'max_downtime_reminders') {
+          merged[key] = Math.max(0, parseInt(settings[key]) || defaultSettings[key])
+        } else if (key === 'auto_switch') {
+          merged[key] = Boolean(settings[key])
+        } else {
+          merged[key] = settings[key] !== null ? settings[key] : defaultSettings[key]
+        }
+      }
+    })
+  }
+  return merged
+}
+
+// Merge timer state with defaults
+function mergeTimerStateWithDefaults(timerState) {
+  const merged = { ...defaultTimerState }
+  if (timerState) {
+    Object.keys(defaultTimerState).forEach(key => {
+      if (timerState[key] !== undefined) {
+        if (key === 'remaining_seconds' || key === 'completed_pomodoros') {
+          merged[key] = Math.max(0, parseInt(timerState[key]) || defaultTimerState[key])
+        } else if (key === 'is_running' || key === 'is_paused') {
+          merged[key] = Boolean(timerState[key])
+        } else {
+          merged[key] = timerState[key]
+        }
+      }
+    })
+  }
+  return merged
+}
+
+// Storage helper with cross-browser support
+function getStorage() {
+  return browserAPI && browserAPI.storage ? browserAPI.storage.local : null
 }
 
 // Initialize storage with defaults
 async function initializeStorage() {
-  const result = await chrome.storage.local.get(['timerState', 'settings', 'downTime', 'downTimeStartTime'])
-  
-  if (!result.timerState) {
-    await chrome.storage.local.set({ timerState: defaultTimerState })
+  const storage = getStorage()
+  if (!storage) {
+    console.error('Storage API not available')
+    return
   }
   
-  if (!result.settings) {
-    await chrome.storage.local.set({ settings: defaultSettings })
+  const result = await new Promise((resolve) => {
+    storage.get(['timerState', 'settings', 'downTime', 'downTimeStartTime'], resolve)
+  })
+  
+  // Merge and save timer state with defaults
+  const mergedTimerState = mergeTimerStateWithDefaults(result.timerState)
+  if (!result.timerState || JSON.stringify(result.timerState) !== JSON.stringify(mergedTimerState)) {
+    await new Promise((resolve) => {
+      storage.set({ timerState: mergedTimerState }, resolve)
+    })
+  }
+  
+  // Merge and save settings with defaults
+  const mergedSettings = mergeSettingsWithDefaults(result.settings)
+  if (!result.settings || JSON.stringify(result.settings) !== JSON.stringify(mergedSettings)) {
+    await new Promise((resolve) => {
+      storage.set({ settings: mergedSettings }, resolve)
+    })
   }
   
   // Load down time
@@ -49,21 +122,44 @@ async function initializeStorage() {
 
 // Load timer state from storage
 async function loadTimerState() {
-  const result = await chrome.storage.local.get(['timerState', 'settings'])
+  const storage = getStorage()
+  if (!storage) {
+    return {
+      timerState: defaultTimerState,
+      settings: defaultSettings
+    }
+  }
+  
+  const result = await new Promise((resolve) => {
+    storage.get(['timerState', 'settings'], resolve)
+  })
+  
   return {
-    timerState: result.timerState || defaultTimerState,
-    settings: result.settings || defaultSettings
+    timerState: mergeTimerStateWithDefaults(result.timerState),
+    settings: mergeSettingsWithDefaults(result.settings)
   }
 }
 
 // Save timer state to storage
 async function saveTimerState(timerState) {
-  await chrome.storage.local.set({ timerState })
+  const storage = getStorage()
+  if (!storage) return
+  
+  const mergedState = mergeTimerStateWithDefaults(timerState)
+  await new Promise((resolve) => {
+    storage.set({ timerState: mergedState }, resolve)
+  })
 }
 
 // Save settings to storage
 async function saveSettings(settings) {
-  await chrome.storage.local.set({ settings })
+  const storage = getStorage()
+  if (!storage) return
+  
+  const mergedSettings = mergeSettingsWithDefaults(settings)
+  await new Promise((resolve) => {
+    storage.set({ settings: mergedSettings }, resolve)
+  })
 }
 
 // Format down time for badge
@@ -101,10 +197,22 @@ async function updateBadge(timerState) {
     const currentDownTime = await getCurrentDownTime(timerState)
     if (currentDownTime > 0) {
       const badgeText = formatDownTimeForBadge(currentDownTime)
-      chrome.action.setBadgeText({ text: badgeText })
-      chrome.action.setBadgeBackgroundColor({ color: '#6b7280' }) // gray for down time
+      const actionAPI = browserAPI && browserAPI.action ? browserAPI.action : 
+                        (browserAPI && browserAPI.browserAction ? browserAPI.browserAction : null)
+      if (actionAPI) {
+        if (actionAPI.setBadgeText) {
+          actionAPI.setBadgeText({ text: badgeText })
+        }
+        if (actionAPI.setBadgeBackgroundColor) {
+          actionAPI.setBadgeBackgroundColor({ color: '#6b7280' }) // gray for down time
+        }
+      }
     } else {
-      chrome.action.setBadgeText({ text: '' })
+      const actionAPI = browserAPI && browserAPI.action ? browserAPI.action : 
+                        (browserAPI && browserAPI.browserAction ? browserAPI.browserAction : null)
+      if (actionAPI && actionAPI.setBadgeText) {
+        actionAPI.setBadgeText({ text: '' })
+      }
     }
   }
 }
@@ -231,23 +339,44 @@ async function startDownTimeTracking() {
     
     if (!downTimeStartTime) {
       downTimeStartTime = Date.now()
-      await chrome.storage.local.set({ downTimeStartTime })
+      const storage = getStorage()
+      if (storage) {
+        await new Promise((resolve) => {
+          storage.set({ downTimeStartTime }, resolve)
+        })
+      }
     }
     
     downTimeInterval = setInterval(async () => {
       const { timerState, settings } = await loadTimerState()
       if (!timerState.is_running && !timerState.is_paused) {
         const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
-        downTime = (await chrome.storage.local.get(['downTime'])).downTime || 0
+        const storage = getStorage()
+        if (storage) {
+          const downTimeResult = await new Promise((resolve) => {
+            storage.get(['downTime'], resolve)
+          })
+          downTime = downTimeResult.downTime || 0
+        }
         const currentDownTime = downTime + elapsed
         
         // Check if down time has crossed a new multiple of max_down_time
         const maxDownTime = settings.max_down_time || (15 * 60)
+        const maxReminders = settings.max_downtime_reminders !== undefined ? parseInt(settings.max_downtime_reminders) : 0
+        
         if (maxDownTime > 0) {
           const currentMultiple = Math.floor(currentDownTime / maxDownTime)
           // Only notify when we cross into a new multiple (e.g., 15, 30, 45 minutes)
           if (currentMultiple > lastNotifiedMultiple && currentDownTime >= maxDownTime) {
             lastNotifiedMultiple = currentMultiple
+            
+            // Check if we've reached the max reminders (0 = unlimited)
+            if (maxReminders > 0 && lastNotifiedMultiple >= maxReminders) {
+              // Pause downtime tracking after max reminders reached
+              stopDownTimeTracking()
+              return
+            }
+            
             openDownTimeExceededTab(maxDownTime, currentMultiple)
           }
         }
@@ -271,7 +400,12 @@ async function stopDownTimeTracking() {
     const elapsed = Math.floor((Date.now() - downTimeStartTime) / 1000)
     downTime = (downTime + elapsed) || 0
     downTimeStartTime = null
-    await chrome.storage.local.set({ downTime, downTimeStartTime: null })
+    const storage = getStorage()
+    if (storage) {
+      await new Promise((resolve) => {
+        storage.set({ downTime, downTimeStartTime: null }, resolve)
+      })
+    }
   }
 }
 
@@ -280,7 +414,12 @@ async function resetDownTime() {
   downTime = 0
   downTimeStartTime = null
   lastNotifiedMultiple = 0
-  await chrome.storage.local.set({ downTime: 0, downTimeStartTime: null })
+  const storage = getStorage()
+  if (storage) {
+    await new Promise((resolve) => {
+      storage.set({ downTime: 0, downTimeStartTime: null }, resolve)
+    })
+  }
   stopDownTimeTracking()
 }
 
@@ -357,17 +496,26 @@ async function startTimerUpdate() {
         // Show notification
         showTimerCompleteNotification(previousMode, timerState.current_mode, timerState.completed_pomodoros)
         
+        // Play audio notification (works even when popup is closed)
+        playAudioNotification(previousMode, settings)
+        
         // Notify popup
         try {
           const currentDownTime = await getCurrentDownTime(timerState)
-          chrome.runtime.sendMessage({
-            type: 'TIMER_COMPLETE',
-            timerState,
-            previousMode,
-            downTime: currentDownTime
-          }).catch(() => {
-            // Popup might not be open, ignore error
-          })
+          const runtimeAPI = browserAPI && browserAPI.runtime ? browserAPI.runtime : null
+          if (runtimeAPI && runtimeAPI.sendMessage) {
+            runtimeAPI.sendMessage({
+              type: 'TIMER_COMPLETE',
+              timerState,
+              previousMode,
+              downTime: currentDownTime
+            }, () => {
+              // Ignore errors - popup might not be open
+              if (runtimeAPI.lastError) {
+                // Silently ignore
+              }
+            })
+          }
         } catch (e) {
           // Ignore
         }
@@ -491,6 +639,140 @@ function openTimerCompleteTab(completedMode, nextMode, pomodoros) {
   })
 }
 
+// Play audio notification from background script
+async function playAudioNotification(previousMode, settings) {
+  try {
+    // Determine which sound to play
+    const isWorkCompletion = previousMode === 'work'
+    const soundData = isWorkCompletion 
+      ? settings.work_sound 
+      : settings.break_sound
+    
+    // If custom sound is available, try to play it via a data URL in a new tab
+    if (soundData) {
+      // Create a temporary HTML page that plays the audio
+      const audioHTML = `<!DOCTYPE html>
+<html>
+<head><title>Playing Sound</title></head>
+<body>
+  <script>
+    const audio = new Audio('${soundData}');
+    audio.volume = 0.7;
+    audio.play().then(() => {
+      setTimeout(() => window.close(), 2000);
+    }).catch(() => {
+      // Fallback to beep
+      playBeep();
+    });
+    
+    function playBeep() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 800;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+      setTimeout(() => {
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.frequency.value = 800;
+        osc2.type = 'sine';
+        gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc2.start(ctx.currentTime);
+        osc2.stop(ctx.currentTime + 0.5);
+        setTimeout(() => window.close(), 1000);
+      }, 300);
+    }
+  </script>
+</body>
+</html>`
+      
+      const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(audioHTML)
+      const tabsAPI = browserAPI && browserAPI.tabs ? browserAPI.tabs : null
+      if (tabsAPI && tabsAPI.create) {
+        tabsAPI.create({
+          url: dataUrl,
+          active: false
+        }, (tab) => {
+          // Close the tab after audio plays
+          setTimeout(() => {
+            if (tab && tab.id && tabsAPI.remove) {
+              tabsAPI.remove(tab.id, () => {})
+            }
+          }, 3000)
+        })
+      }
+    } else {
+      // Play default beep via temporary tab
+      const beepHTML = `<!DOCTYPE html>
+<html>
+<head><title>Beep</title></head>
+<body>
+  <script>
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') {
+      ctx.resume().then(() => playBeep());
+    } else {
+      playBeep();
+    }
+    
+    function playBeep() {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 800;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+      setTimeout(() => {
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.frequency.value = 800;
+        osc2.type = 'sine';
+        gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc2.start(ctx.currentTime);
+        osc2.stop(ctx.currentTime + 0.5);
+        setTimeout(() => window.close(), 1000);
+      }, 300);
+    }
+  </script>
+</body>
+</html>`
+      
+      const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(beepHTML)
+      const tabsAPI = browserAPI && browserAPI.tabs ? browserAPI.tabs : null
+      if (tabsAPI && tabsAPI.create) {
+        tabsAPI.create({
+          url: dataUrl,
+          active: false
+        }, (tab) => {
+          setTimeout(() => {
+            if (tab && tab.id && tabsAPI.remove) {
+              tabsAPI.remove(tab.id, () => {})
+            }
+          }, 2000)
+        })
+      }
+    }
+  } catch (err) {
+    console.error('Error playing audio notification:', err)
+  }
+}
+
 // Show notification when timer completes
 function showTimerCompleteNotification(completedMode, nextMode, pomodoros) {
   let title = '🍅 Timer Complete!'
@@ -509,14 +791,29 @@ function showTimerCompleteNotification(completedMode, nextMode, pomodoros) {
     body = 'Long break finished! Ready for more work? 💼'
   }
   
-  chrome.notifications.create({
-    type: 'basic',
-    iconUrl: 'icon48.png',
-    title: title,
-    message: body,
-    requireInteraction: true,
-    priority: 2
-  })
+  // Create notification with error handling
+  // Cross-browser notifications
+  const notificationsAPI = browserAPI && browserAPI.notifications ? browserAPI.notifications : null
+  const runtimeAPI = browserAPI && browserAPI.runtime ? browserAPI.runtime : null
+  
+  if (notificationsAPI && notificationsAPI.create) {
+    const iconUrl = runtimeAPI && runtimeAPI.getURL ? runtimeAPI.getURL('icon48.png') : 'icon48.png'
+    
+    notificationsAPI.create({
+      type: 'basic',
+      iconUrl: iconUrl,
+      title: title,
+      message: body,
+      requireInteraction: true,
+      priority: 2
+    }, (notificationId) => {
+      if (runtimeAPI && runtimeAPI.lastError) {
+        console.error('Error creating notification:', runtimeAPI.lastError.message)
+      } else {
+        console.log('Notification created:', notificationId)
+      }
+    })
+  }
 }
 
 // Handle messages from popup
@@ -640,6 +937,18 @@ async function handleMessage(message, sender, sendResponse) {
         if (newSettings.max_down_time !== undefined) {
           updateData.settings.max_down_time = Math.max(1, parseInt(newSettings.max_down_time))
         }
+        if (newSettings.work_sound !== undefined) {
+          updateData.settings.work_sound = newSettings.work_sound
+        }
+        if (newSettings.work_sound_file_name !== undefined) {
+          updateData.settings.work_sound_file_name = newSettings.work_sound_file_name
+        }
+        if (newSettings.break_sound !== undefined) {
+          updateData.settings.break_sound = newSettings.break_sound
+        }
+        if (newSettings.break_sound_file_name !== undefined) {
+          updateData.settings.break_sound_file_name = newSettings.break_sound_file_name
+        }
         
         // Update current timer if not running
         if (!updateData.timerState.is_running) {
@@ -667,11 +976,18 @@ async function handleMessage(message, sender, sendResponse) {
 }
 
 // Handle notification clicks
-chrome.notifications.onClicked.addListener((notificationId) => {
-  chrome.notifications.clear(notificationId)
-  // Focus the extension popup
-  chrome.action.openPopup()
-})
+// Notification click handler - cross-browser
+if (notificationsAPI && notificationsAPI.onClicked) {
+  notificationsAPI.onClicked.addListener((notificationId) => {
+    if (notificationsAPI.clear) {
+      notificationsAPI.clear(notificationId)
+    }
+    // Focus the extension popup
+    if (actionAPI && actionAPI.openPopup) {
+      actionAPI.openPopup()
+    }
+  })
+}
 
 // Initialize badge on startup
 async function initializeBadge() {
@@ -684,19 +1000,26 @@ async function initializeBadge() {
 }
 
 // Initialize on startup
-chrome.runtime.onStartup.addListener(() => {
-  initializeStorage().then(() => {
-    startTimerUpdate()
-    initializeBadge()
-  })
-})
-
-chrome.runtime.onInstalled.addListener(() => {
-  initializeStorage().then(() => {
-    startTimerUpdate()
-    initializeBadge()
-  })
-})
+// Startup and install listeners - cross-browser
+if (runtimeAPI) {
+  if (runtimeAPI.onStartup && runtimeAPI.onStartup.addListener) {
+    runtimeAPI.onStartup.addListener(() => {
+      initializeStorage().then(() => {
+        startTimerUpdate()
+        initializeBadge()
+      })
+    })
+  }
+  
+  if (runtimeAPI.onInstalled && runtimeAPI.onInstalled.addListener) {
+    runtimeAPI.onInstalled.addListener(() => {
+      initializeStorage().then(() => {
+        startTimerUpdate()
+        initializeBadge()
+      })
+    })
+  }
+}
 
 // Start timer update when service worker starts
 initializeStorage().then(() => {

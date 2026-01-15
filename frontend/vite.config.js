@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     rollupOptions: {
-      input: resolve(__dirname, 'popup.html')
+      input: process.env.ELECTRON ? resolve(__dirname, 'index.html') : resolve(__dirname, 'popup.html')
     },
     // Ensure assets are properly referenced
     assetsDir: 'assets',
@@ -18,6 +18,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src')
     }
-  }
+  },
+  base: process.env.ELECTRON ? './' : '/'
 })
 
