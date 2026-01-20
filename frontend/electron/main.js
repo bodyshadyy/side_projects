@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Notification, nativeImage } = require('electron')
+const { app, BrowserWindow, ipcMain, Notification } = require('electron')
 const path = require('path')
 const fs = require('fs').promises
 
@@ -103,15 +103,15 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, '../frontend/dist/icon48.png')
+    icon: path.join(__dirname, '../dist/icon48.png')
   })
 
   // Load the app
-  if (process.env.NODE_ENV === 'development') {
+  if (app.isPackaged) {
+    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+  } else {
     mainWindow.loadURL('http://localhost:5173')
     mainWindow.webContents.openDevTools()
-  } else {
-    mainWindow.loadFile(path.join(__dirname, '../frontend/dist/index.html'))
   }
 
   mainWindow.on('closed', () => {
@@ -272,7 +272,7 @@ function showNotification(completedMode, nextMode, pomodoros) {
     new Notification({
       title,
       body,
-      icon: path.join(__dirname, '../frontend/dist/icon48.png')
+      icon: path.join(__dirname, '../dist/icon48.png')
     }).show()
   }
 }
@@ -286,7 +286,7 @@ function showDownTimeNotification(maxDownTime, currentMultiple) {
     new Notification({
       title: '⏰ Downtime Alert',
       body: `You've been away for ${exceededMinutes} minutes (${currentMultiple}x ${minutes} min)`,
-      icon: path.join(__dirname, '../frontend/dist/icon48.png')
+      icon: path.join(__dirname, '../dist/icon48.png')
     }).show()
   }
 }
@@ -407,4 +407,7 @@ app.on('before-quit', async () => {
   stopDownTimeTracking()
   await saveData()
 })
+
+
+
 

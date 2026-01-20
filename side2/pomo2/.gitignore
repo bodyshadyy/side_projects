@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.swp
+*.log
+.DS_Store
+.venv/
+env/
+venv/
+.env
+
+# IDE/Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# SQLite database
+data/pomodoro.db
+
+# Cursor/terminal state
+.cursor/
+terminals/
+_pycache__
+data

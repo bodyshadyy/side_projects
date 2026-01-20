@@ -70,10 +70,10 @@ The installer will be named something like:
 
 ```
 .
-├── electron/
-│   ├── main.js          # Electron main process
-│   └── preload.js       # Preload script (bridge)
 ├── frontend/
+│   ├── electron/
+│   │   ├── main.js          # Electron main process
+│   │   └── preload.js       # Preload script (bridge)
 │   ├── src/
 │   │   ├── utils/
 │   │   │   ├── chrome-api.js    # Chrome extension API
