@@ -124,12 +124,14 @@ class TimerWindow(QWidget):
         super().__init__(parent)
         self.db = Database()
         self.settings = self._load_settings()
-        self.state = TimerState.DOWNTIME
+        self.state = TimerState.WORK
         self.previous_state = TimerState.WORK  # Store state before pause
         self.remaining_seconds = 0
         self.work_sessions = 0
         self.downtime_seconds = 0  # Track downtime duration
         self.last_notification_time = 0  # Track last notification time
+        self.is_downtime_active = False  # Track if downtime is currently being tracked
+        self.muted = False  # Track mute state
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._update_timer)
         self.tray_icon = None
@@ -162,7 +164,7 @@ class TimerWindow(QWidget):
         main_layout.setContentsMargins(40, 40, 40, 40)
         
         # State label
-        self.state_label = QLabel("Downtime")
+        self.state_label = QLabel("⏱ Work Time")
         self.state_label.setObjectName("state_label")
         self.state_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         font = QFont()
@@ -257,6 +259,18 @@ class TimerWindow(QWidget):
         
         main_layout.addLayout(button_layout)
         
+        # Mute button
+        mute_layout = QHBoxLayout()
+        mute_layout.addStretch()
+        self.mute_button = QPushButton("🔊 Mute")
+        self.mute_button.setObjectName("muteBtn")
+        self.mute_button.clicked.connect(self.toggle_mute)
+        self.mute_button.setMinimumHeight(35)
+        self.mute_button.setMinimumWidth(100)
+        mute_layout.addWidget(self.mute_button)
+        mute_layout.addStretch()
+        main_layout.addLayout(mute_layout)
+        
         # Spacer
         main_layout.addStretch()
         
@@ -290,7 +304,6 @@ class TimerWindow(QWidget):
             TimerState.WORK: "⏱️",
             TimerState.SHORT_BREAK: "☕",
             TimerState.LONG_BREAK: "🌴",
-            TimerState.DOWNTIME: "💤",
             TimerState.PAUSED: "⏸️"
         }
         
@@ -337,13 +350,9 @@ class TimerWindow(QWidget):
     def _update_display(self):
         """Update the timer display."""
         # Update main timer
-        if self.state == TimerState.DOWNTIME:
-            # When in downtime, show 00:00 in main timer
-            self.timer_label.setText("00:00")
-        else:
-            minutes = self.remaining_seconds // 60
-            seconds = self.remaining_seconds % 60
-            self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
+        minutes = self.remaining_seconds // 60
+        seconds = self.remaining_seconds % 60
+        self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
         
         # Update work sessions
         self.sessions_label.setText(f"Work Sessions: {self.work_sessions}")
@@ -417,6 +426,15 @@ class TimerWindow(QWidget):
             QPushButton#skipBtn:hover {
                 background-color: #0b7dda;
             }
+            QPushButton#muteBtn {
+                background-color: #757575;
+            }
+            QPushButton#muteBtn:hover {
+                background-color: #616161;
+            }
+            QPushButton#muteBtn:pressed {
+                background-color: #424242;
+            }
         """
         
         if self.state == TimerState.WORK:
@@ -483,10 +501,7 @@ class TimerWindow(QWidget):
                 }
             """
             self.setStyleSheet(state_style)
-            if self.state == TimerState.DOWNTIME:
-                self.state_label.setText("💤 Downtime")
-            else:
-                self.state_label.setText("⏸ Paused")
+            self.state_label.setText("⏸ Paused")
             # Show downtime timer if enabled
             if hasattr(self, 'downtime_container'):
                 self.downtime_container.setVisible(self.settings.enable_downtime)
@@ -502,9 +517,20 @@ class TimerWindow(QWidget):
             return self.settings.short_break
         elif self.state == TimerState.LONG_BREAK:
             return self.settings.long_break
-        elif self.state == TimerState.DOWNTIME:
-            return self.settings.downtime
         return 0
+    
+    def _get_next_state(self):
+        """Get the next timer state without changing current state."""
+        if self.state == TimerState.WORK:
+            # Calculate what the next break will be after incrementing work_sessions
+            next_session_count = self.work_sessions + 1
+            if next_session_count % 4 == 0:
+                return 'long_break'
+            else:
+                return 'short_break'
+        elif self.state in [TimerState.SHORT_BREAK, TimerState.LONG_BREAK]:
+            return 'work'
+        return 'work'
     
     def _next_state(self):
         """Move to the next timer state."""
@@ -516,29 +542,36 @@ class TimerWindow(QWidget):
                 self.state = TimerState.SHORT_BREAK
         elif self.state in [TimerState.SHORT_BREAK, TimerState.LONG_BREAK]:
             self.state = TimerState.WORK
-        elif self.state == TimerState.DOWNTIME:
-            self.state = TimerState.WORK
         
         self.remaining_seconds = self._get_timer_duration()
         self._update_display()
         self._apply_state_colors()
     
+    def _has_sound_for_state(self, state_name: str) -> bool:
+        """Check if there's a sound configured for the given state."""
+        if state_name == 'work':
+            return bool(self.settings.alarm_sound_path and os.path.exists(self.settings.alarm_sound_path))
+        elif state_name == 'short_break':
+            return bool(self.settings.short_break_sound_path and os.path.exists(self.settings.short_break_sound_path))
+        elif state_name == 'long_break':
+            return bool(self.settings.long_break_sound_path and os.path.exists(self.settings.long_break_sound_path))
+        return False
+    
     def start_timer(self):
         """Start the timer."""
+        # Stop downtime tracking when starting timer
+        if self.is_downtime_active:
+            self._stop_downtime()
+        
+        # Resume from pause
         if self.state == TimerState.PAUSED:
-            # Resume from pause - restore previous state
             self.state = self.previous_state
-        elif self.state == TimerState.DOWNTIME:
-            # Starting from downtime - reset downtime tracking
-            self.downtime_seconds = 0
-            self.last_notification_time = 0
-            self.state = TimerState.WORK
-            self.remaining_seconds = self._get_timer_duration()
-        elif self.remaining_seconds == 0:
-            # Start new timer
+        
+        # Reset if timer is at zero
+        if self.remaining_seconds == 0:
             self.remaining_seconds = self._get_timer_duration()
         
-        self.timer.start(1000)  # Update every second
+        self.timer.start(1000)
         self.start_button.setEnabled(False)
         self.pause_button.setEnabled(True)
         self._apply_state_colors()
@@ -546,15 +579,9 @@ class TimerWindow(QWidget):
     def pause_timer(self):
         """Pause the timer."""
         self.timer.stop()
-        self.previous_state = self.state  # Save current state
-        # Enter downtime when paused (if enabled)
-        if self.settings.enable_downtime:
-            self.state = TimerState.DOWNTIME
-            self.downtime_seconds = 0
-            self.last_notification_time = 0
-            self.timer.start(1000)  # Start tracking downtime
-        else:
-            self.state = TimerState.PAUSED
+        self.previous_state = self.state
+        self.state = TimerState.PAUSED
+        
         self.start_button.setEnabled(True)
         self.pause_button.setEnabled(False)
         self._apply_state_colors()
@@ -562,15 +589,11 @@ class TimerWindow(QWidget):
     def reset_timer(self):
         """Reset the timer."""
         self.timer.stop()
-        if self.settings.enable_downtime:
-            self.state = TimerState.DOWNTIME
-            self.downtime_seconds = 0
-            self.last_notification_time = 0
-            self.remaining_seconds = 0
-            self.timer.start(1000)  # Start tracking downtime
-        else:
-            self.state = TimerState.WORK
-            self.remaining_seconds = self._get_timer_duration()
+        self._stop_downtime()
+        
+        self.state = TimerState.WORK
+        self.remaining_seconds = self._get_timer_duration()
+        
         self.start_button.setEnabled(True)
         self.pause_button.setEnabled(False)
         self._update_display()
@@ -579,69 +602,102 @@ class TimerWindow(QWidget):
     def skip_timer(self):
         """Skip to the next timer state."""
         self.timer.stop()
+        self._stop_downtime()
         self._next_state()
         self.start_button.setEnabled(True)
         self.pause_button.setEnabled(False)
         
-        # Auto-start if enabled and not in downtime
-        if self.settings.auto_start and self.state != TimerState.DOWNTIME:
+        # Auto-start if enabled
+        if self.settings.auto_start:
             self.start_timer()
+    
+    def toggle_mute(self):
+        """Toggle mute state for all alarms."""
+        self.muted = not self.muted
+        if self.muted:
+            self.mute_button.setText("🔇 Unmute")
+            # Stop any currently playing alarm
+            if self.media_player and self.media_player.isPlaying():
+                self.media_player.stop()
+        else:
+            self.mute_button.setText("🔊 Mute")
     
     def _update_timer(self):
         """Update timer countdown."""
-        if self.state == TimerState.DOWNTIME:
-            # Track downtime duration
+        # Track downtime in background if active
+        if self.is_downtime_active:
             self.downtime_seconds += 1
-            self.remaining_seconds = self.downtime_seconds
-            
-            # Check if downtime exceeds threshold - repeat at each threshold interval
-            if (self.settings.enable_downtime and 
-                self.settings.downtime_notify_threshold > 0):
-                # Calculate how many threshold intervals have passed
-                intervals_passed = self.downtime_seconds // self.settings.downtime_notify_threshold
-                # Check if we've crossed a new threshold interval
-                if intervals_passed > 0 and intervals_passed * self.settings.downtime_notify_threshold > self.last_notification_time:
-                    self._notify_downtime_exceeded()
-                    self.last_notification_time = intervals_passed * self.settings.downtime_notify_threshold
-            
+            self._check_downtime_notification()
             self._update_display()
-        elif self.remaining_seconds > 0:
+        
+        # Handle regular timer countdown
+        if self.remaining_seconds > 0:
             self.remaining_seconds -= 1
             self._update_display()
-        else:
-            # Timer completed
-            self.timer.stop()
-            state_name = self.state.value
-            self.timer_completed.emit(state_name)
-            
-            # Play alarm sound if configured and show dialog
-            if self.settings.alarm_sound_path and os.path.exists(self.settings.alarm_sound_path):
-                self._show_alarm_dialog(state_name)
-            else:
-                # Still show dialog even without sound
-                self._show_alarm_dialog(state_name, play_sound=False)
-            
-            self._next_state()
-            self.start_button.setEnabled(True)
-            self.pause_button.setEnabled(False)
-            
-            # Auto-start if enabled and not in downtime
-            if self.settings.auto_start and self.state != TimerState.DOWNTIME:
-                self.start_timer()
+            return
+        
+        # Timer completed - handle completion
+        if not self.is_downtime_active:
+            self._handle_timer_completion()
+    
+    def _check_downtime_notification(self):
+        """Check if downtime exceeds threshold and notify if needed."""
+        if not (self.settings.enable_downtime and self.settings.downtime_notify_threshold > 0):
+            return
+        
+        intervals_passed = self.downtime_seconds // self.settings.downtime_notify_threshold
+        threshold_time = intervals_passed * self.settings.downtime_notify_threshold
+        
+        if intervals_passed > 0 and threshold_time > self.last_notification_time:
+            self.last_notification_time = threshold_time
+            self._notify_downtime_exceeded()
     
     def _notify_downtime_exceeded(self):
         """Show notification when downtime exceeds threshold."""
-        # Use the same alarm dialog as other timers - exactly like timer completion
-        # Play alarm sound if configured and show dialog
-        if self.settings.downtime_sound_path and os.path.exists(self.settings.downtime_sound_path):
-            self._show_alarm_dialog('downtime')
+        has_sound = (self.settings.downtime_sound_path and 
+                    os.path.exists(self.settings.downtime_sound_path))
+        self._show_alarm_dialog('downtime', play_sound=has_sound and not self.muted)
+    
+    def _handle_timer_completion(self):
+        """Handle timer completion - show alarm and transition to next state."""
+        self.timer_completed.emit(self.state.value)
+        
+        # Show alarm for next state
+        next_state = self._get_next_state()
+        has_sound = self._has_sound_for_state(next_state)
+        self._show_alarm_dialog(next_state, play_sound=has_sound and not self.muted)
+        
+        # Move to next state
+        self._next_state()
+        self.start_button.setEnabled(True)
+        self.pause_button.setEnabled(False)
+        
+        # Auto-start or start downtime tracking
+        if self.settings.auto_start:
+            self.start_timer()
+        elif self.settings.enable_downtime:
+            self._start_downtime()
         else:
-            # Still show dialog even without sound
-            self._show_alarm_dialog('downtime', play_sound=False)
+            self.timer.stop()
+    
+    def _get_sound_path(self, state_name: str) -> str:
+        """Get sound path for given state."""
+        sound_map = {
+            'work': self.settings.alarm_sound_path,
+            'short_break': self.settings.short_break_sound_path,
+            'long_break': self.settings.long_break_sound_path,
+            'downtime': self.settings.downtime_sound_path
+        }
+        sound_path = sound_map.get(state_name)
+        
+        # Fallback to work sound if specific sound not set
+        if not sound_path:
+            sound_path = self.settings.alarm_sound_path
+        
+        return sound_path if (sound_path and os.path.exists(sound_path)) else None
     
     def _show_alarm_dialog(self, state_name: str, play_sound: bool = True):
         """Show alarm dialog and play sound."""
-        # Get state display name
         state_display = {
             'work': '⏱ Work Time',
             'short_break': '☕ Short Break',
@@ -650,65 +706,50 @@ class TimerWindow(QWidget):
         }
         display_name = state_display.get(state_name, 'Timer')
         
-        # Play sound if configured - use appropriate sound for each timer type
+        # Play sound if requested
         if play_sound:
-            sound_path = None
-            if state_name == 'work':
-                sound_path = self.settings.alarm_sound_path
-            elif state_name == 'short_break':
-                sound_path = self.settings.short_break_sound_path
-            elif state_name == 'long_break':
-                sound_path = self.settings.long_break_sound_path
-            elif state_name == 'downtime':
-                sound_path = self.settings.downtime_sound_path
-            
-            # Fallback to work sound if specific sound not set
-            if not sound_path and state_name in ['short_break', 'long_break']:
-                sound_path = self.settings.alarm_sound_path
-            if not sound_path and state_name == 'downtime':
-                sound_path = self.settings.alarm_sound_path
-            
-            if sound_path and os.path.exists(sound_path):
+            sound_path = self._get_sound_path(state_name)
+            if sound_path:
                 try:
                     self.media_player.setSource(QUrl.fromLocalFile(sound_path))
                     self.media_player.play()
                 except Exception as e:
                     print(f"Error playing alarm sound: {e}")
         
-        # Bring main window to front if minimized
+        # Bring window to front
         if self.isMinimized():
             self.showNormal()
         self.raise_()
         self.activateWindow()
         
-        # Create and show alarm dialog
+        # Show dialog
         self.alarm_dialog = AlarmDialog(self, display_name, self.media_player)
         self.alarm_dialog.exec()
         
-        # Ensure alarm is stopped after dialog closes
+        # Stop alarm after dialog closes
         if self.media_player:
             self.media_player.stop()
     
-    def _play_alarm_sound(self):
-        """Play the alarm sound if configured."""
-        if self.settings.alarm_sound_path and os.path.exists(self.settings.alarm_sound_path):
-            try:
-                self.media_player.setSource(QUrl.fromLocalFile(self.settings.alarm_sound_path))
-                self.media_player.play()
-            except Exception as e:
-                print(f"Error playing alarm sound: {e}")
+    def _start_downtime(self):
+        """Start downtime tracking in background."""
+        self.is_downtime_active = True
+        self.downtime_seconds = 0
+        self.last_notification_time = 0
+        self.remaining_seconds = 0
+        # Keep timer running to track downtime
+        if not self.timer.isActive():
+            self.timer.start(1000)
+    
+    def _stop_downtime(self):
+        """Stop downtime tracking."""
+        self.is_downtime_active = False
+        self.downtime_seconds = 0
+        self.last_notification_time = 0
     
     def _load_state(self):
         """Load timer state from settings."""
-        if self.settings.enable_downtime:
-            self.state = TimerState.DOWNTIME
-            self.downtime_seconds = 0
-            self.last_notification_time = 0
-            self.remaining_seconds = 0
-            self.timer.start(1000)  # Start tracking downtime
-        else:
-            self.state = TimerState.WORK
-            self.remaining_seconds = self._get_timer_duration()
+        self.state = TimerState.WORK
+        self.remaining_seconds = self._get_timer_duration()
         self.previous_state = self.state
         self._update_display()
         self._apply_state_colors()
