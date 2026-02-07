@@ -9,6 +9,8 @@ from PyQt6.QtGui import QIcon, QFont, QAction, QPixmap, QPainter, QColor
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from enum import Enum
 import os
+import platform
+import subprocess
 from database import Database
 from models import Settings
 
@@ -132,6 +134,7 @@ class TimerWindow(QWidget):
         self.last_notification_time = 0  # Track last notification time
         self.is_downtime_active = False  # Track if downtime is currently being tracked
         self.muted = False  # Track mute state
+        self.current_desktop = 1  # Track which virtual desktop we're on (1 or 2)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._update_timer)
         self.tray_icon = None
@@ -156,7 +159,8 @@ class TimerWindow(QWidget):
     def _init_ui(self):
         """Initialize the UI."""
         self.setWindowTitle("Pomodoro Timer")
-        self.setMinimumSize(500, 600)
+        self.setMinimumSize(300, 150)  # Allow much smaller window
+        # Window is resizable by default in PyQt6, no need to set flags
         
         # Main layout
         main_layout = QVBoxLayout()
@@ -278,6 +282,7 @@ class TimerWindow(QWidget):
         self._update_display()
         self._apply_state_colors()
         self._update_icon()  # Set initial icon
+        self._update_ui_for_size()  # Set initial UI state based on size
     
     def _create_emoji_icon(self, emoji: str) -> QIcon:
         """Create an icon from an emoji."""
@@ -297,18 +302,52 @@ class TimerWindow(QWidget):
         
         return QIcon(pixmap)
     
-    def _update_icon(self):
-        """Update the app icon based on current timer state."""
-        # Map states to emojis
-        state_emojis = {
-            TimerState.WORK: "⏱️",
-            TimerState.SHORT_BREAK: "☕",
-            TimerState.LONG_BREAK: "🌴",
-            TimerState.PAUSED: "⏸️"
-        }
+    def _create_text_icon(self, text: str, color: QColor = None) -> QIcon:
+        """Create an icon with text showing minutes."""
+        # Default color (blue) if not specified
+        if color is None:
+            color = QColor(70, 130, 180)
         
-        emoji = state_emojis.get(self.state, "⏱️")
-        icon = self._create_emoji_icon(emoji)
+        # Create a larger pixmap for better text visibility
+        pixmap = QPixmap(64, 64)
+        pixmap.fill(QColor(255, 255, 255, 0))  # Transparent background
+        
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        
+        # Draw background circle with specified color
+        painter.setBrush(QColor(color.red(), color.green(), color.blue(), 220))  # With transparency
+        painter.setPen(QColor(color.red(), color.green(), color.blue(), 255))
+        painter.drawEllipse(2, 2, 60, 60)
+        
+        # Draw text
+        font = QFont()
+        font.setPointSize(16)
+        font.setBold(True)
+        painter.setFont(font)
+        painter.setPen(QColor(255, 255, 255))  # White text
+        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, text)
+        painter.end()
+        
+        return QIcon(pixmap)
+    
+    def _update_icon(self):
+        """Update the app icon to show time left in minutes."""
+        # Calculate minutes remaining
+        minutes = self.remaining_seconds // 60
+        
+        # Determine color based on timer state
+        if self.state == TimerState.WORK:
+            icon_color = QColor(198, 40, 40)  # Red
+        elif self.state == TimerState.SHORT_BREAK:
+            icon_color = QColor(21, 101, 192)  # Blue
+        elif self.state == TimerState.LONG_BREAK:
+            icon_color = QColor(46, 125, 50)  # Green
+        else:  # PAUSED or other states
+            icon_color = QColor(97, 97, 97)  # Gray
+        
+        # Create icon with minutes text and appropriate color
+        icon = self._create_text_icon(str(minutes), icon_color)
         
         # Update window icon
         self.setWindowIcon(icon)
@@ -316,6 +355,16 @@ class TimerWindow(QWidget):
         # Update tray icon if available
         if self.tray_icon:
             self.tray_icon.setIcon(icon)
+            # Update tooltip with exact time
+            seconds = self.remaining_seconds % 60
+            state_names = {
+                TimerState.WORK: "Work",
+                TimerState.SHORT_BREAK: "Short Break",
+                TimerState.LONG_BREAK: "Long Break",
+                TimerState.PAUSED: "Paused",
+            }
+            state_name = state_names.get(self.state, "Timer")
+            self.tray_icon.setToolTip(f"{state_name} — {minutes:02d}:{seconds:02d}")
     
     def _setup_tray(self):
         """Setup system tray icon."""
@@ -342,7 +391,24 @@ class TimerWindow(QWidget):
     
     def _tray_icon_activated(self, reason):
         """Handle tray icon activation."""
-        if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
+        if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            # Single click - show exact time left as a notification
+            minutes = self.remaining_seconds // 60
+            seconds = self.remaining_seconds % 60
+            state_names = {
+                TimerState.WORK: "Work",
+                TimerState.SHORT_BREAK: "Short Break",
+                TimerState.LONG_BREAK: "Long Break",
+                TimerState.PAUSED: "Paused",
+            }
+            state_name = state_names.get(self.state, "Timer")
+            self.tray_icon.showMessage(
+                f"{state_name}",
+                f"Time left: {minutes:02d}:{seconds:02d}",
+                QSystemTrayIcon.MessageIcon.Information,
+                3000
+            )
+        elif reason == QSystemTrayIcon.ActivationReason.DoubleClick:
             self.show()
             self.raise_()
             self.activateWindow()
@@ -372,6 +438,9 @@ class TimerWindow(QWidget):
             else:
                 self.downtime_label.setText("--:--")
                 self.downtime_label.setStyleSheet("color: #ccc;")
+        
+        # Update icon to show minutes remaining
+        self._update_icon()
     
     def _apply_state_colors(self):
         """Apply color coding based on timer state."""
@@ -662,6 +731,10 @@ class TimerWindow(QWidget):
         """Handle timer completion - show alarm and transition to next state."""
         self.timer_completed.emit(self.state.value)
         
+        # Switch virtual desktop if enabled
+        if self.settings.switch_desktop:
+            self._switch_desktop()
+        
         # Show alarm for next state
         next_state = self._get_next_state()
         has_sound = self._has_sound_for_state(next_state)
@@ -679,6 +752,43 @@ class TimerWindow(QWidget):
             self._start_downtime()
         else:
             self.timer.stop()
+    
+    def _switch_desktop(self):
+        """Switch between virtual desktop 1 and 2 using keyboard shortcut."""
+        try:
+            if platform.system() == 'Windows':
+                import ctypes
+                from ctypes import wintypes
+                
+                user32 = ctypes.windll.user32
+                
+                # Key codes
+                VK_LWIN = 0x5B
+                VK_CONTROL = 0x11
+                VK_LEFT = 0x25
+                VK_RIGHT = 0x27
+                
+                KEYEVENTF_KEYUP = 0x0002
+                
+                # Determine direction: desktop 1 -> right to 2, desktop 2 -> left to 1
+                if self.current_desktop == 1:
+                    arrow_key = VK_RIGHT
+                    self.current_desktop = 2
+                else:
+                    arrow_key = VK_LEFT
+                    self.current_desktop = 1
+                
+                # Press Win+Ctrl+Arrow
+                user32.keybd_event(VK_LWIN, 0, 0, 0)
+                user32.keybd_event(VK_CONTROL, 0, 0, 0)
+                user32.keybd_event(arrow_key, 0, 0, 0)
+                
+                # Release keys
+                user32.keybd_event(arrow_key, 0, KEYEVENTF_KEYUP, 0)
+                user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+                user32.keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0)
+        except Exception as e:
+            print(f"Error switching desktop: {e}")
     
     def _get_sound_path(self, state_name: str) -> str:
         """Get sound path for given state."""
@@ -762,6 +872,83 @@ class TimerWindow(QWidget):
             self.downtime_container.setVisible(self.settings.enable_downtime)
         if not self.timer.isActive():
             self._load_state()
+    
+    def resizeEvent(self, event):
+        """Handle window resize event to show/hide elements based on size."""
+        super().resizeEvent(event)
+        self._update_ui_for_size()
+    
+    def _update_ui_for_size(self):
+        """Update UI visibility based on window size."""
+        height = self.height()
+        width = self.width()
+        
+        # Threshold for compact mode (only show timer)
+        compact_threshold = 200
+        
+        # If window is very small, only show timer
+        if height < compact_threshold or width < 300:
+            # Hide all elements except timer
+            if hasattr(self, 'state_label'):
+                self.state_label.setVisible(False)
+            if hasattr(self, 'sessions_label'):
+                self.sessions_label.setVisible(False)
+            if hasattr(self, 'downtime_container'):
+                self.downtime_container.setVisible(False)
+            # Hide buttons
+            if hasattr(self, 'start_button'):
+                self.start_button.setVisible(False)
+            if hasattr(self, 'pause_button'):
+                self.pause_button.setVisible(False)
+            if hasattr(self, 'reset_button'):
+                self.reset_button.setVisible(False)
+            if hasattr(self, 'skip_button'):
+                self.skip_button.setVisible(False)
+            if hasattr(self, 'mute_button'):
+                self.mute_button.setVisible(False)
+            
+            # Adjust timer font size for compact mode
+            timer_font = QFont()
+            timer_font.setPointSize(min(48, max(24, int(height * 0.3))))
+            timer_font.setBold(True)
+            self.timer_label.setFont(timer_font)
+            
+            # Reduce margins for compact mode
+            layout = self.layout()
+            if layout:
+                layout.setContentsMargins(10, 10, 10, 10)
+                layout.setSpacing(5)
+        else:
+            # Show all elements in normal mode
+            if hasattr(self, 'state_label'):
+                self.state_label.setVisible(True)
+            if hasattr(self, 'sessions_label'):
+                self.sessions_label.setVisible(True)
+            if hasattr(self, 'downtime_container'):
+                self.downtime_container.setVisible(self.settings.enable_downtime)
+            # Show buttons
+            if hasattr(self, 'start_button'):
+                self.start_button.setVisible(True)
+            if hasattr(self, 'pause_button'):
+                self.pause_button.setVisible(True)
+            if hasattr(self, 'reset_button'):
+                self.reset_button.setVisible(True)
+            if hasattr(self, 'skip_button'):
+                self.skip_button.setVisible(True)
+            if hasattr(self, 'mute_button'):
+                self.mute_button.setVisible(True)
+            
+            # Restore normal timer font size
+            timer_font = QFont()
+            timer_font.setPointSize(72)
+            timer_font.setBold(True)
+            self.timer_label.setFont(timer_font)
+            
+            # Restore normal margins
+            layout = self.layout()
+            if layout:
+                layout.setContentsMargins(40, 40, 40, 40)
+                layout.setSpacing(25)
     
     def closeEvent(self, event):
         """Handle window close event."""

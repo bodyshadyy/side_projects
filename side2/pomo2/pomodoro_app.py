@@ -9,6 +9,7 @@ from timer_window import TimerWindow
 from settings_dialog import SettingsDialog
 from calendar_notes import CalendarNotesWidget
 from todo_list import TodoListWidget
+from eisenhower_matrix import EisenhowerMatrixWidget
 
 
 class PomodoroApp(QMainWindow):
@@ -103,6 +104,10 @@ class PomodoroApp(QMainWindow):
         self.todo_list = TodoListWidget()
         self.tabs.addTab(self.todo_list, "Todos")
         
+        # Eisenhower Matrix tab
+        self.eisenhower = EisenhowerMatrixWidget()
+        self.tabs.addTab(self.eisenhower, "Eisenhower")
+        
         # Check for repeatable todos when switching to todos tab
         self.tabs.currentChanged.connect(self._on_tab_changed)
         
@@ -142,6 +147,10 @@ class PomodoroApp(QMainWindow):
         todos_action = QAction("Todos", self)
         todos_action.triggered.connect(lambda: self.tabs.setCurrentIndex(2))
         view_menu.addAction(todos_action)
+        
+        eisenhower_action = QAction("Eisenhower", self)
+        eisenhower_action.triggered.connect(lambda: self.tabs.setCurrentIndex(3))
+        view_menu.addAction(eisenhower_action)
     
     def _show_settings(self):
         """Show settings dialog."""
@@ -179,6 +188,9 @@ class PomodoroApp(QMainWindow):
             db.handle_repeatable_todos()
             if self.todo_list:
                 self.todo_list._load_todos()
+        elif index == 3:  # Eisenhower tab index
+            if self.eisenhower:
+                self.eisenhower.refresh()
     
     def closeEvent(self, event):
         """Handle window close event."""

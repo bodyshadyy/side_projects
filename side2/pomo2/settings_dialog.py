@@ -167,6 +167,15 @@ class SettingsDialog(QDialog):
         self.enable_downtime_check.setChecked(self.settings.enable_downtime)
         options_layout.addRow("Enable Downtime:", self.enable_downtime_check)
         
+        # Switch desktop checkbox
+        self.switch_desktop_check = QCheckBox()
+        self.switch_desktop_check.setChecked(self.settings.switch_desktop)
+        self.switch_desktop_check.setToolTip(
+            "Switch between virtual desktops 1 and 2 when the timer finishes.\n"
+            "Uses Win+Ctrl+Arrow keys (Windows 10/11)."
+        )
+        options_layout.addRow("Switch Desktop:", self.switch_desktop_check)
+        
         # Downtime notification threshold
         notify_layout = QHBoxLayout()
         notify_layout.setSpacing(5)
@@ -349,6 +358,7 @@ class SettingsDialog(QDialog):
                 notify_threshold = 1
             self.settings.downtime_notify_threshold = notify_threshold
             
+            self.settings.switch_desktop = self.switch_desktop_check.isChecked()
             self.settings.alarm_sound_path = self.work_sound_edit.text().strip()
             self.settings.short_break_sound_path = self.short_sound_edit.text().strip()
             self.settings.long_break_sound_path = self.long_sound_edit.text().strip()

@@ -56,7 +56,8 @@ class Database:
                 short_break_sound_path TEXT DEFAULT '',
                 long_break_sound_path TEXT DEFAULT '',
                 downtime_sound_path TEXT DEFAULT '',
-                downtime_notify_threshold INTEGER NOT NULL DEFAULT 300
+                downtime_notify_threshold INTEGER NOT NULL DEFAULT 300,
+                switch_desktop BOOLEAN NOT NULL DEFAULT 0
             )
         """)
         
@@ -84,6 +85,17 @@ class Database:
             )
         """)
         
+        # Eisenhower matrix tasks table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS eisenhower_tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task TEXT NOT NULL,
+                quadrant INTEGER NOT NULL DEFAULT 1,
+                completed BOOLEAN NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL
+            )
+        """)
+        
         self._connection.commit()
     
     def _init_default_settings(self):
@@ -95,8 +107,8 @@ class Database:
                 INSERT INTO settings (id, work_time, short_break, long_break, 
                                     downtime, auto_start, enable_downtime, alarm_sound_path,
                                     short_break_sound_path, long_break_sound_path, downtime_sound_path,
-                                    downtime_notify_threshold)
-                VALUES (1, 1500, 300, 900, 0, 0, 1, '', '', '', '', 300)
+                                    downtime_notify_threshold, switch_desktop)
+                VALUES (1, 1500, 300, 900, 0, 0, 1, '', '', '', '', 300, 0)
             """)
             self._connection.commit()
         else:
@@ -119,6 +131,10 @@ class Database:
                 pass
             try:
                 cursor.execute("ALTER TABLE settings ADD COLUMN downtime_notify_threshold INTEGER NOT NULL DEFAULT 300")
+            except sqlite3.OperationalError:
+                pass
+            try:
+                cursor.execute("ALTER TABLE settings ADD COLUMN switch_desktop BOOLEAN NOT NULL DEFAULT 0")
             except sqlite3.OperationalError:
                 pass
             self._connection.commit()
@@ -187,6 +203,10 @@ class Database:
                 result['downtime_notify_threshold'] = row['downtime_notify_threshold'] if row['downtime_notify_threshold'] else 300
             except (IndexError, KeyError):
                 result['downtime_notify_threshold'] = 300
+            try:
+                result['switch_desktop'] = bool(row['switch_desktop'])
+            except (IndexError, KeyError):
+                result['switch_desktop'] = False
             return result
         return None
     
@@ -201,35 +221,67 @@ class Database:
         has_long_break_sound = 'long_break_sound_path' in columns
         has_downtime_sound = 'downtime_sound_path' in columns
         has_notify_threshold = 'downtime_notify_threshold' in columns
+        has_switch_desktop = 'switch_desktop' in columns
         
         if has_alarm and has_short_break_sound and has_long_break_sound and has_downtime_sound and has_notify_threshold:
-            cursor.execute("""
-                UPDATE settings SET
-                    work_time = ?,
-                    short_break = ?,
-                    long_break = ?,
-                    downtime = ?,
-                    auto_start = ?,
-                    enable_downtime = ?,
-                    alarm_sound_path = ?,
-                    short_break_sound_path = ?,
-                    long_break_sound_path = ?,
-                    downtime_sound_path = ?,
-                    downtime_notify_threshold = ?
-                WHERE id = 1
-            """, (
-                settings['work_time'],
-                settings['short_break'],
-                settings['long_break'],
-                settings['downtime'],
-                1 if settings['auto_start'] else 0,
-                1 if settings['enable_downtime'] else 0,
-                settings.get('alarm_sound_path', ''),
-                settings.get('short_break_sound_path', ''),
-                settings.get('long_break_sound_path', ''),
-                settings.get('downtime_sound_path', ''),
-                settings.get('downtime_notify_threshold', 300)
-            ))
+            if has_switch_desktop:
+                cursor.execute("""
+                    UPDATE settings SET
+                        work_time = ?,
+                        short_break = ?,
+                        long_break = ?,
+                        downtime = ?,
+                        auto_start = ?,
+                        enable_downtime = ?,
+                        alarm_sound_path = ?,
+                        short_break_sound_path = ?,
+                        long_break_sound_path = ?,
+                        downtime_sound_path = ?,
+                        downtime_notify_threshold = ?,
+                        switch_desktop = ?
+                    WHERE id = 1
+                """, (
+                    settings['work_time'],
+                    settings['short_break'],
+                    settings['long_break'],
+                    settings['downtime'],
+                    1 if settings['auto_start'] else 0,
+                    1 if settings['enable_downtime'] else 0,
+                    settings.get('alarm_sound_path', ''),
+                    settings.get('short_break_sound_path', ''),
+                    settings.get('long_break_sound_path', ''),
+                    settings.get('downtime_sound_path', ''),
+                    settings.get('downtime_notify_threshold', 300),
+                    1 if settings.get('switch_desktop', False) else 0
+                ))
+            else:
+                cursor.execute("""
+                    UPDATE settings SET
+                        work_time = ?,
+                        short_break = ?,
+                        long_break = ?,
+                        downtime = ?,
+                        auto_start = ?,
+                        enable_downtime = ?,
+                        alarm_sound_path = ?,
+                        short_break_sound_path = ?,
+                        long_break_sound_path = ?,
+                        downtime_sound_path = ?,
+                        downtime_notify_threshold = ?
+                    WHERE id = 1
+                """, (
+                    settings['work_time'],
+                    settings['short_break'],
+                    settings['long_break'],
+                    settings['downtime'],
+                    1 if settings['auto_start'] else 0,
+                    1 if settings['enable_downtime'] else 0,
+                    settings.get('alarm_sound_path', ''),
+                    settings.get('short_break_sound_path', ''),
+                    settings.get('long_break_sound_path', ''),
+                    settings.get('downtime_sound_path', ''),
+                    settings.get('downtime_notify_threshold', 300)
+                ))
         elif has_alarm:
             cursor.execute("""
                 UPDATE settings SET
@@ -478,6 +530,61 @@ class Database:
         """Delete a todo item."""
         cursor = self._connection.cursor()
         cursor.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
+        self._connection.commit()
+    
+    # Eisenhower matrix operations
+    def add_eisenhower_task(self, task: str, quadrant: int) -> int:
+        """Add a new Eisenhower matrix task. Quadrant: 1-4."""
+        cursor = self._connection.cursor()
+        created_at = datetime.now().isoformat()
+        cursor.execute("""
+            INSERT INTO eisenhower_tasks (task, quadrant, completed, created_at)
+            VALUES (?, ?, 0, ?)
+        """, (task, quadrant, created_at))
+        self._connection.commit()
+        return cursor.lastrowid
+    
+    def get_eisenhower_tasks(self, quadrant: Optional[int] = None) -> List[Dict[str, Any]]:
+        """Get Eisenhower tasks, optionally filtered by quadrant."""
+        cursor = self._connection.cursor()
+        if quadrant is not None:
+            cursor.execute("""
+                SELECT * FROM eisenhower_tasks WHERE quadrant = ?
+                ORDER BY completed ASC, created_at DESC
+            """, (quadrant,))
+        else:
+            cursor.execute("""
+                SELECT * FROM eisenhower_tasks
+                ORDER BY quadrant ASC, completed ASC, created_at DESC
+            """)
+        return [dict(row) for row in cursor.fetchall()]
+    
+    def update_eisenhower_task(self, task_id: int, task: Optional[str] = None,
+                               quadrant: Optional[int] = None,
+                               completed: Optional[bool] = None):
+        """Update an Eisenhower task."""
+        cursor = self._connection.cursor()
+        updates = []
+        values = []
+        if task is not None:
+            updates.append("task = ?")
+            values.append(task)
+        if quadrant is not None:
+            updates.append("quadrant = ?")
+            values.append(quadrant)
+        if completed is not None:
+            updates.append("completed = ?")
+            values.append(1 if completed else 0)
+        if updates:
+            values.append(task_id)
+            query = f"UPDATE eisenhower_tasks SET {', '.join(updates)} WHERE id = ?"
+            cursor.execute(query, values)
+            self._connection.commit()
+    
+    def delete_eisenhower_task(self, task_id: int):
+        """Delete an Eisenhower task."""
+        cursor = self._connection.cursor()
+        cursor.execute("DELETE FROM eisenhower_tasks WHERE id = ?", (task_id,))
         self._connection.commit()
     
     def close(self):
