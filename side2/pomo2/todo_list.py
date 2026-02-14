@@ -1,526 +1,845 @@
 """
 Todo list management widget for Pomodoro app.
+Beautiful, modern card-based design.
 """
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QListWidget, QListWidgetItem,
+                             QLineEdit, QPushButton, QScrollArea, QFrame,
                              QCheckBox, QMessageBox, QDateEdit, QComboBox,
-                             QDialog, QFormLayout, QDialogButtonBox)
-from PyQt6.QtCore import QDate, Qt, pyqtSignal
-from PyQt6.QtGui import QFont, QColor
+                             QDialog, QFormLayout, QDialogButtonBox,
+                             QSizePolicy, QGraphicsDropShadowEffect,
+                             QSpacerItem)
+from PyQt6.QtCore import QDate, Qt, pyqtSignal, QPropertyAnimation, QEasingCurve, QSize
+from PyQt6.QtGui import QFont, QColor, QIcon, QPixmap, QPainter
 from datetime import datetime
 from database import Database
 from models import Todo
 
 
+# ── Color Palette ─────────────────────────────────────────────────────────────
+COLORS = {
+    "bg":          "#f0f2f5",
+    "card":        "#ffffff",
+    "text":        "#1a1a2e",
+    "text_sec":    "#6b7280",
+    "accent":      "#6366f1",   # Indigo
+    "accent_hover":"#4f46e5",
+    "success":     "#10b981",   # Emerald
+    "warning":     "#f59e0b",   # Amber
+    "danger":      "#ef4444",   # Red
+    "border":      "#e5e7eb",
+    "input_bg":    "#f9fafb",
+    "shadow":      "#00000018",
+}
+
+PRIORITY = {
+    1: {"label": "Low",    "color": "#10b981", "bg": "#ecfdf5", "border": "#6ee7b7", "icon": "○"},
+    2: {"label": "Medium", "color": "#f59e0b", "bg": "#fffbeb", "border": "#fcd34d", "icon": "◐"},
+    3: {"label": "High",   "color": "#ef4444", "bg": "#fef2f2", "border": "#fca5a5", "icon": "●"},
+}
+
+
+def _shadow(blur=18, dx=0, dy=4, color=QColor(0, 0, 0, 25)):
+    """Create a drop-shadow effect."""
+    fx = QGraphicsDropShadowEffect()
+    fx.setBlurRadius(blur)
+    fx.setXOffset(dx)
+    fx.setYOffset(dy)
+    fx.setColor(color)
+    return fx
+
+
+# ── Edit / Add Dialog ─────────────────────────────────────────────────────────
+
 class TodoEditDialog(QDialog):
-    """Dialog for editing todo items."""
+    """Modern dialog for editing / adding a todo item."""
     
     def __init__(self, parent=None, todo: Todo = None):
         super().__init__(parent)
         self.todo = todo
-        self.setWindowTitle("Edit Todo" if todo else "Add Todo")
-        self.setMinimumSize(400, 300)
-        
-        layout = QVBoxLayout()
-        layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
-        
-        form = QFormLayout()
-        form.setSpacing(12)
+        self.setWindowTitle("Edit Task" if todo else "New Task")
+        self.setMinimumSize(460, 420)
+        self.setStyleSheet(self._sheet())
+        self._build(todo)
+
+    # ── UI ────────────────────────────────────────────────────────────────────
+    def _build(self, todo):
+        root = QVBoxLayout()
+        root.setSpacing(0)
+        root.setContentsMargins(0, 0, 0, 0)
+
+        # Header bar
+        header = QFrame()
+        header.setObjectName("dialogHeader")
+        header.setFixedHeight(56)
+        hl = QHBoxLayout(header)
+        hl.setContentsMargins(24, 0, 24, 0)
+        title = QLabel("✏️  Edit Task" if todo else "✨  New Task")
+        title.setObjectName("dialogTitle")
+        hl.addWidget(title)
+        root.addWidget(header)
+
+        # Body
+        body = QWidget()
+        body.setObjectName("dialogBody")
+        form = QFormLayout(body)
+        form.setSpacing(16)
+        form.setContentsMargins(28, 24, 28, 24)
+        form.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
         
         # Task input
         self.task_input = QLineEdit()
+        self.task_input.setPlaceholderText("What needs to be done?")
+        self.task_input.setMinimumHeight(40)
         if todo:
             self.task_input.setText(todo.task)
-        self.task_input.setPlaceholderText("Enter task description...")
-        form.addRow("Task:", self.task_input)
+        form.addRow("Task", self.task_input)
         
-        # Date picker
+        # Date
         self.date_picker = QDateEdit()
         self.date_picker.setCalendarPopup(True)
+        self.date_picker.setMinimumHeight(40)
         if todo:
             try:
-                todo_date = datetime.strptime(todo.date, "%Y-%m-%d").date()
                 self.date_picker.setDate(QDate.fromString(todo.date, "yyyy-MM-dd"))
-            except:
+            except Exception:
                 self.date_picker.setDate(QDate.currentDate())
         else:
             self.date_picker.setDate(QDate.currentDate())
-        form.addRow("Date:", self.date_picker)
+        form.addRow("Date", self.date_picker)
         
         # Priority
         self.priority_combo = QComboBox()
-        self.priority_combo.addItems(["Low", "Medium", "High"])
+        self.priority_combo.setMinimumHeight(40)
+        for p in (1, 2, 3):
+            self.priority_combo.addItem(f"{PRIORITY[p]['icon']}  {PRIORITY[p]['label']}")
         if todo:
             self.priority_combo.setCurrentIndex(todo.priority - 1)
-        else:
-            self.priority_combo.setCurrentIndex(0)  # Default to Low
-        form.addRow("Priority:", self.priority_combo)
+        form.addRow("Priority", self.priority_combo)
         
-        # Repeatable checkbox
-        self.repeatable_check = QCheckBox()
+        # Repeatable
+        self.repeatable_check = QCheckBox("Enable")
         if todo:
             self.repeatable_check.setChecked(todo.is_repeatable)
-        form.addRow("Repeatable:", self.repeatable_check)
+        form.addRow("Repeat", self.repeatable_check)
         
         # Repeat type
         self.repeat_type_combo = QComboBox()
+        self.repeat_type_combo.setMinimumHeight(40)
         self.repeat_type_combo.addItems(["Daily", "Weekly", "Monthly"])
         if todo and todo.repeat_type:
-            repeat_map = {"daily": 0, "weekly": 1, "monthly": 2}
-            self.repeat_type_combo.setCurrentIndex(repeat_map.get(todo.repeat_type.lower(), 0))
+            idx = {"daily": 0, "weekly": 1, "monthly": 2}.get(todo.repeat_type.lower(), 0)
+            self.repeat_type_combo.setCurrentIndex(idx)
         self.repeat_type_combo.setEnabled(self.repeatable_check.isChecked())
         self.repeatable_check.toggled.connect(self.repeat_type_combo.setEnabled)
-        form.addRow("Repeat Type:", self.repeat_type_combo)
-        
-        layout.addLayout(form)
-        
-        # Buttons
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        )
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-        
-        self.setLayout(layout)
-    
+        form.addRow("Frequency", self.repeat_type_combo)
+
+        root.addWidget(body, 1)
+
+        # Footer buttons
+        footer = QFrame()
+        footer.setObjectName("dialogFooter")
+        footer.setFixedHeight(64)
+        fl = QHBoxLayout(footer)
+        fl.setContentsMargins(24, 0, 24, 0)
+        fl.addStretch()
+
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setObjectName("cancelBtn")
+        cancel_btn.setMinimumSize(100, 38)
+        cancel_btn.clicked.connect(self.reject)
+        fl.addWidget(cancel_btn)
+
+        save_btn = QPushButton("Save Task" if self.todo else "Add Task")
+        save_btn.setObjectName("saveBtn")
+        save_btn.setMinimumSize(120, 38)
+        save_btn.clicked.connect(self._validate_and_accept)
+        fl.addWidget(save_btn)
+
+        root.addWidget(footer)
+        self.setLayout(root)
+
+    def _validate_and_accept(self):
+        if not self.task_input.text().strip():
+            self.task_input.setFocus()
+            self.task_input.setStyleSheet("border: 2px solid #ef4444;")
+            return
+        self.accept()
+
+    # ── Data ──────────────────────────────────────────────────────────────────
     def get_todo_data(self):
-        """Get todo data from dialog."""
-        priority_map = {"Low": 1, "Medium": 2, "High": 3}
-        repeat_type_map = {"Daily": "daily", "Weekly": "weekly", "Monthly": "monthly"}
-        
+        pri_map = {0: 1, 1: 2, 2: 3}
+        rep_map = {0: "daily", 1: "weekly", 2: "monthly"}
         return {
-            'task': self.task_input.text().strip(),
-            'date': self.date_picker.date().toPyDate().strftime("%Y-%m-%d"),
-            'priority': priority_map[self.priority_combo.currentText()],
-            'is_repeatable': self.repeatable_check.isChecked(),
-            'repeat_type': repeat_type_map[self.repeat_type_combo.currentText()] if self.repeatable_check.isChecked() else ''
+            "task":          self.task_input.text().strip(),
+            "date":          self.date_picker.date().toPyDate().strftime("%Y-%m-%d"),
+            "priority":      pri_map[self.priority_combo.currentIndex()],
+            "is_repeatable": self.repeatable_check.isChecked(),
+            "repeat_type":   rep_map[self.repeat_type_combo.currentIndex()] if self.repeatable_check.isChecked() else "",
         }
 
+    # ── Stylesheet ────────────────────────────────────────────────────────────
+    @staticmethod
+    def _sheet():
+        return f"""
+            QDialog {{
+                background-color: {COLORS['bg']};
+                border-radius: 12px;
+            }}
+            #dialogHeader {{
+                background-color: {COLORS['accent']};
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }}
+            #dialogTitle {{
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+            }}
+            #dialogBody {{
+                background-color: {COLORS['card']};
+            }}
+            QLabel {{
+                color: {COLORS['text_sec']};
+                font-size: 13px;
+                font-weight: 600;
+            }}
+            QLineEdit, QDateEdit, QComboBox {{
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-size: 13px;
+                background-color: {COLORS['input_bg']};
+                color: {COLORS['text']};
+            }}
+            QLineEdit:focus, QDateEdit:focus, QComboBox:focus {{
+                border-color: {COLORS['accent']};
+            }}
+            QCheckBox {{
+                font-size: 13px;
+                color: {COLORS['text']};
+                spacing: 8px;
+            }}
+            QCheckBox::indicator {{
+                width: 20px; height: 20px;
+                border-radius: 4px;
+                border: 2px solid {COLORS['border']};
+            }}
+            QCheckBox::indicator:checked {{
+                background-color: {COLORS['accent']};
+                border-color: {COLORS['accent']};
+            }}
+            #dialogFooter {{
+                background-color: {COLORS['bg']};
+                border-top: 1px solid {COLORS['border']};
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+            }}
+            #cancelBtn {{
+                background-color: transparent;
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 8px;
+                color: {COLORS['text_sec']};
+                font-weight: 600;
+                font-size: 13px;
+            }}
+            #cancelBtn:hover {{
+                background-color: {COLORS['border']};
+            }}
+            #saveBtn {{
+                background-color: {COLORS['accent']};
+                border: none;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                font-size: 13px;
+            }}
+            #saveBtn:hover {{
+                background-color: {COLORS['accent_hover']};
+            }}
+        """
+
+
+# ── Single Todo Card ──────────────────────────────────────────────────────────
+
+class TodoCard(QFrame):
+    """A single todo item rendered as a card."""
+
+    toggled  = pyqtSignal(int, bool)
+    deleted  = pyqtSignal(int)
+    edited   = pyqtSignal(int)
+
+    def __init__(self, todo: Todo, parent=None):
+        super().__init__(parent)
+        self.todo = todo
+        self.setObjectName("todoCard")
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setGraphicsEffect(_shadow())
+        self._build()
+
+    def _build(self):
+        pri = PRIORITY.get(self.todo.priority, PRIORITY[1])
+        done = self.todo.completed
+
+        self.setStyleSheet(f"""
+            #todoCard {{
+                background-color: {COLORS['card']};
+                border-radius: 12px;
+                border-left: 4px solid {pri['color'] if not done else COLORS['border']};
+            }}
+            #todoCard:hover {{
+                border-left: 4px solid {COLORS['accent']};
+            }}
+        """)
+
+        root = QHBoxLayout(self)
+        root.setContentsMargins(16, 14, 16, 14)
+        root.setSpacing(14)
+
+        # ── Checkbox ──────────────────────────────────────────────────────────
+        self.cb = QCheckBox()
+        self.cb.setChecked(done)
+        self.cb.setStyleSheet(f"""
+            QCheckBox::indicator {{
+                width: 22px; height: 22px;
+                border-radius: 11px;
+                border: 2px solid {pri['color']};
+                background-color: {"" + pri['color'] if done else "white"};
+            }}
+            QCheckBox::indicator:hover {{
+                border-color: {COLORS['accent']};
+            }}
+        """)
+        self.cb.stateChanged.connect(
+            lambda s: self.toggled.emit(self.todo.id, s == Qt.CheckState.Checked.value)
+        )
+        root.addWidget(self.cb)
+
+        # ── Content column ────────────────────────────────────────────────────
+        col = QVBoxLayout()
+        col.setSpacing(4)
+        col.setContentsMargins(0, 0, 0, 0)
+
+        # Task text
+        self.task_lbl = QLabel(self.todo.task)
+        fnt = QFont()
+        fnt.setPointSize(13)
+        fnt.setBold(not done)
+        self.task_lbl.setFont(fnt)
+        self.task_lbl.setWordWrap(True)
+        if done:
+            self.task_lbl.setStyleSheet(
+                f"color: {COLORS['text_sec']}; text-decoration: line-through;"
+            )
+        else:
+            self.task_lbl.setStyleSheet(f"color: {COLORS['text']};")
+        col.addWidget(self.task_lbl)
+
+        # Meta row: priority pill + date + repeat badge
+        meta = QHBoxLayout()
+        meta.setSpacing(8)
+        meta.setContentsMargins(0, 2, 0, 0)
+
+        # Priority pill
+        pill = QLabel(f"  {pri['icon']}  {pri['label']}  ")
+        pill.setStyleSheet(f"""
+            background-color: {pri['bg']};
+            color: {pri['color']};
+            border: 1px solid {pri['border']};
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 4px;
+        """)
+        pill.setFixedHeight(22)
+        meta.addWidget(pill)
+
+        # Date badge
+        date_text, date_color = self._format_date()
+        if date_text:
+            date_lbl = QLabel(f"  {date_text}  ")
+            date_lbl.setStyleSheet(f"""
+                color: {date_color};
+                font-size: 11px;
+                font-weight: 500;
+                padding: 2px 0px;
+            """)
+            date_lbl.setFixedHeight(22)
+            meta.addWidget(date_lbl)
+
+        # Repeat badge
+        if self.todo.is_repeatable and self.todo.repeat_type:
+            rpt_icons = {"daily": "↻ Daily", "weekly": "↻ Weekly", "monthly": "↻ Monthly"}
+            rpt_text = rpt_icons.get(self.todo.repeat_type.lower(), "↻ Repeat")
+            rpt_lbl = QLabel(f"  {rpt_text}  ")
+            rpt_lbl.setStyleSheet(f"""
+                background-color: #eef2ff;
+                color: {COLORS['accent']};
+                border: 1px solid #c7d2fe;
+                border-radius: 10px;
+                font-size: 11px;
+                font-weight: 600;
+                padding: 2px 4px;
+            """)
+            rpt_lbl.setFixedHeight(22)
+            meta.addWidget(rpt_lbl)
+
+        meta.addStretch()
+        col.addLayout(meta)
+        root.addLayout(col, 1)
+
+        # ── Action buttons ────────────────────────────────────────────────────
+        btn_col = QVBoxLayout()
+        btn_col.setSpacing(4)
+        btn_col.setContentsMargins(0, 0, 0, 0)
+
+        edit_btn = QPushButton("✎")
+        edit_btn.setToolTip("Edit task")
+        edit_btn.setFixedSize(30, 30)
+        edit_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 6px;
+                color: {COLORS['text_sec']};
+                font-size: 14px;
+            }}
+            QPushButton:hover {{
+                background: {COLORS['accent']};
+                border-color: {COLORS['accent']};
+                color: white;
+            }}
+        """)
+        edit_btn.clicked.connect(lambda: self.edited.emit(self.todo.id))
+        btn_col.addWidget(edit_btn)
+
+        del_btn = QPushButton("×")
+        del_btn.setToolTip("Delete task")
+        del_btn.setFixedSize(30, 30)
+        del_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 6px;
+                color: {COLORS['text_sec']};
+                font-size: 16px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                background: {COLORS['danger']};
+                border-color: {COLORS['danger']};
+                color: white;
+            }}
+        """)
+        del_btn.clicked.connect(lambda: self.deleted.emit(self.todo.id))
+        btn_col.addWidget(del_btn)
+
+        btn_col.addStretch()
+        root.addLayout(btn_col)
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
+    def _format_date(self):
+        try:
+            d = datetime.strptime(self.todo.date, "%Y-%m-%d").date()
+            today = datetime.now().date()
+            if d == today:
+                return "📅 Today", COLORS['accent']
+            elif d < today:
+                days = (today - d).days
+                return f"⚠ {days}d overdue", COLORS['danger']
+            else:
+                days = (d - today).days
+                if days == 1:
+                    return "Tomorrow", COLORS['warning']
+                elif days <= 7:
+                    return f"In {days} days", COLORS['success']
+                else:
+                    return d.strftime("%b %d"), COLORS['text_sec']
+        except Exception:
+            return "", COLORS['text_sec']
+
+
+# ── Main Widget ───────────────────────────────────────────────────────────────
 
 class TodoListWidget(QWidget):
-    """Todo list widget."""
+    """Beautiful todo-list widget with card-based layout."""
     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.db = Database()
+        self.active_filter = None  # None = all, date obj = specific date
         self._init_ui()
-        self._load_todos()
-        # Check for repeatable todos on startup
         self.db.handle_repeatable_todos()
         self._load_todos()
     
+    # ── UI ────────────────────────────────────────────────────────────────────
     def _init_ui(self):
-        """Initialize the UI."""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #f5f7fa;
-            }
-            QLineEdit {
-                border: 2px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 10px;
+        self.setStyleSheet(f"background-color: {COLORS['bg']};")
+
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+        root.setContentsMargins(0, 0, 0, 0)
+
+        # ── Top bar ───────────────────────────────────────────────────────────
+        top_bar = QFrame()
+        top_bar.setStyleSheet(f"""
+            QFrame {{
+                background-color: {COLORS['card']};
+                border-bottom: 1px solid {COLORS['border']};
+            }}
+        """)
+        top_bar.setGraphicsEffect(_shadow(12, 0, 2, QColor(0, 0, 0, 15)))
+
+        tb = QVBoxLayout(top_bar)
+        tb.setSpacing(16)
+        tb.setContentsMargins(28, 22, 28, 20)
+
+        # Title row
+        title_row = QHBoxLayout()
+        title_lbl = QLabel("Tasks")
+        tf = QFont()
+        tf.setPointSize(22)
+        tf.setBold(True)
+        title_lbl.setFont(tf)
+        title_lbl.setStyleSheet(f"color: {COLORS['text']};")
+        title_row.addWidget(title_lbl)
+
+        title_row.addStretch()
+
+        # Counter badge
+        self.counter_lbl = QLabel("0")
+        self.counter_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.counter_lbl.setFixedSize(32, 32)
+        self.counter_lbl.setStyleSheet(f"""
+            background-color: {COLORS['accent']};
+            color: white;
+            border-radius: 16px;
                 font-size: 13px;
+            font-weight: bold;
+        """)
+        title_row.addWidget(self.counter_lbl)
+        tb.addLayout(title_row)
+
+        # Input row
+        input_row = QHBoxLayout()
+        input_row.setSpacing(10)
+
+        self.todo_input = QLineEdit()
+        self.todo_input.setPlaceholderText("What needs to be done?  Press Enter to add…")
+        self.todo_input.setMinimumHeight(44)
+        self.todo_input.setStyleSheet(f"""
+            QLineEdit {{
+                border: 2px solid {COLORS['border']};
+                border-radius: 10px;
+                padding: 0 16px;
+                font-size: 14px;
+                background-color: {COLORS['input_bg']};
+                color: {COLORS['text']};
+            }}
+            QLineEdit:focus {{
+                border-color: {COLORS['accent']};
                 background-color: white;
-            }
-            QLineEdit:focus {
-                border-color: #4CAF50;
-                background-color: #f9fff9;
-            }
-            QDateEdit {
-                border: 2px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 8px;
-                background-color: white;
-            }
-            QDateEdit:focus {
-                border-color: #4CAF50;
-            }
-            QPushButton {
-                background-color: #4CAF50;
+            }}
+        """)
+        self.todo_input.returnPressed.connect(self._quick_add_todo)
+        input_row.addWidget(self.todo_input, 1)
+
+        add_btn = QPushButton("+ Add")
+        add_btn.setMinimumSize(80, 44)
+        add_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {COLORS['accent']};
                 color: white;
                 border: none;
-                padding: 10px 20px;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #3d8b40;
-            }
-            QPushButton#filterBtn {
-                background-color: #2196F3;
-            }
-            QPushButton#filterBtn:hover {
-                background-color: #0b7dda;
-            }
-            QPushButton#deleteBtn {
-                background-color: #f44336;
-            }
-            QPushButton#deleteBtn:hover {
-                background-color: #da190b;
-            }
-            QPushButton#editBtn {
-                background-color: #ff9800;
-            }
-            QPushButton#editBtn:hover {
-                background-color: #e68900;
-            }
-            QListWidget {
-                border: none;
-                background-color: transparent;
-                padding: 5px;
-            }
-            QListWidget::item {
-                margin: 6px 0px;
-                min-height: 65px;
-            }
-            QListWidget::item:hover {
-                background-color: transparent;
-            }
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['accent_hover']};
+            }}
         """)
-        
-        layout = QVBoxLayout()
-        layout.setSpacing(20)
-        layout.setContentsMargins(25, 25, 25, 25)
-        
-        # Title
-        title = QLabel("✅ Todo List")
-        title_font = QFont()
-        title_font.setPointSize(24)
-        title_font.setBold(True)
-        title.setFont(title_font)
-        title.setStyleSheet("color: #2c3e50; margin-bottom: 10px;")
-        layout.addWidget(title)
-        
-        # Add todo section
-        add_layout = QHBoxLayout()
-        add_layout.setSpacing(10)
-        
-        self.todo_input = QLineEdit()
-        self.todo_input.setPlaceholderText("Enter a new task...")
-        self.todo_input.returnPressed.connect(self._quick_add_todo)
-        add_layout.addWidget(self.todo_input)
-        
-        quick_add_button = QPushButton("➕ Quick Add")
-        quick_add_button.clicked.connect(self._quick_add_todo)
-        quick_add_button.setMinimumWidth(120)
-        quick_add_button.setMinimumHeight(40)
-        add_layout.addWidget(quick_add_button)
-        
-        add_full_button = QPushButton("➕ Add with Details")
-        add_full_button.clicked.connect(self._add_todo_with_details)
-        add_full_button.setMinimumWidth(150)
-        add_full_button.setMinimumHeight(40)
-        add_layout.addWidget(add_full_button)
-        
-        layout.addLayout(add_layout)
-        
-        # Filter buttons
-        filter_layout = QHBoxLayout()
-        filter_layout.setSpacing(10)
-        
-        all_button = QPushButton("📋 All")
-        all_button.setObjectName("filterBtn")
-        all_button.clicked.connect(lambda: self._filter_todos(None))
-        all_button.setMinimumHeight(38)
-        filter_layout.addWidget(all_button)
-        
-        today_button = QPushButton("📅 Today")
-        today_button.setObjectName("filterBtn")
-        today_button.clicked.connect(lambda: self._filter_todos(datetime.now().date()))
-        today_button.setMinimumHeight(38)
-        filter_layout.addWidget(today_button)
-        
-        filter_layout.addStretch()
-        layout.addLayout(filter_layout)
-        
-        # Todo list
-        self.todo_list = QListWidget()
-        self.todo_list.setSpacing(10)
-        layout.addWidget(self.todo_list)
-        
-        # Action buttons
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        
-        edit_button = QPushButton("✏️ Edit Selected")
-        edit_button.setObjectName("editBtn")
-        edit_button.clicked.connect(self._edit_selected)
-        edit_button.setMinimumWidth(140)
-        edit_button.setMinimumHeight(40)
-        button_layout.addWidget(edit_button)
-        
-        delete_button = QPushButton("🗑️ Delete Selected")
-        delete_button.setObjectName("deleteBtn")
-        delete_button.clicked.connect(self._delete_selected)
-        delete_button.setMinimumWidth(150)
-        delete_button.setMinimumHeight(40)
-        button_layout.addWidget(delete_button)
-        
-        layout.addLayout(button_layout)
-        
-        self.setLayout(layout)
+        add_btn.clicked.connect(self._quick_add_todo)
+        input_row.addWidget(add_btn)
+
+        detail_btn = QPushButton("+ Detailed")
+        detail_btn.setMinimumSize(100, 44)
+        detail_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {COLORS['accent']};
+                border: 2px solid {COLORS['accent']};
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['accent']};
+                color: white;
+            }}
+        """)
+        detail_btn.clicked.connect(self._add_todo_with_details)
+        input_row.addWidget(detail_btn)
+
+        tb.addLayout(input_row)
+
+        # Filter chips
+        chip_row = QHBoxLayout()
+        chip_row.setSpacing(8)
+
+        self.chip_all = self._make_chip("All", active=True)
+        self.chip_all.clicked.connect(lambda: self._set_filter(None))
+        chip_row.addWidget(self.chip_all)
+
+        self.chip_today = self._make_chip("Today")
+        self.chip_today.clicked.connect(lambda: self._set_filter(datetime.now().date()))
+        chip_row.addWidget(self.chip_today)
+
+        self.chip_active = self._make_chip("Active")
+        self.chip_active.clicked.connect(lambda: self._set_filter("active"))
+        chip_row.addWidget(self.chip_active)
+
+        self.chip_done = self._make_chip("Done")
+        self.chip_done.clicked.connect(lambda: self._set_filter("done"))
+        chip_row.addWidget(self.chip_done)
+
+        chip_row.addStretch()
+        tb.addLayout(chip_row)
+
+        root.addWidget(top_bar)
+
+        # ── Scrollable card list ──────────────────────────────────────────────
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setStyleSheet(f"""
+            QScrollArea {{
+                border: none;
+                background-color: {COLORS['bg']};
+            }}
+            QScrollBar:vertical {{
+                width: 8px;
+                background: transparent;
+            }}
+            QScrollBar::handle:vertical {{
+                background: #c4c4c4;
+                border-radius: 4px;
+                min-height: 40px;
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background: #a0a0a0;
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height: 0;
+            }}
+        """)
+
+        self.card_container = QWidget()
+        self.card_container.setStyleSheet(f"background-color: {COLORS['bg']};")
+        self.card_layout = QVBoxLayout(self.card_container)
+        self.card_layout.setSpacing(10)
+        self.card_layout.setContentsMargins(28, 16, 28, 28)
+        self.card_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Empty state placeholder
+        self.empty_label = QLabel("No tasks yet — add one above!")
+        self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_label.setStyleSheet(f"""
+            color: {COLORS['text_sec']};
+            font-size: 15px;
+            padding: 60px 0;
+        """)
+        self.card_layout.addWidget(self.empty_label)
+
+        scroll.setWidget(self.card_container)
+        root.addWidget(scroll, 1)
+
+    # ── Chip factory ──────────────────────────────────────────────────────────
+    def _make_chip(self, text, active=False):
+        btn = QPushButton(text)
+        btn.setCheckable(True)
+        btn.setChecked(active)
+        btn.setMinimumHeight(32)
+        btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {COLORS['accent'] if active else 'transparent'};
+                color: {'white' if active else COLORS['text_sec']};
+                border: 1.5px solid {COLORS['accent'] if active else COLORS['border']};
+                border-radius: 16px;
+                padding: 0 16px;
+                font-size: 12px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['accent']};
+                color: white;
+                border-color: {COLORS['accent']};
+            }}
+            QPushButton:checked {{
+                background-color: {COLORS['accent']};
+                color: white;
+                border-color: {COLORS['accent']};
+            }}
+        """)
+        return btn
+
+    def _update_chips(self):
+        """Keep only the active chip checked."""
+        chips = [self.chip_all, self.chip_today, self.chip_active, self.chip_done]
+        for c in chips:
+            c.setChecked(False)
+            c.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: transparent;
+                    color: {COLORS['text_sec']};
+                    border: 1.5px solid {COLORS['border']};
+                    border-radius: 16px;
+                    padding: 0 16px;
+                    font-size: 12px;
+                    font-weight: 600;
+                }}
+                QPushButton:hover {{
+                    background-color: {COLORS['accent']};
+                    color: white;
+                    border-color: {COLORS['accent']};
+                }}
+                QPushButton:checked {{
+                    background-color: {COLORS['accent']};
+                    color: white;
+                    border-color: {COLORS['accent']};
+                }}
+            """)
+
+        target = {
+            None:     self.chip_all,
+            "active": self.chip_active,
+            "done":   self.chip_done,
+        }.get(self.active_filter if not isinstance(self.active_filter, type(datetime.now().date())) else "date", self.chip_today)
+
+        if isinstance(self.active_filter, type(datetime.now().date())):
+            target = self.chip_today
+
+        target.setChecked(True)
+        target.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {COLORS['accent']};
+                color: white;
+                border: 1.5px solid {COLORS['accent']};
+                border-radius: 16px;
+                padding: 0 16px;
+                font-size: 12px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['accent_hover']};
+            }}
+        """)
+
+    # ── Data helpers ──────────────────────────────────────────────────────────
+    def _set_filter(self, f):
+        self.active_filter = f
+        self._update_chips()
+        self._load_todos()
     
     def _quick_add_todo(self):
-        """Quick add todo with default settings."""
-        task_text = self.todo_input.text().strip()
-        if not task_text:
+        text = self.todo_input.text().strip()
+        if not text:
             return
-        
-        selected_date = QDate.currentDate()
-        date_str = selected_date.toPyDate().strftime("%Y-%m-%d")
-        
-        self.db.add_todo(task_text, date_str, priority=1, is_repeatable=False)
+        date_str = QDate.currentDate().toPyDate().strftime("%Y-%m-%d")
+        self.db.add_todo(text, date_str, priority=1, is_repeatable=False)
         self.todo_input.clear()
         self._load_todos()
     
     def _add_todo_with_details(self):
-        """Add todo with full details dialog."""
-        dialog = TodoEditDialog(self)
-        if dialog.exec():
-            data = dialog.get_todo_data()
-            self.db.add_todo(
-                data['task'],
-                data['date'],
-                priority=data['priority'],
-                is_repeatable=data['is_repeatable'],
-                repeat_type=data['repeat_type']
-            )
+        dlg = TodoEditDialog(self)
+        if dlg.exec():
+            d = dlg.get_todo_data()
+            self.db.add_todo(d["task"], d["date"],
+                             priority=d["priority"],
+                             is_repeatable=d["is_repeatable"],
+                             repeat_type=d["repeat_type"])
             self._load_todos()
     
     def _load_todos(self, filter_date=None):
-        """Load todos from database."""
-        self.todo_list.clear()
-        
-        if filter_date:
-            date_str = filter_date.strftime("%Y-%m-%d")
-            todos = self.db.get_todos(date_str)
+        # Clear current cards
+        while self.card_layout.count():
+            item = self.card_layout.takeAt(0)
+            w = item.widget()
+            if w:
+                w.deleteLater()
+
+        f = filter_date or self.active_filter
+
+        if isinstance(f, type(datetime.now().date())):
+            todos = self.db.get_todos(f.strftime("%Y-%m-%d"))
         else:
             todos = self.db.get_todos()
         
-        for todo_data in todos:
-            todo = Todo.from_dict(todo_data)
-            self._add_todo_item(todo)
-    
-    def _add_todo_item(self, todo: Todo):
-        """Add a todo item to the list widget with improved styling."""
-        item = QListWidgetItem()
-        item.setData(Qt.ItemDataRole.UserRole, todo.id)
-        
-        # Priority colors - more vibrant
-        priority_colors = {
-            1: {"bg": "#e8f5e9", "border": "#4CAF50", "accent": "#66bb6a", "text": "#2e7d32", "emoji": "🟢"},
-            2: {"bg": "#fff3e0", "border": "#ff9800", "accent": "#ffb74d", "text": "#e65100", "emoji": "🟠"},
-            3: {"bg": "#ffebee", "border": "#f44336", "accent": "#ef5350", "text": "#c62828", "emoji": "🔴"}
-        }
-        
-        colors = priority_colors.get(todo.priority, priority_colors[1])
-        
-        # Create widget for todo item - compact design
-        widget = QWidget()
-        
-        # Main container - smaller and more compact
-        widget.setStyleSheet(f"""
-            QWidget {{
-                background-color: {colors['bg']};
-                border-radius: 12px;
-                border-left: 4px solid {colors['border']};
-                min-height: 60px;
-            }}
-        """)
-        
-        widget_layout = QHBoxLayout()
-        widget_layout.setContentsMargins(12, 10, 12, 10)
-        widget_layout.setSpacing(12)
-        
-        # Left side: Checkbox
-        checkbox = QCheckBox()
-        checkbox.setChecked(todo.completed)
-        checkbox.setMinimumSize(22, 22)
-        checkbox.setStyleSheet(f"""
-            QCheckBox::indicator {{
-                width: 22px;
-                height: 22px;
-                border-radius: 5px;
-                border: 2px solid {colors['border']};
-                background-color: white;
-            }}
-            QCheckBox::indicator:checked {{
-                background-color: {colors['border']};
-                border-color: {colors['border']};
-            }}
-            QCheckBox::indicator:hover {{
-                border-color: {colors['accent']};
-            }}
-        """)
-        checkbox.stateChanged.connect(
-            lambda state, tid=todo.id: self._toggle_todo(tid, state == Qt.CheckState.Checked.value)
-        )
-        widget_layout.addWidget(checkbox)
-        
-        # Center: Task content - single line with emojis
-        content_layout = QHBoxLayout()
-        content_layout.setSpacing(12)
-        content_layout.setContentsMargins(0, 0, 0, 0)
-        
-        # Task label - compact single line
-        task_label = QLabel(todo.task)
-        task_font = QFont()
-        task_font.setPointSize(13)
-        task_font.setBold(not todo.completed)
-        task_label.setFont(task_font)
-        if todo.completed:
-            task_label.setStyleSheet("""
-                text-decoration: line-through;
-                color: #9e9e9e;
-                opacity: 0.6;
+        items = [Todo.from_dict(t) for t in todos]
+
+        # Apply local filters
+        if f == "active":
+            items = [t for t in items if not t.completed]
+        elif f == "done":
+            items = [t for t in items if t.completed]
+
+        # Update counter
+        active_count = sum(1 for t in items if not t.completed)
+        self.counter_lbl.setText(str(active_count))
+
+        if not items:
+            self.empty_label = QLabel("No tasks yet — add one above!")
+            self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.empty_label.setStyleSheet(f"""
+                color: {COLORS['text_sec']};
+                font-size: 15px;
+                padding: 60px 0;
             """)
-        else:
-            task_label.setStyleSheet(f"color: {colors['text']};")
-        content_layout.addWidget(task_label, 1)  # Take available space
-        
-        # Combined emoji box - all emojis in one container
-        emoji_container = QWidget()
-        emoji_layout = QHBoxLayout()
-        emoji_layout.setSpacing(8)
-        emoji_layout.setContentsMargins(10, 6, 10, 6)
-        
-        emoji_text = ""
-        tooltip_parts = []
-        
-        # Priority emoji
-        priority_emoji = colors['emoji']
-        priority_text = "Low Priority" if todo.priority == 1 else "Medium Priority" if todo.priority == 2 else "High Priority"
-        emoji_text += priority_emoji + " "
-        tooltip_parts.append(f"{priority_emoji} {priority_text}")
-        
-        # Date emoji
-        try:
-            todo_date = datetime.strptime(todo.date, "%Y-%m-%d").date()
-            today = datetime.now().date()
-            
-            if todo_date == today:
-                date_emoji = "📅"
-                date_text = "Due Today"
-            elif todo_date < today:
-                date_emoji = "⚠️"
-                days_overdue = (today - todo_date).days
-                date_text = f"Overdue by {days_overdue} day{'s' if days_overdue > 1 else ''}"
-            else:
-                date_emoji = "📆"
-                date_text = f"Due {todo_date.strftime('%b %d, %Y')}"
-            
-            emoji_text += date_emoji + " "
-            tooltip_parts.append(f"{date_emoji} {date_text}")
-        except:
-            pass
-        
-        # Repeat emoji (if repeatable)
-        if todo.is_repeatable:
-            repeat_emojis = {"daily": "🔄", "weekly": "🔁", "monthly": "🔂"}
-            repeat_emoji = repeat_emojis.get(todo.repeat_type.lower(), "🔄")
-            repeat_text = f"Repeats {todo.repeat_type.capitalize()}"
-            emoji_text += repeat_emoji
-            tooltip_parts.append(f"{repeat_emoji} {repeat_text}")
-        
-        # Single label with all emojis
-        emoji_label = QLabel(emoji_text.strip())
-        emoji_label.setStyleSheet(f"""
-            font-size: 16px;
-            padding: 6px 12px;
-            background-color: white;
-            border-radius: 8px;
-            border: 1px solid {colors['border']}40;
-        """)
-        emoji_label.setToolTip(" | ".join(tooltip_parts))
-        emoji_layout.addWidget(emoji_label)
-        
-        emoji_container.setLayout(emoji_layout)
-        content_layout.addWidget(emoji_container)
-        
-        widget_layout.addLayout(content_layout)
-        
-        widget.setLayout(widget_layout)
-        
-        # Set item size - compact
-        item.setSizeHint(widget.sizeHint())
-        size_hint = item.sizeHint()
-        size_hint.setWidth(max(size_hint.width(), 600))
-        size_hint.setHeight(max(size_hint.height(), 65))  # Much shorter - 65px
-        item.setSizeHint(size_hint)
-        
-        self.todo_list.addItem(item)
-        self.todo_list.setItemWidget(item, widget)
-    
-    def _toggle_todo(self, todo_id: int, completed: bool):
-        """Toggle todo completion status."""
+            self.card_layout.addWidget(self.empty_label)
+            return
+
+        for todo in items:
+            card = TodoCard(todo, self)
+            card.toggled.connect(self._on_toggle)
+            card.deleted.connect(self._on_delete)
+            card.edited.connect(self._on_edit)
+            self.card_layout.addWidget(card)
+
+        # Push remaining space to bottom
+        self.card_layout.addStretch()
+
+    # ── Callbacks ─────────────────────────────────────────────────────────────
+    def _on_toggle(self, todo_id, completed):
         self.db.update_todo(todo_id, completed=completed)
-        # Handle repeatable todos
         if completed:
             self.db.handle_repeatable_todos()
         self._load_todos()
     
-    def _edit_selected(self):
-        """Edit selected todo item."""
-        selected_items = self.todo_list.selectedItems()
-        if not selected_items:
-            QMessageBox.warning(self, "No Selection", "Please select a todo item to edit.")
-            return
-        
-        if len(selected_items) > 1:
-            QMessageBox.warning(self, "Multiple Selection", "Please select only one todo item to edit.")
-            return
-        
-        item = selected_items[0]
-        todo_id = item.data(Qt.ItemDataRole.UserRole)
-        
-        # Get todo from database
-        todos = self.db.get_todos()
-        todo_data = next((t for t in todos if t['id'] == todo_id), None)
-        
-        if todo_data:
-            todo = Todo.from_dict(todo_data)
-            dialog = TodoEditDialog(self, todo)
-            if dialog.exec():
-                data = dialog.get_todo_data()
-                self.db.update_todo(
-                    todo_id,
-                    task=data['task'],
-                    priority=data['priority'],
-                    is_repeatable=data['is_repeatable'],
-                    repeat_type=data['repeat_type']
-                )
-                # Update date if changed
-                if data['date'] != todo.date:
-                    # For date change, we'd need to delete and recreate or add a method
-                    # For now, just update other fields
-                    pass
-                self._load_todos()
-    
-    def _delete_selected(self):
-        """Delete selected todo items."""
-        selected_items = self.todo_list.selectedItems()
-        if not selected_items:
-            QMessageBox.warning(self, "No Selection", "Please select a todo item to delete.")
-            return
-        
+    def _on_delete(self, todo_id):
         reply = QMessageBox.question(
-            self, "Delete Todo",
-            f"Are you sure you want to delete {len(selected_items)} todo item(s)?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            self, "Delete Task",
+            "Are you sure you want to delete this task?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        
         if reply == QMessageBox.StandardButton.Yes:
-            for item in selected_items:
-                todo_id = item.data(Qt.ItemDataRole.UserRole)
-                self.db.delete_todo(todo_id)
+            self.db.delete_todo(todo_id)
+            self._load_todos()
+    
+    def _on_edit(self, todo_id):
+        todos = self.db.get_todos()
+        data = next((t for t in todos if t["id"] == todo_id), None)
+        if not data:
+            return
+        todo = Todo.from_dict(data)
+        dlg = TodoEditDialog(self, todo)
+        if dlg.exec():
+            d = dlg.get_todo_data()
+            self.db.update_todo(todo_id,
+                                task=d["task"],
+                                priority=d["priority"],
+                                is_repeatable=d["is_repeatable"],
+                                repeat_type=d["repeat_type"])
             self._load_todos()
     
     def _filter_todos(self, filter_date):
-        """Filter todos by date."""
-        self._load_todos(filter_date)
+        """Legacy compat — called from elsewhere."""
+        self._set_filter(filter_date)

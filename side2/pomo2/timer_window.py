@@ -9,8 +9,11 @@ from PyQt6.QtGui import QIcon, QFont, QAction, QPixmap, QPainter, QColor
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from enum import Enum
 import os
+import math
+import struct
+import tempfile
+import wave
 import platform
-import subprocess
 from database import Database
 from models import Settings
 
@@ -134,7 +137,6 @@ class TimerWindow(QWidget):
         self.last_notification_time = 0  # Track last notification time
         self.is_downtime_active = False  # Track if downtime is currently being tracked
         self.muted = False  # Track mute state
-        self.current_desktop = 1  # Track which virtual desktop we're on (1 or 2)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._update_timer)
         self.tray_icon = None
@@ -144,6 +146,12 @@ class TimerWindow(QWidget):
         self.audio_output = QAudioOutput(self)
         self.media_player = QMediaPlayer(self)
         self.media_player.setAudioOutput(self.audio_output)
+        
+        # Setup tick sound player (separate so it doesn't interrupt alarms)
+        self.tick_audio_output = QAudioOutput(self)
+        self.tick_audio_output.setVolume(0.5)
+        self.tick_player = QMediaPlayer(self)
+        self.tick_player.setAudioOutput(self.tick_audio_output)
         
         self._init_ui()
         self._setup_tray()
@@ -355,16 +363,6 @@ class TimerWindow(QWidget):
         # Update tray icon if available
         if self.tray_icon:
             self.tray_icon.setIcon(icon)
-            # Update tooltip with exact time
-            seconds = self.remaining_seconds % 60
-            state_names = {
-                TimerState.WORK: "Work",
-                TimerState.SHORT_BREAK: "Short Break",
-                TimerState.LONG_BREAK: "Long Break",
-                TimerState.PAUSED: "Paused",
-            }
-            state_name = state_names.get(self.state, "Timer")
-            self.tray_icon.setToolTip(f"{state_name} — {minutes:02d}:{seconds:02d}")
     
     def _setup_tray(self):
         """Setup system tray icon."""
@@ -391,24 +389,7 @@ class TimerWindow(QWidget):
     
     def _tray_icon_activated(self, reason):
         """Handle tray icon activation."""
-        if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            # Single click - show exact time left as a notification
-            minutes = self.remaining_seconds // 60
-            seconds = self.remaining_seconds % 60
-            state_names = {
-                TimerState.WORK: "Work",
-                TimerState.SHORT_BREAK: "Short Break",
-                TimerState.LONG_BREAK: "Long Break",
-                TimerState.PAUSED: "Paused",
-            }
-            state_name = state_names.get(self.state, "Timer")
-            self.tray_icon.showMessage(
-                f"{state_name}",
-                f"Time left: {minutes:02d}:{seconds:02d}",
-                QSystemTrayIcon.MessageIcon.Information,
-                3000
-            )
-        elif reason == QSystemTrayIcon.ActivationReason.DoubleClick:
+        if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
             self.show()
             self.raise_()
             self.activateWindow()
@@ -703,11 +684,60 @@ class TimerWindow(QWidget):
         if self.remaining_seconds > 0:
             self.remaining_seconds -= 1
             self._update_display()
+            
+            # Play tick sound in the last 5 seconds
+            if 0 < self.remaining_seconds <= 5 and not self.muted:
+                self._play_tick()
+            
             return
         
         # Timer completed - handle completion
         if not self.is_downtime_active:
             self._handle_timer_completion()
+    
+    def _generate_tick_sound(self):
+        """Generate a short tick WAV file and return its path."""
+        if hasattr(self, '_tick_sound_path') and os.path.exists(self._tick_sound_path):
+            return self._tick_sound_path
+        
+        # Generate a short, crisp tick sound
+        sample_rate = 44100
+        duration = 0.08  # 80ms — short and crisp
+        frequency = 1200  # Hz — a sharp click tone
+        n_samples = int(sample_rate * duration)
+        
+        samples = []
+        for i in range(n_samples):
+            t = i / sample_rate
+            # Quick attack, fast decay envelope
+            envelope = math.exp(-t * 60)
+            value = envelope * math.sin(2 * math.pi * frequency * t)
+            # Add a click transient at the start
+            if i < 80:
+                value += envelope * 0.5 * math.sin(2 * math.pi * 2400 * t)
+            sample = int(value * 32767 * 0.7)
+            sample = max(-32768, min(32767, sample))
+            samples.append(struct.pack('<h', sample))
+        
+        # Write to a temp WAV file
+        tick_path = os.path.join(tempfile.gettempdir(), 'pomo_tick.wav')
+        with wave.open(tick_path, 'w') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            wf.writeframes(b''.join(samples))
+        
+        self._tick_sound_path = tick_path
+        return tick_path
+    
+    def _play_tick(self):
+        """Play a short tick sound."""
+        try:
+            tick_path = self._generate_tick_sound()
+            self.tick_player.setSource(QUrl.fromLocalFile(tick_path))
+            self.tick_player.play()
+        except Exception as e:
+            print(f"Error playing tick sound: {e}")
     
     def _check_downtime_notification(self):
         """Check if downtime exceeds threshold and notify if needed."""
@@ -731,12 +761,18 @@ class TimerWindow(QWidget):
         """Handle timer completion - show alarm and transition to next state."""
         self.timer_completed.emit(self.state.value)
         
-        # Switch virtual desktop if enabled
+        # Determine which desktop the NEXT state needs
+        next_state = self._get_next_state()
+        
+        # Switch virtual desktop if enabled — go to the desktop for the next state
         if self.settings.switch_desktop:
-            self._switch_desktop()
+            if next_state == 'work':
+                target_desktop = self.settings.work_desktop
+            else:
+                target_desktop = self.settings.break_desktop
+            self._switch_to_desktop(target_desktop)
         
         # Show alarm for next state
-        next_state = self._get_next_state()
         has_sound = self._has_sound_for_state(next_state)
         self._show_alarm_dialog(next_state, play_sound=has_sound and not self.muted)
         
@@ -753,12 +789,17 @@ class TimerWindow(QWidget):
         else:
             self.timer.stop()
     
-    def _switch_desktop(self):
-        """Switch between virtual desktop 1 and 2 using keyboard shortcut."""
+    def _switch_to_desktop(self, target_desktop: int):
+        """Switch to a specific virtual desktop number (1-based).
+        
+        Uses Win+Ctrl+Left/Right arrow keys to navigate.
+        To avoid drift from manual desktop switches, we first go all the way
+        left to desktop 1, then step right to the target desktop.
+        """
         try:
             if platform.system() == 'Windows':
                 import ctypes
-                from ctypes import wintypes
+                import time
                 
                 user32 = ctypes.windll.user32
                 
@@ -767,28 +808,56 @@ class TimerWindow(QWidget):
                 VK_CONTROL = 0x11
                 VK_LEFT = 0x25
                 VK_RIGHT = 0x27
-                
                 KEYEVENTF_KEYUP = 0x0002
                 
-                # Determine direction: desktop 1 -> right to 2, desktop 2 -> left to 1
-                if self.current_desktop == 1:
-                    arrow_key = VK_RIGHT
-                    self.current_desktop = 2
-                else:
-                    arrow_key = VK_LEFT
-                    self.current_desktop = 1
+                def _press_desktop_switch(arrow_key):
+                    """Send one Win+Ctrl+Arrow keystroke."""
+                    user32.keybd_event(VK_LWIN, 0, 0, 0)
+                    user32.keybd_event(VK_CONTROL, 0, 0, 0)
+                    user32.keybd_event(arrow_key, 0, 0, 0)
+                    user32.keybd_event(arrow_key, 0, KEYEVENTF_KEYUP, 0)
+                    user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+                    user32.keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0)
+                    time.sleep(0.3)
                 
-                # Press Win+Ctrl+Arrow
-                user32.keybd_event(VK_LWIN, 0, 0, 0)
-                user32.keybd_event(VK_CONTROL, 0, 0, 0)
-                user32.keybd_event(arrow_key, 0, 0, 0)
+                # Step 1: Go all the way left to guarantee we're on desktop 1.
+                # Press Win+Ctrl+Left 10 times (extra presses on desktop 1 are no-ops).
+                max_desktops = 10
+                for _ in range(max_desktops):
+                    _press_desktop_switch(VK_LEFT)
                 
-                # Release keys
-                user32.keybd_event(arrow_key, 0, KEYEVENTF_KEYUP, 0)
-                user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
-                user32.keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0)
+                # Step 2: Step right (target_desktop - 1) times to land on the target.
+                for _ in range(target_desktop - 1):
+                    _press_desktop_switch(VK_RIGHT)
+                
+                # After switching, bring the app window to the front
+                QTimer.singleShot(500, self._bring_window_to_front)
+                
         except Exception as e:
             print(f"Error switching desktop: {e}")
+    
+    def _bring_window_to_front(self):
+        """Bring the app window to the front on the current desktop."""
+        try:
+            if platform.system() == 'Windows':
+                import ctypes
+                
+                # Get the window handle
+                hwnd = int(self.winId())
+                
+                user32 = ctypes.windll.user32
+                
+                # Show window and bring to front
+                SW_SHOW = 5
+                user32.ShowWindow(hwnd, SW_SHOW)
+                user32.SetForegroundWindow(hwnd)
+                
+            # Also use Qt methods
+            self.show()
+            self.raise_()
+            self.activateWindow()
+        except Exception as e:
+            print(f"Error bringing window to front: {e}")
     
     def _get_sound_path(self, state_name: str) -> str:
         """Get sound path for given state."""

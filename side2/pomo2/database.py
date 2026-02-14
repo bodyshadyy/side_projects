@@ -57,7 +57,9 @@ class Database:
                 long_break_sound_path TEXT DEFAULT '',
                 downtime_sound_path TEXT DEFAULT '',
                 downtime_notify_threshold INTEGER NOT NULL DEFAULT 300,
-                switch_desktop BOOLEAN NOT NULL DEFAULT 0
+                switch_desktop BOOLEAN NOT NULL DEFAULT 0,
+                work_desktop INTEGER NOT NULL DEFAULT 1,
+                break_desktop INTEGER NOT NULL DEFAULT 2
             )
         """)
         
@@ -107,8 +109,8 @@ class Database:
                 INSERT INTO settings (id, work_time, short_break, long_break, 
                                     downtime, auto_start, enable_downtime, alarm_sound_path,
                                     short_break_sound_path, long_break_sound_path, downtime_sound_path,
-                                    downtime_notify_threshold, switch_desktop)
-                VALUES (1, 1500, 300, 900, 0, 0, 1, '', '', '', '', 300, 0)
+                                    downtime_notify_threshold, switch_desktop, work_desktop, break_desktop)
+                VALUES (1, 1500, 300, 900, 0, 0, 1, '', '', '', '', 300, 0, 1, 2)
             """)
             self._connection.commit()
         else:
@@ -135,6 +137,14 @@ class Database:
                 pass
             try:
                 cursor.execute("ALTER TABLE settings ADD COLUMN switch_desktop BOOLEAN NOT NULL DEFAULT 0")
+            except sqlite3.OperationalError:
+                pass
+            try:
+                cursor.execute("ALTER TABLE settings ADD COLUMN work_desktop INTEGER NOT NULL DEFAULT 1")
+            except sqlite3.OperationalError:
+                pass
+            try:
+                cursor.execute("ALTER TABLE settings ADD COLUMN break_desktop INTEGER NOT NULL DEFAULT 2")
             except sqlite3.OperationalError:
                 pass
             self._connection.commit()
@@ -207,6 +217,14 @@ class Database:
                 result['switch_desktop'] = bool(row['switch_desktop'])
             except (IndexError, KeyError):
                 result['switch_desktop'] = False
+            try:
+                result['work_desktop'] = row['work_desktop'] if row['work_desktop'] else 1
+            except (IndexError, KeyError):
+                result['work_desktop'] = 1
+            try:
+                result['break_desktop'] = row['break_desktop'] if row['break_desktop'] else 2
+            except (IndexError, KeyError):
+                result['break_desktop'] = 2
             return result
         return None
     
@@ -223,8 +241,45 @@ class Database:
         has_notify_threshold = 'downtime_notify_threshold' in columns
         has_switch_desktop = 'switch_desktop' in columns
         
+        has_work_desktop = 'work_desktop' in columns
+        has_break_desktop = 'break_desktop' in columns
+        
         if has_alarm and has_short_break_sound and has_long_break_sound and has_downtime_sound and has_notify_threshold:
-            if has_switch_desktop:
+            if has_switch_desktop and has_work_desktop and has_break_desktop:
+                cursor.execute("""
+                    UPDATE settings SET
+                        work_time = ?,
+                        short_break = ?,
+                        long_break = ?,
+                        downtime = ?,
+                        auto_start = ?,
+                        enable_downtime = ?,
+                        alarm_sound_path = ?,
+                        short_break_sound_path = ?,
+                        long_break_sound_path = ?,
+                        downtime_sound_path = ?,
+                        downtime_notify_threshold = ?,
+                        switch_desktop = ?,
+                        work_desktop = ?,
+                        break_desktop = ?
+                    WHERE id = 1
+                """, (
+                    settings['work_time'],
+                    settings['short_break'],
+                    settings['long_break'],
+                    settings['downtime'],
+                    1 if settings['auto_start'] else 0,
+                    1 if settings['enable_downtime'] else 0,
+                    settings.get('alarm_sound_path', ''),
+                    settings.get('short_break_sound_path', ''),
+                    settings.get('long_break_sound_path', ''),
+                    settings.get('downtime_sound_path', ''),
+                    settings.get('downtime_notify_threshold', 300),
+                    1 if settings.get('switch_desktop', False) else 0,
+                    settings.get('work_desktop', 1),
+                    settings.get('break_desktop', 2)
+                ))
+            elif has_switch_desktop:
                 cursor.execute("""
                     UPDATE settings SET
                         work_time = ?,

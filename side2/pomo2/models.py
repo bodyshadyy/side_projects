@@ -21,6 +21,8 @@ class Settings:
     downtime_sound_path: str = ""  # Downtime alarm
     downtime_notify_threshold: int = 300  # Notify when downtime exceeds this (seconds)
     switch_desktop: bool = False  # Switch virtual desktop when timer finishes
+    work_desktop: int = 1  # Which virtual desktop is for work (1-based)
+    break_desktop: int = 2  # Which virtual desktop is for breaks (1-based)
     
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -36,7 +38,9 @@ class Settings:
             'long_break_sound_path': self.long_break_sound_path,
             'downtime_sound_path': self.downtime_sound_path,
             'downtime_notify_threshold': self.downtime_notify_threshold,
-            'switch_desktop': self.switch_desktop
+            'switch_desktop': self.switch_desktop,
+            'work_desktop': self.work_desktop,
+            'break_desktop': self.break_desktop
         }
     
     @classmethod
@@ -60,7 +64,9 @@ class Settings:
             long_break_sound_path=data.get('long_break_sound_path', ''),
             downtime_sound_path=data.get('downtime_sound_path', ''),
             downtime_notify_threshold=data.get('downtime_notify_threshold', 300),
-            switch_desktop=bool(data.get('switch_desktop', False))
+            switch_desktop=bool(data.get('switch_desktop', False)),
+            work_desktop=data.get('work_desktop', 1),
+            break_desktop=data.get('break_desktop', 2)
         )
 
 

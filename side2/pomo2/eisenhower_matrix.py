@@ -301,3 +301,4 @@ class EisenhowerMatrixWidget(QWidget):
         self.q3.load_tasks()
         self.q4.load_tasks()
 
+

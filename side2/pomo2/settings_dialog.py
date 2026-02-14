@@ -3,7 +3,8 @@ Settings dialog for Pomodoro app.
 """
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                              QPushButton, QSpinBox, QCheckBox, QFormLayout,
-                             QMessageBox, QFileDialog, QLineEdit, QGroupBox)
+                             QMessageBox, QFileDialog, QLineEdit, QGroupBox,
+                             QScrollArea, QWidget)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from database import Database
@@ -171,10 +172,29 @@ class SettingsDialog(QDialog):
         self.switch_desktop_check = QCheckBox()
         self.switch_desktop_check.setChecked(self.settings.switch_desktop)
         self.switch_desktop_check.setToolTip(
-            "Switch between virtual desktops 1 and 2 when the timer finishes.\n"
+            "Switch between virtual desktops when the timer finishes.\n"
             "Uses Win+Ctrl+Arrow keys (Windows 10/11)."
         )
+        self.switch_desktop_check.stateChanged.connect(self._toggle_desktop_options)
         options_layout.addRow("Switch Desktop:", self.switch_desktop_check)
+        
+        # Work desktop number
+        self.work_desktop_spin = QSpinBox()
+        self.work_desktop_spin.setRange(1, 10)
+        self.work_desktop_spin.setValue(self.settings.work_desktop)
+        self.work_desktop_spin.setToolTip("Which virtual desktop to switch to during work sessions")
+        options_layout.addRow("Work Desktop:", self.work_desktop_spin)
+        
+        # Break desktop number
+        self.break_desktop_spin = QSpinBox()
+        self.break_desktop_spin.setRange(1, 10)
+        self.break_desktop_spin.setValue(self.settings.break_desktop)
+        self.break_desktop_spin.setToolTip("Which virtual desktop to switch to during breaks")
+        options_layout.addRow("Break Desktop:", self.break_desktop_spin)
+        
+        # Set initial visibility of desktop options
+        self.work_desktop_spin.setEnabled(self.settings.switch_desktop)
+        self.break_desktop_spin.setEnabled(self.settings.switch_desktop)
         
         # Downtime notification threshold
         notify_layout = QHBoxLayout()
@@ -329,6 +349,12 @@ class SettingsDialog(QDialog):
         
         self.setLayout(layout)
     
+    def _toggle_desktop_options(self, state):
+        """Enable/disable desktop number spinboxes based on switch desktop checkbox."""
+        enabled = state == 2  # Qt.CheckState.Checked
+        self.work_desktop_spin.setEnabled(enabled)
+        self.break_desktop_spin.setEnabled(enabled)
+    
     def _browse_sound_file(self, line_edit):
         """Browse for MP3 sound file."""
         file_path, _ = QFileDialog.getOpenFileName(
@@ -359,6 +385,8 @@ class SettingsDialog(QDialog):
             self.settings.downtime_notify_threshold = notify_threshold
             
             self.settings.switch_desktop = self.switch_desktop_check.isChecked()
+            self.settings.work_desktop = self.work_desktop_spin.value()
+            self.settings.break_desktop = self.break_desktop_spin.value()
             self.settings.alarm_sound_path = self.work_sound_edit.text().strip()
             self.settings.short_break_sound_path = self.short_sound_edit.text().strip()
             self.settings.long_break_sound_path = self.long_sound_edit.text().strip()
