@@ -1,2 +1,5 @@
 PyQt6>=6.10.2
-
+anthropic>=0.40.0
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

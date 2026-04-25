@@ -1,163 +1,270 @@
 """
-Calendar and notes interface for Pomodoro app.
+Calendar and daily notes widget for Pomodoro app.
+
+Select any date on the calendar to view or edit the note for that day.
+Notes are saved automatically 1.5 seconds after you stop typing (debounced
+auto-save).  Ctrl+S triggers an immediate save.
 """
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QCalendarWidget, QTextEdit, QPushButton)
-from PyQt6.QtCore import QDate, Qt, pyqtSignal
-from PyQt6.QtGui import QFont
+                              QCalendarWidget, QTextEdit, QPushButton, QFrame,
+                              QGraphicsDropShadowEffect)
+from PyQt6.QtCore import QDate, Qt, QTimer
+from PyQt6.QtGui import QFont, QColor, QKeySequence, QShortcut
 from datetime import datetime
 from database import Database
+from theme import COLORS
+
+
+def _shadow(blur=16, dy=3, alpha=20):
+    fx = QGraphicsDropShadowEffect()
+    fx.setBlurRadius(blur)
+    fx.setXOffset(0)
+    fx.setYOffset(dy)
+    fx.setColor(QColor(0, 0, 0, alpha))
+    return fx
 
 
 class CalendarNotesWidget(QWidget):
-    """Calendar and notes widget."""
-    
+    """Calendar picker + free-text note editor for each day."""
+
+    _AUTOSAVE_DELAY_MS = 1500   # debounce delay for auto-save
+
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.db = Database()
+        self.db           = Database()
         self.current_date = datetime.now().date()
+        self._dirty       = False
+
+        # Debounce timer — fires once typing stops.
+        self._save_timer = QTimer(self)
+        self._save_timer.setSingleShot(True)
+        self._save_timer.timeout.connect(self._autosave)
+
         self._init_ui()
         self._load_note_for_date()
-    
-    def _init_ui(self):
-        """Initialize the UI."""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #ffffff;
-            }
-            QLabel {
-                color: #333;
-            }
-            QCalendarWidget {
-                background-color: white;
-                border: 2px solid #e0e0e0;
-                border-radius: 8px;
-            }
-            QCalendarWidget QTableView {
-                selection-background-color: #4CAF50;
-                selection-color: white;
-            }
-            QTextEdit {
-                border: 2px solid #e0e0e0;
-                border-radius: 5px;
-                padding: 10px;
-                font-size: 12px;
-                background-color: #fafafa;
-            }
-            QTextEdit:focus {
-                border-color: #4CAF50;
-                background-color: white;
-            }
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                font-weight: bold;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #3d8b40;
-            }
-            QPushButton:disabled {
-                background-color: #cccccc;
-            }
+
+    # ── UI construction ───────────────────────────────────────────────────────
+
+    def _init_ui(self) -> None:
+        self.setStyleSheet(f"QWidget {{ background-color: {COLORS['bg']}; }}")
+
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+        root.setContentsMargins(0, 0, 0, 0)
+
+        # ── Top bar ───────────────────────────────────────────────────────────
+        top_bar = QFrame()
+        top_bar.setStyleSheet(f"""
+            QFrame {{
+                background-color: {COLORS['surface']};
+                border-bottom: 1px solid {COLORS['border']};
+            }}
         """)
-        
-        layout = QVBoxLayout()
-        layout.setSpacing(20)
-        layout.setContentsMargins(25, 25, 25, 25)
-        
-        # Title
-        title = QLabel("📝 Daily Notes")
-        title_font = QFont()
-        title_font.setPointSize(22)
-        title_font.setBold(True)
-        title.setFont(title_font)
-        title.setStyleSheet("color: #2c3e50; margin-bottom: 10px;")
-        layout.addWidget(title)
-        
-        # Calendar widget
+        top_bar.setGraphicsEffect(_shadow())
+        tb = QVBoxLayout(top_bar)
+        tb.setContentsMargins(28, 20, 28, 18)
+        tb.setSpacing(4)
+
+        title = QLabel("Daily Notes")
+        tf = QFont()
+        tf.setPointSize(22)
+        tf.setBold(True)
+        title.setFont(tf)
+        title.setStyleSheet(f"color: {COLORS['text']};")
+        tb.addWidget(title)
+
+        subtitle = QLabel(
+            "One note per day — saved automatically as you type.  Ctrl+S to save immediately."
+        )
+        subtitle.setStyleSheet(f"color: {COLORS['text_sec']}; font-size: 12px;")
+        tb.addWidget(subtitle)
+
+        root.addWidget(top_bar)
+
+        # ── Body ──────────────────────────────────────────────────────────────
+        body = QHBoxLayout()
+        body.setSpacing(0)
+        body.setContentsMargins(0, 0, 0, 0)
+
+        # Left: calendar
+        left_pane = QWidget()
+        left_pane.setFixedWidth(300)
+        left_pane.setStyleSheet(f"""
+            QWidget {{
+                background-color: {COLORS['surface']};
+                border-right: 1px solid {COLORS['border']};
+            }}
+        """)
+        lp = QVBoxLayout(left_pane)
+        lp.setContentsMargins(18, 18, 18, 18)
+        lp.setSpacing(12)
+
         self.calendar = QCalendarWidget()
         self.calendar.setSelectedDate(QDate.currentDate())
+        self.calendar.setVerticalHeaderFormat(
+            QCalendarWidget.VerticalHeaderFormat.NoVerticalHeader
+        )
+        self.calendar.setStyleSheet(f"""
+            QCalendarWidget {{
+                background-color: {COLORS['surface']};
+            }}
+            QCalendarWidget QTableView {{
+                selection-background-color: {COLORS['accent']};
+                selection-color: white;
+                background-color: {COLORS['surface']};
+                gridline-color: {COLORS['border']};
+            }}
+            QCalendarWidget QAbstractItemView:enabled {{
+                color: {COLORS['text']};
+                selection-background-color: {COLORS['accent']};
+                selection-color: white;
+            }}
+            QCalendarWidget QAbstractItemView:disabled {{
+                color: {COLORS['text_muted']};
+            }}
+            QCalendarWidget QToolButton {{
+                background-color: transparent;
+                color: {COLORS['text']};
+                font-weight: bold;
+                border-radius: 4px;
+                padding: 4px;
+            }}
+            QCalendarWidget QToolButton:hover {{
+                background-color: {COLORS['accent_light']};
+                color: {COLORS['accent']};
+            }}
+            QCalendarWidget QMenu {{
+                background-color: {COLORS['surface']};
+            }}
+            #qt_calendar_navigationbar {{
+                background-color: {COLORS['accent_light']};
+                border-radius: 8px;
+                margin: 4px;
+            }}
+        """)
         self.calendar.selectionChanged.connect(self._on_date_selected)
-        layout.addWidget(self.calendar)
-        
-        # Selected date label
+        lp.addWidget(self.calendar)
+        lp.addStretch()
+
+        body.addWidget(left_pane)
+
+        # Right: note editor
+        right_pane = QWidget()
+        right_pane.setStyleSheet(f"background-color: {COLORS['bg']};")
+        rp = QVBoxLayout(right_pane)
+        rp.setContentsMargins(24, 20, 24, 20)
+        rp.setSpacing(14)
+
+        # Date header
         self.date_label = QLabel()
+        df = QFont()
+        df.setPointSize(16)
+        df.setBold(True)
+        self.date_label.setFont(df)
+        self.date_label.setStyleSheet(f"""
+            color: {COLORS['accent']};
+            background-color: {COLORS['accent_light']};
+            border: 1px solid {COLORS['accent_border']};
+            border-radius: 8px;
+            padding: 8px 14px;
+        """)
         self._update_date_label()
-        date_font = QFont()
-        date_font.setPointSize(14)
-        date_font.setBold(True)
-        self.date_label.setFont(date_font)
-        self.date_label.setStyleSheet("color: #4CAF50; padding: 10px; background-color: #e8f5e9; border-radius: 5px;")
-        layout.addWidget(self.date_label)
-        
-        # Notes editor
-        notes_label = QLabel("Notes:")
-        notes_label.setFont(QFont("", 13, QFont.Weight.Bold))
-        notes_label.setStyleSheet("color: #555; margin-top: 10px;")
-        layout.addWidget(notes_label)
-        
+        rp.addWidget(self.date_label)
+
+        # Notes header row (label + save status)
+        notes_header_row = QHBoxLayout()
+        notes_header = QLabel("Notes")
+        nhf = QFont()
+        nhf.setPointSize(13)
+        nhf.setBold(True)
+        notes_header.setFont(nhf)
+        notes_header.setStyleSheet(f"color: {COLORS['text_sec']};")
+        notes_header_row.addWidget(notes_header)
+        notes_header_row.addStretch()
+
+        self.save_status = QLabel("")
+        self.save_status.setStyleSheet(f"color: {COLORS['success']}; font-size: 12px;")
+        notes_header_row.addWidget(self.save_status)
+        rp.addLayout(notes_header_row)
+
+        # Note editor
         self.notes_editor = QTextEdit()
-        self.notes_editor.setPlaceholderText("Enter your notes for this day...")
-        self.notes_editor.setMinimumHeight(250)
-        layout.addWidget(self.notes_editor)
-        
-        # Save button
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        
-        self.save_button = QPushButton("💾 Save Note")
-        self.save_button.clicked.connect(self._save_note)
-        self.save_button.setMinimumWidth(140)
-        self.save_button.setMinimumHeight(40)
-        button_layout.addWidget(self.save_button)
-        
-        layout.addLayout(button_layout)
-        
-        layout.addStretch()
-        self.setLayout(layout)
-    
-    def _update_date_label(self):
-        """Update the date label."""
-        date_str = self.current_date.strftime("%A, %B %d, %Y")
-        self.date_label.setText(f"Selected Date: {date_str}")
-    
-    def _on_date_selected(self):
-        """Handle date selection change."""
-        selected_date = self.calendar.selectedDate()
-        self.current_date = selected_date.toPyDate()
+        self.notes_editor.setPlaceholderText(
+            "Write anything here — goals, reflections, highlights…"
+        )
+        self.notes_editor.setStyleSheet(f"""
+            QTextEdit {{
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 10px;
+                padding: 12px;
+                font-size: 13px;
+                background-color: {COLORS['surface']};
+                color: {COLORS['text']};
+                line-height: 1.5;
+            }}
+            QTextEdit:focus {{
+                border-color: {COLORS['accent']};
+                background-color: {COLORS['surface']};
+            }}
+        """)
+        self.notes_editor.textChanged.connect(self._on_text_changed)
+        rp.addWidget(self.notes_editor, 1)
+
+        body.addWidget(right_pane, 1)
+        root.addLayout(body, 1)
+
+        # Ctrl+S shortcut for immediate save
+        save_shortcut = QShortcut(QKeySequence("Ctrl+S"), self.notes_editor)
+        save_shortcut.activated.connect(self._save_now)
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
+
+    def _update_date_label(self) -> None:
+        self.date_label.setText(
+            f"📅  {self.current_date.strftime('%A, %B %d, %Y')}"
+        )
+
+    def _on_date_selected(self) -> None:
+        # Save any pending changes before switching dates.
+        if self._dirty:
+            self._save_now()
+        self.current_date = self.calendar.selectedDate().toPyDate()
         self._update_date_label()
         self._load_note_for_date()
-    
-    def _load_note_for_date(self):
-        """Load note for the current selected date."""
+
+    def _load_note_for_date(self) -> None:
         date_str = self.current_date.strftime("%Y-%m-%d")
-        note = self.db.get_note(date_str)
-        if note:
-            self.notes_editor.setPlainText(note)
-        else:
-            self.notes_editor.clear()
-    
-    def _save_note(self):
-        """Save the current note."""
-        date_str = self.current_date.strftime("%Y-%m-%d")
+        note     = self.db.get_note(date_str)
+        # Block signals so loading doesn't trigger auto-save.
+        self.notes_editor.blockSignals(True)
+        self.notes_editor.setPlainText(note if note else "")
+        self.notes_editor.blockSignals(False)
+        self._dirty = False
+        self.save_status.setText("")
+
+    def _on_text_changed(self) -> None:
+        self._dirty = True
+        self.save_status.setText("Unsaved…")
+        self.save_status.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 12px;")
+        self._save_timer.start(self._AUTOSAVE_DELAY_MS)
+
+    def _autosave(self) -> None:
+        if self._dirty:
+            self._persist()
+            self.save_status.setText("Saved")
+            self.save_status.setStyleSheet(f"color: {COLORS['success']}; font-size: 12px;")
+            # Fade out the "Saved" label after 2 s.
+            QTimer.singleShot(2000, lambda: self.save_status.setText(""))
+
+    def _save_now(self) -> None:
+        self._save_timer.stop()
+        self._persist()
+        self.save_status.setText("✓  Saved!")
+        self.save_status.setStyleSheet(f"color: {COLORS['success']}; font-size: 12px; font-weight: 600;")
+        QTimer.singleShot(1500, lambda: self.save_status.setText(""))
+
+    def _persist(self) -> None:
+        date_str  = self.current_date.strftime("%Y-%m-%d")
         note_text = self.notes_editor.toPlainText()
         self.db.save_note(date_str, note_text)
-        
-        # Visual feedback
-        original_text = self.save_button.text()
-        self.save_button.setText("Saved!")
-        self.save_button.setEnabled(False)
-        
-        from PyQt6.QtCore import QTimer
-        QTimer.singleShot(1500, lambda: (
-            self.save_button.setText(original_text),
-            self.save_button.setEnabled(True)
-        ))
-
+        self._dirty = False

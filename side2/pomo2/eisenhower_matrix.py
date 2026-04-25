@@ -1,180 +1,269 @@
 """
 Eisenhower Matrix widget for Pomodoro app.
-4-quadrant task prioritization matrix.
+
+The classic 2×2 decision matrix:
+  Q1 (red)    – Urgent   & Important   → Do First
+  Q2 (blue)   – Not Urgent & Important → Schedule
+  Q3 (orange) – Urgent   & Not Important → Delegate
+  Q4 (gray)   – Not Urgent & Not Important → Eliminate
 """
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QListWidget, QListWidgetItem,
-                             QCheckBox, QGridLayout, QFrame, QMessageBox,
-                             QSizePolicy)
+                             QLineEdit, QPushButton, QListWidget,
+                             QListWidgetItem, QCheckBox, QGridLayout,
+                             QFrame, QSizePolicy, QGraphicsDropShadowEffect)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QColor
 from database import Database
+from theme import COLORS
 
 
-# Quadrant definitions
+# ── Quadrant definitions ──────────────────────────────────────────────────────
+
 QUADRANTS = {
-    1: {"title": "Do First", "subtitle": "Urgent & Important", "color": "#c62828", "bg": "#ffebee", "border": "#ef5350"},
-    2: {"title": "Schedule", "subtitle": "Not Urgent & Important", "color": "#1565c0", "bg": "#e3f2fd", "border": "#42a5f5"},
-    3: {"title": "Delegate", "subtitle": "Urgent & Not Important", "color": "#e65100", "bg": "#fff3e0", "border": "#ff9800"},
-    4: {"title": "Eliminate", "subtitle": "Not Urgent & Not Important", "color": "#616161", "bg": "#f5f5f5", "border": "#9e9e9e"},
+    1: {
+        "title":    "Do First",
+        "subtitle": "Urgent & Important",
+        "color":    "#ef4444",
+        "bg":       "#fef2f2",
+        "border":   "#fca5a5",
+        "badge_bg": "#fee2e2",
+    },
+    2: {
+        "title":    "Schedule",
+        "subtitle": "Not Urgent & Important",
+        "color":    "#0ea5e9",
+        "bg":       "#f0f9ff",
+        "border":   "#7dd3fc",
+        "badge_bg": "#e0f2fe",
+    },
+    3: {
+        "title":    "Delegate",
+        "subtitle": "Urgent & Not Important",
+        "color":    "#f59e0b",
+        "bg":       "#fffbeb",
+        "border":   "#fcd34d",
+        "badge_bg": "#fef3c7",
+    },
+    4: {
+        "title":    "Eliminate",
+        "subtitle": "Not Urgent & Not Important",
+        "color":    "#94a3b8",
+        "bg":       "#f8fafc",
+        "border":   "#cbd5e1",
+        "badge_bg": "#f1f5f9",
+    },
 }
 
 
+def _card_shadow():
+    fx = QGraphicsDropShadowEffect()
+    fx.setBlurRadius(16)
+    fx.setXOffset(0)
+    fx.setYOffset(3)
+    fx.setColor(QColor(0, 0, 0, 20))
+    return fx
+
+
+# ── Single task row ───────────────────────────────────────────────────────────
+
 class TaskItemWidget(QWidget):
-    """Custom widget for a task item in the list."""
-    
+    """One task row inside a quadrant list."""
+
     def __init__(self, task_id: int, task_text: str, completed: bool,
                  quadrant: int, parent_widget=None):
         super().__init__()
-        self.task_id = task_id
-        self.quadrant = quadrant
+        self.task_id       = task_id
+        self.quadrant      = quadrant
         self.parent_widget = parent_widget
-        
-        layout = QHBoxLayout()
-        layout.setContentsMargins(4, 2, 4, 2)
-        layout.setSpacing(6)
-        
-        # Checkbox
+        q = QUADRANTS[quadrant]
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(6, 4, 6, 4)
+        layout.setSpacing(8)
+
         self.checkbox = QCheckBox()
         self.checkbox.setChecked(completed)
+        self.checkbox.setStyleSheet(f"""
+            QCheckBox::indicator {{
+                width: 18px; height: 18px;
+                border-radius: 9px;
+                border: 2px solid {q['border']};
+                background-color: {'white' if not completed else q['color']};
+            }}
+            QCheckBox::indicator:hover {{
+                border-color: {q['color']};
+            }}
+        """)
         self.checkbox.stateChanged.connect(self._on_toggle)
         layout.addWidget(self.checkbox)
-        
-        # Task label
+
         self.label = QLabel(task_text)
         self.label.setWordWrap(True)
-        self.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        self.label.setSizePolicy(QSizePolicy.Policy.Expanding,
+                                 QSizePolicy.Policy.Preferred)
+        lf = QFont()
+        lf.setPointSize(12)
+        self.label.setFont(lf)
         if completed:
-            self.label.setStyleSheet("text-decoration: line-through; color: #999;")
+            self.label.setStyleSheet(
+                f"text-decoration: line-through; color: {COLORS['text_muted']};"
+            )
         else:
-            self.label.setStyleSheet("color: #333;")
-        layout.addWidget(self.label, stretch=1)
-        
-        # Delete button
-        delete_btn = QPushButton("✕")
-        delete_btn.setFixedSize(24, 24)
-        delete_btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                color: #999;
-                border: none;
+            self.label.setStyleSheet(f"color: {COLORS['text']};")
+        layout.addWidget(self.label, 1)
+
+        del_btn = QPushButton("×")
+        del_btn.setFixedSize(26, 26)
+        del_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 6px;
+                color: {COLORS['text_muted']};
                 font-size: 14px;
                 font-weight: bold;
-            }
-            QPushButton:hover {
-                color: #f44336;
-            }
+            }}
+            QPushButton:hover {{
+                background: {COLORS['danger']};
+                border-color: {COLORS['danger']};
+                color: white;
+            }}
         """)
-        delete_btn.clicked.connect(self._on_delete)
-        layout.addWidget(delete_btn)
-        
-        self.setLayout(layout)
-    
-    def _on_toggle(self, state):
-        """Handle task completion toggle."""
-        completed = state == 2  # Qt.CheckState.Checked
-        db = Database()
-        db.update_eisenhower_task(self.task_id, completed=completed)
+        del_btn.clicked.connect(self._on_delete)
+        layout.addWidget(del_btn)
+
+    def _on_toggle(self, state: int) -> None:
+        completed = state == 2
+        Database().update_eisenhower_task(self.task_id, completed=completed)
         if completed:
-            self.label.setStyleSheet("text-decoration: line-through; color: #999;")
+            self.label.setStyleSheet(
+                f"text-decoration: line-through; color: {COLORS['text_muted']};"
+            )
         else:
-            self.label.setStyleSheet("color: #333;")
-    
-    def _on_delete(self):
-        """Handle task deletion."""
-        db = Database()
-        db.delete_eisenhower_task(self.task_id)
+            q = QUADRANTS[self.quadrant]
+            self.label.setStyleSheet(f"color: {COLORS['text']};")
+
+    def _on_delete(self) -> None:
+        Database().delete_eisenhower_task(self.task_id)
         if self.parent_widget:
             self.parent_widget.load_tasks()
 
 
+# ── One quadrant ──────────────────────────────────────────────────────────────
+
 class QuadrantWidget(QFrame):
-    """Widget for a single quadrant of the Eisenhower matrix."""
-    
+    """Card widget representing a single Eisenhower quadrant."""
+
     def __init__(self, quadrant: int, parent_matrix=None):
         super().__init__()
-        self.quadrant = quadrant
+        self.quadrant      = quadrant
         self.parent_matrix = parent_matrix
-        self.db = Database()
-        info = QUADRANTS[quadrant]
-        
-        self.setFrameStyle(QFrame.Shape.Box)
+        self.db            = Database()
+        q = QUADRANTS[quadrant]
+
+        self.setFrameStyle(QFrame.Shape.NoFrame)
         self.setStyleSheet(f"""
-            QuadrantWidget {{
-                background-color: {info['bg']};
-                border: 2px solid {info['border']};
-                border-radius: 8px;
+            QuadrantWidget, QFrame {{
+                background-color: {q['bg']};
+                border: 1.5px solid {q['border']};
+                border-radius: 12px;
             }}
         """)
-        
-        layout = QVBoxLayout()
-        layout.setSpacing(8)
-        layout.setContentsMargins(12, 12, 12, 12)
-        
-        # Header
-        header = QLabel(f"{info['title']}")
-        header_font = QFont()
-        header_font.setPointSize(14)
-        header_font.setBold(True)
-        header.setFont(header_font)
-        header.setStyleSheet(f"color: {info['color']}; border: none;")
-        header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(header)
-        
-        # Subtitle
-        subtitle = QLabel(info['subtitle'])
-        subtitle_font = QFont()
-        subtitle_font.setPointSize(9)
-        subtitle.setFont(subtitle_font)
-        subtitle.setStyleSheet(f"color: {info['color']}; opacity: 0.7; border: none;")
-        subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(subtitle)
-        
+        self.setGraphicsEffect(_card_shadow())
+
+        layout = QVBoxLayout(self)
+        layout.setSpacing(10)
+        layout.setContentsMargins(14, 14, 14, 14)
+
+        # Header row
+        header_row = QHBoxLayout()
+        badge = QLabel(q["title"])
+        bf = QFont()
+        bf.setPointSize(13)
+        bf.setBold(True)
+        badge.setFont(bf)
+        badge.setStyleSheet(f"""
+            color: {q['color']};
+            background-color: {q['badge_bg']};
+            border: 1px solid {q['border']};
+            border-radius: 8px;
+            padding: 3px 10px;
+        """)
+        header_row.addWidget(badge)
+        header_row.addStretch()
+
+        sub = QLabel(q["subtitle"])
+        sf = QFont()
+        sf.setPointSize(10)
+        sub.setFont(sf)
+        sub.setStyleSheet(f"color: {q['color']}; opacity: 0.8; border: none;")
+        header_row.addWidget(sub)
+
+        layout.addLayout(header_row)
+
         # Task list
         self.task_list = QListWidget()
         self.task_list.setStyleSheet(f"""
             QListWidget {{
                 background-color: white;
-                border: 1px solid {info['border']};
-                border-radius: 4px;
-            }}
-            QListWidget::item {{
-                border-bottom: 1px solid #eee;
+                border: 1px solid {q['border']};
+                border-radius: 8px;
                 padding: 2px;
             }}
+            QListWidget::item {{
+                border-bottom: 1px solid {COLORS['border']};
+                border-radius: 0px;
+            }}
+            QListWidget::item:last-child {{
+                border-bottom: none;
+            }}
+            QListWidget::item:hover {{
+                background-color: {q['bg']};
+            }}
+            QScrollBar:vertical {{
+                width: 6px;
+                background: transparent;
+            }}
+            QScrollBar::handle:vertical {{
+                background: {COLORS['border']};
+                border-radius: 3px;
+                min-height: 30px;
+            }}
         """)
-        layout.addWidget(self.task_list, stretch=1)
-        
-        # Add task input row
-        input_layout = QHBoxLayout()
-        input_layout.setSpacing(6)
-        
+        layout.addWidget(self.task_list, 1)
+
+        # Input row
+        input_row = QHBoxLayout()
+        input_row.setSpacing(6)
+
         self.input_field = QLineEdit()
-        self.input_field.setPlaceholderText("Add a task...")
+        self.input_field.setPlaceholderText("Add a task…")
+        self.input_field.setMinimumHeight(36)
         self.input_field.setStyleSheet(f"""
             QLineEdit {{
-                padding: 6px 10px;
-                border: 1px solid {info['border']};
-                border-radius: 4px;
+                padding: 0 10px;
+                border: 1.5px solid {q['border']};
+                border-radius: 8px;
                 background-color: white;
-                color: #333;
+                color: {COLORS['text']};
+                font-size: 12px;
             }}
             QLineEdit:focus {{
-                border: 2px solid {info['color']};
+                border-color: {q['color']};
             }}
         """)
         self.input_field.returnPressed.connect(self._add_task)
-        input_layout.addWidget(self.input_field, stretch=1)
-        
+        input_row.addWidget(self.input_field, 1)
+
         add_btn = QPushButton("+")
-        add_btn.setFixedSize(32, 32)
+        add_btn.setFixedSize(36, 36)
         add_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {info['color']};
+                background-color: {q['color']};
                 color: white;
                 border: none;
-                border-radius: 4px;
-                font-size: 18px;
+                border-radius: 8px;
+                font-size: 20px;
                 font-weight: bold;
             }}
             QPushButton:hover {{
@@ -182,123 +271,141 @@ class QuadrantWidget(QFrame):
             }}
         """)
         add_btn.clicked.connect(self._add_task)
-        input_layout.addWidget(add_btn)
-        
-        layout.addLayout(input_layout)
-        
-        self.setLayout(layout)
+        input_row.addWidget(add_btn)
+
+        layout.addLayout(input_row)
         self.load_tasks()
-    
-    def _add_task(self):
-        """Add a new task to this quadrant."""
+
+    def _add_task(self) -> None:
         text = self.input_field.text().strip()
         if not text:
             return
         self.db.add_eisenhower_task(text, self.quadrant)
         self.input_field.clear()
         self.load_tasks()
-    
-    def load_tasks(self):
-        """Load and display tasks for this quadrant."""
+
+    def load_tasks(self) -> None:
         self.task_list.clear()
-        tasks = self.db.get_eisenhower_tasks(self.quadrant)
-        for task in tasks:
-            item = QListWidgetItem()
+        for task in self.db.get_eisenhower_tasks(self.quadrant):
+            item   = QListWidgetItem()
             widget = TaskItemWidget(
-                task_id=task['id'],
-                task_text=task['task'],
-                completed=bool(task['completed']),
+                task_id=task["id"],
+                task_text=task["task"],
+                completed=bool(task["completed"]),
                 quadrant=self.quadrant,
-                parent_widget=self
+                parent_widget=self,
             )
             item.setSizeHint(widget.sizeHint())
             self.task_list.addItem(item)
             self.task_list.setItemWidget(item, widget)
 
 
+# ── Main widget ───────────────────────────────────────────────────────────────
+
 class EisenhowerMatrixWidget(QWidget):
-    """Eisenhower Matrix widget with 4 quadrants."""
-    
+    """The full 2×2 Eisenhower Matrix."""
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self._init_ui()
-    
-    def _init_ui(self):
-        """Initialize the UI."""
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(12)
-        main_layout.setContentsMargins(15, 15, 15, 15)
-        
-        # Title
+
+    def _init_ui(self) -> None:
+        self.setStyleSheet(f"QWidget {{ background-color: {COLORS['bg']}; }}")
+
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+        root.setContentsMargins(0, 0, 0, 0)
+
+        # ── Header bar ────────────────────────────────────────────────────────
+        header = QFrame()
+        header.setStyleSheet(f"""
+            QFrame {{
+                background-color: {COLORS['surface']};
+                border-bottom: 1px solid {COLORS['border']};
+            }}
+        """)
+        hb = QVBoxLayout(header)
+        hb.setContentsMargins(28, 18, 28, 16)
+        hb.setSpacing(4)
+
         title = QLabel("Eisenhower Matrix")
-        title_font = QFont()
-        title_font.setPointSize(18)
-        title_font.setBold(True)
-        title.setFont(title_font)
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("color: #333;")
-        main_layout.addWidget(title)
-        
-        # Axis labels row (top)
-        top_label_layout = QHBoxLayout()
-        top_label_layout.addStretch()
-        urgent_label = QLabel("URGENT")
-        urgent_label.setStyleSheet("color: #c62828; font-weight: bold; font-size: 11px;")
-        urgent_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        top_label_layout.addWidget(urgent_label)
-        top_label_layout.addStretch()
-        not_urgent_label = QLabel("NOT URGENT")
-        not_urgent_label.setStyleSheet("color: #1565c0; font-weight: bold; font-size: 11px;")
-        not_urgent_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        top_label_layout.addWidget(not_urgent_label)
-        top_label_layout.addStretch()
-        main_layout.addLayout(top_label_layout)
-        
-        # Grid with side labels
-        content_layout = QHBoxLayout()
-        
-        # Left side labels
-        side_label_layout = QVBoxLayout()
-        imp_label = QLabel("I\nM\nP\nO\nR\nT\nA\nN\nT")
-        imp_label.setStyleSheet("color: #2e7d32; font-weight: bold; font-size: 10px;")
-        imp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        side_label_layout.addWidget(imp_label)
-        not_imp_label = QLabel("N\nO\nT\n \nI\nM\nP")
-        not_imp_label.setStyleSheet("color: #e65100; font-weight: bold; font-size: 10px;")
-        not_imp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        side_label_layout.addWidget(not_imp_label)
-        content_layout.addLayout(side_label_layout)
-        
-        # 2x2 Grid of quadrants
+        tf = QFont()
+        tf.setPointSize(22)
+        tf.setBold(True)
+        title.setFont(tf)
+        title.setStyleSheet(f"color: {COLORS['text']};")
+        hb.addWidget(title)
+
+        subtitle = QLabel(
+            "Prioritise tasks by urgency and importance. "
+            "Do First → Schedule → Delegate → Eliminate."
+        )
+        subtitle.setStyleSheet(f"color: {COLORS['text_sec']}; font-size: 12px;")
+        hb.addWidget(subtitle)
+
+        root.addWidget(header)
+
+        # ── Axis labels + grid ────────────────────────────────────────────────
+        body = QVBoxLayout()
+        body.setContentsMargins(16, 12, 16, 16)
+        body.setSpacing(6)
+
+        # Column labels (URGENT / NOT URGENT)
+        col_labels = QHBoxLayout()
+        col_labels.addSpacing(32)           # placeholder for row label column
+
+        for txt, col in (("URGENT", QUADRANTS[1]["color"]),
+                         ("NOT URGENT", QUADRANTS[2]["color"])):
+            lbl = QLabel(txt)
+            lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            lbl.setStyleSheet(
+                f"color: {col}; font-weight: 700; font-size: 11px; letter-spacing: 1px;"
+            )
+            col_labels.addWidget(lbl, 1)
+
+        body.addLayout(col_labels)
+
+        # Grid rows (with vertical IMPORTANT / NOT IMPORTANT labels on left)
+        grid_row = QHBoxLayout()
+        grid_row.setSpacing(0)
+
+        # Vertical label column
+        v_labels = QVBoxLayout()
+        v_labels.setSpacing(0)
+        for txt, col in (("IMPORTANT", QUADRANTS[2]["color"]),
+                         ("NOT IMPORTANT", QUADRANTS[3]["color"])):
+            lbl = QLabel()
+            lbl.setText(txt)
+            lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            lbl.setStyleSheet(
+                f"color: {col}; font-weight: 700; font-size: 10px; letter-spacing: 1px;"
+            )
+            # Rotate text 90°
+            lbl.setFixedWidth(22)
+            # PyQt6 doesn't support CSS transform; use a workaround via layout
+            # We'll just use a narrow label — readable enough for short text
+            v_labels.addWidget(lbl, 1)
+
+        grid_row.addLayout(v_labels)
+
         grid = QGridLayout()
-        grid.setSpacing(8)
-        
-        # Q1: Urgent + Important (top-left)
+        grid.setSpacing(10)
+
         self.q1 = QuadrantWidget(1, self)
-        grid.addWidget(self.q1, 0, 0)
-        
-        # Q2: Not Urgent + Important (top-right)
         self.q2 = QuadrantWidget(2, self)
-        grid.addWidget(self.q2, 0, 1)
-        
-        # Q3: Urgent + Not Important (bottom-left)
         self.q3 = QuadrantWidget(3, self)
-        grid.addWidget(self.q3, 1, 0)
-        
-        # Q4: Not Urgent + Not Important (bottom-right)
         self.q4 = QuadrantWidget(4, self)
+
+        grid.addWidget(self.q1, 0, 0)
+        grid.addWidget(self.q2, 0, 1)
+        grid.addWidget(self.q3, 1, 0)
         grid.addWidget(self.q4, 1, 1)
-        
-        content_layout.addLayout(grid, stretch=1)
-        main_layout.addLayout(content_layout, stretch=1)
-        
-        self.setLayout(main_layout)
-    
-    def refresh(self):
-        """Reload all quadrants."""
-        self.q1.load_tasks()
-        self.q2.load_tasks()
-        self.q3.load_tasks()
-        self.q4.load_tasks()
 
+        grid_row.addLayout(grid, 1)
+        body.addLayout(grid_row, 1)
+        root.addLayout(body, 1)
 
+    def refresh(self) -> None:
+        """Reload all four quadrants from the database."""
+        for q in (self.q1, self.q2, self.q3, self.q4):
+            q.load_tasks()

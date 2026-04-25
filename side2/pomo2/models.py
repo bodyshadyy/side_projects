@@ -71,6 +71,50 @@ class Settings:
 
 
 @dataclass
+class ScheduleTask:
+    """Daily schedule task model."""
+    id: Optional[int] = None
+    task: str = ""
+    duration_minutes: int = 30        # how long the task takes (used for relative tasks)
+    is_fixed_time: bool = False       # True = fixed clock time, False = relative to wake up
+    fixed_time: str = ""              # "HH:MM" start time, used when is_fixed_time=True
+    fixed_time_end: str = ""          # "HH:MM" end time, used when is_fixed_time=True
+    offset_minutes: int = 0           # minutes after wake up, used when is_fixed_time=False
+    anchor_type: str = "wake_up"      # wake_up | task_start | task_end
+    anchor_task_id: Optional[int] = None
+    sort_order: int = 0               # for ordering tasks in the list
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'task': self.task,
+            'duration_minutes': self.duration_minutes,
+            'is_fixed_time': self.is_fixed_time,
+            'fixed_time': self.fixed_time,
+            'fixed_time_end': self.fixed_time_end,
+            'offset_minutes': self.offset_minutes,
+            'anchor_type': self.anchor_type,
+            'anchor_task_id': self.anchor_task_id,
+            'sort_order': self.sort_order,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'ScheduleTask':
+        return cls(
+            id=data.get('id'),
+            task=data.get('task', ''),
+            duration_minutes=data.get('duration_minutes', 30),
+            is_fixed_time=bool(data.get('is_fixed_time', False)),
+            fixed_time=data.get('fixed_time', ''),
+            fixed_time_end=data.get('fixed_time_end', ''),
+            offset_minutes=data.get('offset_minutes', 0),
+            anchor_type=data.get('anchor_type', 'wake_up'),
+            anchor_task_id=data.get('anchor_task_id'),
+            sort_order=data.get('sort_order', 0),
+        )
+
+
+@dataclass
 class Note:
     """Note model."""
     date: str

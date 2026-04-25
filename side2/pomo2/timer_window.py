@@ -1,1029 +1,1240 @@
 """
 Main timer window for Pomodoro app.
+
+Keyboard shortcuts (when the Timer tab is focused):
+    Space  – Start / Pause toggle
+    R      – Reset to beginning of current phase
+    S      – Skip to next phase
+    M      – Toggle mute
 """
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                              QLabel, QSystemTrayIcon, QMenu, QApplication,
-                             QDialog, QMessageBox)
-from PyQt6.QtCore import QTimer, Qt, pyqtSignal, QUrl, QSize
-from PyQt6.QtGui import QIcon, QFont, QAction, QPixmap, QPainter, QColor
+                             QDialog, QMessageBox, QSizePolicy)
+from PyQt6.QtCore import QTimer, Qt, pyqtSignal, QUrl, QSize, QRectF, QThread
+from PyQt6.QtGui import (QIcon, QFont, QAction, QPixmap, QPainter, QColor,
+                         QPen, QKeySequence)
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from enum import Enum
+from datetime import datetime, timedelta
 import os
+import json
 import math
 import struct
 import tempfile
 import wave
 import platform
+from pathlib import Path
 from database import Database
-from models import Settings
+from models import Settings, ScheduleTask
+from theme import COLORS, STATE_COLORS, get_state_bundle
 
 
 class TimerState(Enum):
-    """Timer state enumeration."""
-    WORK = "work"
+    """Possible states of the Pomodoro timer."""
+    WORK        = "work"
     SHORT_BREAK = "short_break"
-    LONG_BREAK = "long_break"
-    DOWNTIME = "downtime"
-    PAUSED = "paused"
+    LONG_BREAK  = "long_break"
+    DOWNTIME    = "downtime"
+    PAUSED      = "paused"
 
+
+# ---------------------------------------------------------------------------
+# Circular progress ring widget
+# ---------------------------------------------------------------------------
+
+class TimerRingWidget(QWidget):
+    """Draws a circular arc that depletes as the timer counts down.
+
+    The ring colour changes with the timer state:
+      • Red   – Work
+      • Sky   – Short break
+      • Green – Long break
+      • Gray  – Paused / idle
+    Time and state labels are drawn *inside* the ring.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._time_text  = "00:00"
+        self._state_text = "Work Time"
+        self._progress   = 1.0          # 1.0 = full ring, 0.0 = empty
+        self._color      = QColor(COLORS["work"])
+        self.setMinimumSize(240, 240)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+    def update_state(self, time_text: str, state_text: str,
+                     progress: float, color_hex: str) -> None:
+        """Refresh the ring display. Call whenever the timer ticks."""
+        self._time_text  = time_text
+        self._state_text = state_text
+        self._progress   = max(0.0, min(1.0, progress))
+        self._color      = QColor(color_hex)
+        self.update()
+
+    def paintEvent(self, event) -> None:
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        w, h     = self.width(), self.height()
+        size     = min(w, h) - 12
+        x        = (w - size) / 2
+        y        = (h - size) / 2
+        ring_w   = max(12, size // 13)
+        half_rw  = ring_w / 2
+        adjusted = QRectF(x + half_rw, y + half_rw,
+                          size - ring_w, size - ring_w)
+
+        # ── Background ring (light gray) ─────────────────────────────────────
+        bg_pen = QPen(QColor(COLORS["border"]))
+        bg_pen.setWidth(ring_w)
+        bg_pen.setCapStyle(Qt.PenCapStyle.FlatCap)
+        p.setPen(bg_pen)
+        p.drawEllipse(adjusted)
+
+        # ── Foreground arc (coloured, starts at 12 o'clock = 90°) ───────────
+        if self._progress > 0.002:
+            arc_pen = QPen(self._color)
+            arc_pen.setWidth(ring_w)
+            arc_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            p.setPen(arc_pen)
+            p.drawArc(adjusted, 90 * 16, -int(360 * self._progress * 16))
+
+        # ── Center: time text ────────────────────────────────────────────────
+        inner_margin = ring_w * 2
+        inner = QRectF(x + inner_margin, y + inner_margin,
+                       size - inner_margin * 2, size - inner_margin * 2)
+
+        # Time (large, bold, dark)
+        tf = QFont()
+        tf.setPointSize(max(20, size // 6))
+        tf.setBold(True)
+        p.setFont(tf)
+        p.setPen(QColor(COLORS["text"]))
+
+        # Split inner vertically: time gets upper 55%, state gets lower 30%
+        time_rect  = QRectF(inner.x(), inner.y(),
+                            inner.width(), inner.height() * 0.55)
+        state_rect = QRectF(inner.x(), inner.y() + inner.height() * 0.58,
+                            inner.width(), inner.height() * 0.30)
+
+        p.drawText(time_rect,
+                   Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom,
+                   self._time_text)
+
+        # State label (smaller, colored)
+        sf = QFont()
+        sf.setPointSize(max(9, size // 22))
+        sf.setBold(False)
+        p.setFont(sf)
+        p.setPen(self._color)
+        p.drawText(state_rect,
+                   Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop,
+                   self._state_text)
+
+        p.end()
+
+
+# ---------------------------------------------------------------------------
+# Session dots indicator
+# ---------------------------------------------------------------------------
+
+class SessionDotsWidget(QWidget):
+    """Renders four dots showing progress through the 4-pomodoro cycle.
+
+    Filled dots = completed work sessions since the last long break.
+    """
+
+    DOT_SIZE = 12
+    DOT_GAP  = 10
+    N        = 4
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._sessions = 0
+        total_w = self.N * self.DOT_SIZE + (self.N - 1) * self.DOT_GAP
+        self.setFixedSize(total_w + 4, self.DOT_SIZE + 8)
+
+    def set_sessions(self, count: int) -> None:
+        """Set the number of completed sessions (auto-wraps at 4)."""
+        self._sessions = count % self.N
+        self.update()
+
+    def paintEvent(self, event) -> None:
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setPen(Qt.PenStyle.NoPen)
+
+        total_w = self.N * self.DOT_SIZE + (self.N - 1) * self.DOT_GAP
+        sx = (self.width() - total_w) / 2
+        cy = self.height() / 2
+
+        for i in range(self.N):
+            x = sx + i * (self.DOT_SIZE + self.DOT_GAP)
+            color = QColor(COLORS["work"]) if i < self._sessions else QColor(COLORS["border"])
+            p.setBrush(color)
+            p.drawEllipse(int(x), int(cy - self.DOT_SIZE / 2),
+                          self.DOT_SIZE, self.DOT_SIZE)
+        p.end()
+
+
+# ---------------------------------------------------------------------------
+# Alarm completion dialog
+# ---------------------------------------------------------------------------
 
 class AlarmDialog(QDialog):
-    """Dialog that appears when timer completes to stop the alarm."""
-    
+    """Modal dialog shown when a timer phase completes; stops the alarm sound."""
+
     def __init__(self, parent=None, timer_name: str = "Timer", media_player=None):
         super().__init__(parent)
         self.media_player = media_player
         self.setWindowTitle("Timer Complete!")
         self.setModal(True)
-        self.setMinimumSize(400, 200)
-        
-        # Make dialog appear on top and bring window to front
+        self.setMinimumSize(380, 190)
         self.setWindowFlags(
-            Qt.WindowType.WindowStaysOnTopHint | 
+            Qt.WindowType.WindowStaysOnTopHint |
             Qt.WindowType.Dialog |
             Qt.WindowType.WindowCloseButtonHint
         )
-        
-        # Apply styling
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #ffffff;
-                border: 3px solid #4CAF50;
-                border-radius: 10px;
-            }
-            QLabel {
-                color: #333;
-            }
-            QPushButton {
-                background-color: #4CAF50;
+        self.setStyleSheet(f"""
+            QDialog {{
+                background-color: {COLORS['surface']};
+                border: 2px solid {COLORS['accent_border']};
+                border-radius: 12px;
+            }}
+            QLabel {{ color: {COLORS['text']}; }}
+            QPushButton {{
+                background-color: {COLORS['accent']};
                 color: white;
                 border: none;
-                padding: 12px 24px;
-                border-radius: 6px;
+                padding: 11px 28px;
+                border-radius: 8px;
                 font-weight: bold;
                 font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #3d8b40;
-            }
+            }}
+            QPushButton:hover  {{ background-color: {COLORS['accent_hover']}; }}
+            QPushButton:pressed{{ background-color: {COLORS['accent_pressed']}; }}
         """)
-        
-        layout = QVBoxLayout()
-        layout.setSpacing(20)
-        layout.setContentsMargins(30, 30, 30, 30)
-        
-        # Title
-        title_label = QLabel(f"{timer_name} Complete!")
-        title_font = QFont()
-        title_font.setPointSize(24)
-        title_font.setBold(True)
-        title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_label.setStyleSheet("color: #4CAF50;")
-        layout.addWidget(title_label)
-        
-        # Message
-        message_label = QLabel("Your timer has finished!")
-        message_font = QFont()
-        message_font.setPointSize(14)
-        message_label.setFont(message_font)
-        message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(message_label)
-        
-        # Stop button
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        
-        stop_button = QPushButton("🔇 Stop Alarm")
-        stop_button.clicked.connect(self._stop_alarm)
-        stop_button.setMinimumWidth(150)
-        stop_button.setMinimumHeight(45)
-        button_layout.addWidget(stop_button)
-        
-        button_layout.addStretch()
-        layout.addLayout(button_layout)
-        
-        self.setLayout(layout)
-        
-        # Bring window to front
+        self._build(timer_name)
         self.raise_()
         self.activateWindow()
-    
-    def _stop_alarm(self):
-        """Stop the alarm sound and close dialog."""
+
+    def _build(self, timer_name: str) -> None:
+        layout = QVBoxLayout(self)
+        layout.setSpacing(16)
+        layout.setContentsMargins(32, 28, 32, 28)
+
+        title = QLabel(f"{timer_name} Complete!")
+        tf = QFont()
+        tf.setPointSize(22)
+        tf.setBold(True)
+        title.setFont(tf)
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet(f"color: {COLORS['accent']};")
+        layout.addWidget(title)
+
+        msg = QLabel("Your timer has finished.")
+        mf = QFont()
+        mf.setPointSize(13)
+        msg.setFont(mf)
+        msg.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        msg.setStyleSheet(f"color: {COLORS['text_sec']};")
+        layout.addWidget(msg)
+
+        row = QHBoxLayout()
+        row.addStretch()
+        btn = QPushButton("Dismiss")
+        btn.setMinimumSize(140, 42)
+        btn.clicked.connect(self._stop_alarm)
+        row.addWidget(btn)
+        row.addStretch()
+        layout.addLayout(row)
+
+    def _stop_alarm(self) -> None:
         if self.media_player:
             self.media_player.stop()
         self.accept()
 
 
+# ---------------------------------------------------------------------------
+# Virtual desktop switcher (background thread — avoids freezing the UI)
+# ---------------------------------------------------------------------------
+
+class _DesktopSwitchThread(QThread):
+    """Navigates to a target virtual desktop number (1-based) off the main thread.
+
+    Pure navigation — no window is moved. The user arranges their own apps on
+    each desktop; the timer just switches which desktop is visible.
+
+    Strategy: Win+Ctrl+Left ×10 (safe floor to desktop 1) then Right ×(target-1).
+    """
+
+    done = pyqtSignal()
+
+    def __init__(self, target: int, parent=None):
+        super().__init__(parent)
+        self._target = max(1, target)
+
+    def run(self) -> None:
+        try:
+            import ctypes
+            import time
+
+            u32    = ctypes.windll.user32
+            VK_LWIN, VK_CONTROL = 0x5B, 0x11
+            VK_LEFT, VK_RIGHT   = 0x25, 0x27
+            KEYUP               = 0x0002
+
+            def press(arrow):
+                u32.keybd_event(VK_LWIN,    0, 0,     0)
+                u32.keybd_event(VK_CONTROL, 0, 0,     0)
+                u32.keybd_event(arrow,      0, 0,     0)
+                u32.keybd_event(arrow,      0, KEYUP, 0)
+                u32.keybd_event(VK_CONTROL, 0, KEYUP, 0)
+                u32.keybd_event(VK_LWIN,    0, KEYUP, 0)
+                time.sleep(0.20)
+
+            for _ in range(10):
+                press(VK_LEFT)
+            for _ in range(self._target - 1):
+                press(VK_RIGHT)
+
+        except Exception:
+            pass
+        finally:
+            self.done.emit()
+
+
+# ---------------------------------------------------------------------------
+# Main timer widget
+# ---------------------------------------------------------------------------
+
 class TimerWindow(QWidget):
-    """Main timer window."""
-    
-    # Signal emitted when timer completes
-    timer_completed = pyqtSignal(str)
-    
+    """Pomodoro timer — displays a circular progress ring and controls.
+
+    Keyboard shortcuts (requires widget focus):
+        Space – Start / Pause toggle
+        R     – Reset current phase
+        S     – Skip to next phase
+        M     – Toggle mute
+    """
+
+    timer_completed  = pyqtSignal(str)
+    mini_tick        = pyqtSignal(str, str, str, str, bool)  # time, state, color, task, is_running
+    desktop_switched = pyqtSignal()                           # emitted after every desktop nav
+
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.db = Database()
-        self.settings = self._load_settings()
-        self.state = TimerState.WORK
-        self.previous_state = TimerState.WORK  # Store state before pause
-        self.remaining_seconds = 0
-        self.work_sessions = 0
-        self.downtime_seconds = 0  # Track downtime duration
-        self.last_notification_time = 0  # Track last notification time
-        self.is_downtime_active = False  # Track if downtime is currently being tracked
-        self.muted = False  # Track mute state
-        self.timer = QTimer(self)
+        self.db                   = Database()
+        self._mini_task_text      = ""
+        self.settings             = self._load_settings()
+        self.state                = TimerState.WORK
+        self.previous_state       = TimerState.WORK
+        self.remaining_seconds    = 0
+        self.work_sessions        = 0
+        self.downtime_seconds     = 0
+        self.last_notification_time = 0
+        self.is_downtime_active   = False
+        self.muted                = False
+        self.timer                = QTimer(self)
         self.timer.timeout.connect(self._update_timer)
-        self.tray_icon = None
-        self.alarm_dialog = None
-        
-        # Setup audio player for alarm sound
-        self.audio_output = QAudioOutput(self)
-        self.media_player = QMediaPlayer(self)
+        self.tray_icon            = None
+        self.alarm_dialog         = None
+
+        self.audio_output  = QAudioOutput(self)
+        self.media_player  = QMediaPlayer(self)
         self.media_player.setAudioOutput(self.audio_output)
-        
-        # Setup tick sound player (separate so it doesn't interrupt alarms)
+
         self.tick_audio_output = QAudioOutput(self)
         self.tick_audio_output.setVolume(0.5)
         self.tick_player = QMediaPlayer(self)
         self.tick_player.setAudioOutput(self.tick_audio_output)
-        
+
         self._init_ui()
         self._setup_tray()
         self._load_state()
-    
+
+    # ── Settings helpers ──────────────────────────────────────────────────────
+
     def _load_settings(self) -> Settings:
-        """Load settings from database."""
-        settings_data = self.db.get_settings()
-        if settings_data:
-            return Settings.from_dict(settings_data)
+        data = self.db.get_settings()
+        if data:
+            return Settings.from_dict(self._apply_day_preset_if_enabled(data))
         return Settings()
-    
-    def _init_ui(self):
-        """Initialize the UI."""
+
+    def _apply_day_preset_if_enabled(self, settings_data: dict) -> dict:
+        """Override timer values from weekday/weekend preset when enabled."""
+        try:
+            preset_path = Path(__file__).parent / "data" / "timer_presets.json"
+            if not preset_path.exists():
+                return settings_data
+            with open(preset_path, "r", encoding="utf-8") as f:
+                store = json.load(f) or {}
+            if not store.get("auto_apply", False):
+                return settings_data
+
+            presets = store.get("presets", {})
+            if not isinstance(presets, dict):
+                return settings_data
+            is_weekend  = datetime.now().weekday() >= 5
+            key         = "weekend_preset" if is_weekend else "weekday_preset"
+            preset_name = store.get(key)
+            payload     = presets.get(preset_name, {})
+            if not isinstance(payload, dict):
+                return settings_data
+
+            merged = dict(settings_data)
+            for field in ("work_time", "short_break", "long_break",
+                          "downtime", "downtime_notify_threshold"):
+                if field in payload:
+                    merged[field] = int(payload[field])
+            return merged
+        except Exception:
+            return settings_data
+
+    def _load_schedule_options(self) -> dict:
+        defaults = {"include_bedtime_routine": False, "awake_hours": 16}
+        try:
+            path = Path(__file__).parent / "data" / "schedule_options.json"
+            if not path.exists():
+                return defaults
+            with open(path, "r", encoding="utf-8") as f:
+                loaded = json.load(f) or {}
+            if not isinstance(loaded, dict):
+                return defaults
+            merged = defaults.copy()
+            merged.update(loaded)
+            return merged
+        except Exception:
+            return defaults
+
+    # ── Schedule helpers (for indicator) ─────────────────────────────────────
+
+    def _build_bedtime_windows(self, wake: datetime):
+        opts = self._load_schedule_options()
+        if not opts.get("include_bedtime_routine", False):
+            return []
+
+        awake_hours = max(8, min(20, int(opts.get("awake_hours", 16))))
+        sleep_start = wake + timedelta(hours=awake_hours)
+        sleep_end   = sleep_start + timedelta(hours=8)
+
+        steps = [
+            ("🧹 Tidy + Prepare Tomorrow", 30),
+            ("📵 Wind Down (No Screens)",  30),
+        ]
+
+        windows = []
+        total  = sum(m for _, m in steps)
+        cursor = sleep_start - timedelta(minutes=total)
+        for title, duration in steps:
+            start = cursor
+            end   = start + timedelta(minutes=duration)
+            windows.append((
+                ScheduleTask(id=None, task=title, duration_minutes=duration,
+                             is_fixed_time=True,
+                             fixed_time=start.strftime("%H:%M"),
+                             fixed_time_end=end.strftime("%H:%M"),
+                             offset_minutes=0, anchor_type="wake_up",
+                             anchor_task_id=None, sort_order=10_000 + len(windows)),
+                start, end,
+            ))
+            cursor = end
+
+        windows.append((
+            ScheduleTask(id=None, task="😴 Sleep",
+                         duration_minutes=int((sleep_end - sleep_start).total_seconds() // 60),
+                         is_fixed_time=True,
+                         fixed_time=sleep_start.strftime("%H:%M"),
+                         fixed_time_end=sleep_end.strftime("%H:%M"),
+                         offset_minutes=0, anchor_type="wake_up",
+                         anchor_task_id=None, sort_order=10_100),
+            sleep_start, sleep_end,
+        ))
+        return windows
+
+    def _get_fixed_end(self, task: ScheduleTask, start_dt: datetime) -> datetime:
+        if task.fixed_time_end:
+            try:
+                h, m = map(int, task.fixed_time_end.split(":"))
+                end_same = start_dt.replace(hour=h, minute=m, second=0, microsecond=0)
+                if end_same > start_dt:
+                    return end_same
+                candidates = []
+                if h < 12:
+                    plus_12 = end_same + timedelta(hours=12)
+                    if plus_12 > start_dt:
+                        candidates.append(plus_12)
+                plus_24 = end_same + timedelta(days=1)
+                if plus_24 > start_dt:
+                    candidates.append(plus_24)
+                if candidates:
+                    return min(candidates, key=lambda dt: dt - start_dt)
+                return end_same
+            except Exception:
+                pass
+        return start_dt + timedelta(minutes=max(int(task.duration_minutes or 30), 1))
+
+    def _get_schedule_windows(self):
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        wake_str = self.db.get_wakeup_time(date_str)
+        if not wake_str:
+            return []
+        try:
+            h, m = map(int, wake_str.split(":"))
+        except ValueError:
+            return []
+
+        now  = datetime.now()
+        wake = now.replace(hour=h, minute=m, second=0, microsecond=0)
+
+        raw_tasks = self.db.get_schedule_tasks()
+        tasks     = [ScheduleTask.from_dict(t) for t in raw_tasks]
+        if not tasks:
+            return []
+
+        occupied_windows = []
+        fixed_entries    = []
+
+        for t in tasks:
+            if not t.is_fixed_time or not t.fixed_time:
+                continue
+            try:
+                sh, sm = map(int, t.fixed_time.split(":"))
+                start  = wake.replace(hour=sh, minute=sm, second=0)
+            except Exception:
+                start = wake
+            end = self._get_fixed_end(t, start)
+            if end <= start:
+                end = start + timedelta(minutes=30)
+            fixed_entries.append((t, start, end))
+            occupied_windows.append((start, end))
+
+        for t, start, end in self._build_bedtime_windows(wake):
+            fixed_entries.append((t, start, end))
+            occupied_windows.append((start, end))
+
+        def all_windows():
+            wins = list(occupied_windows)
+            wins.sort(key=lambda x: x[0])
+            return wins
+
+        relative_tasks = [t for t in tasks if not t.is_fixed_time]
+        relative_tasks.sort(key=lambda x: (x.sort_order, x.id or 0))
+        relative_entries = []
+        cursor = wake
+
+        for t in relative_tasks:
+            dur          = max(1, int(t.duration_minutes))
+            break_min    = max(0, int(t.offset_minutes or 0))
+            start        = cursor + timedelta(minutes=break_min)
+            end          = start + timedelta(minutes=dur)
+            changed = True
+            while changed:
+                changed = False
+                for ws, we in all_windows():
+                    if start < we and end > ws:
+                        start   = we + timedelta(minutes=break_min)
+                        end     = start + timedelta(minutes=dur)
+                        changed = True
+            occupied_windows.append((start, end))
+            relative_entries.append((t, start, end))
+            cursor = end
+
+        combined = fixed_entries + relative_entries
+        combined.sort(key=lambda row: row[1])
+        return combined
+
+    def _update_schedule_indicator(self) -> None:
+        if not hasattr(self, "schedule_now_label"):
+            return
+        now     = datetime.now()
+        windows = self._get_schedule_windows()
+        current = None
+        for task, start, end in windows:
+            if start <= now < end:
+                current = (task, start, end)
+                break
+        if current:
+            task, _, end = current
+            self.schedule_now_label.setText(
+                f"📌 Now: {task.task} (until {end.strftime('%I:%M %p').lstrip('0')})"
+            )
+            self._mini_task_text = task.task
+        else:
+            self.schedule_now_label.setText("📌 Schedule: —")
+            self._mini_task_text = self._get_first_pending_todo()
+
+    # ── UI construction ───────────────────────────────────────────────────────
+
+    def _init_ui(self) -> None:
         self.setWindowTitle("Pomodoro Timer")
-        self.setMinimumSize(300, 150)  # Allow much smaller window
-        # Window is resizable by default in PyQt6, no need to set flags
-        
-        # Main layout
-        main_layout = QVBoxLayout()
-        main_layout.setSpacing(25)
-        main_layout.setContentsMargins(40, 40, 40, 40)
-        
-        # State label
-        self.state_label = QLabel("⏱ Work Time")
-        self.state_label.setObjectName("state_label")
-        self.state_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        font = QFont()
-        font.setPointSize(20)
-        font.setBold(True)
-        self.state_label.setFont(font)
-        main_layout.addWidget(self.state_label)
-        
-        # Timer display
-        self.timer_label = QLabel("00:00")
-        self.timer_label.setObjectName("timer_label")
-        self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        timer_font = QFont()
-        timer_font.setPointSize(72)
-        timer_font.setBold(True)
-        self.timer_label.setFont(timer_font)
-        main_layout.addWidget(self.timer_label)
-        
-        # Work sessions counter
+        self.setMinimumSize(300, 150)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+        root = QVBoxLayout(self)
+        root.setSpacing(10)
+        root.setContentsMargins(32, 28, 32, 24)
+
+        # ── Schedule indicator (top-right) ────────────────────────────────────
+        top_row = QHBoxLayout()
+        top_row.addStretch()
+        self.schedule_now_label = QLabel("📌 Schedule: —")
+        self.schedule_now_label.setStyleSheet(
+            f"color: {COLORS['accent']}; font-size: 12px; font-weight: 600;"
+        )
+        self.schedule_now_label.setAlignment(
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+        )
+        top_row.addWidget(self.schedule_now_label)
+        root.addLayout(top_row)
+
+        # ── Circular timer ring ───────────────────────────────────────────────
+        self.ring = TimerRingWidget()
+        root.addWidget(self.ring, 1)
+
+        # ── Session dots ──────────────────────────────────────────────────────
+        dots_row = QHBoxLayout()
+        dots_row.addStretch()
+        self.session_dots = SessionDotsWidget()
+        dots_row.addWidget(self.session_dots)
+        dots_row.addStretch()
+        root.addLayout(dots_row)
+
+        # Sessions text
         self.sessions_label = QLabel("Work Sessions: 0")
         self.sessions_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        sessions_font = QFont()
-        sessions_font.setPointSize(14)
-        self.sessions_label.setFont(sessions_font)
-        self.sessions_label.setStyleSheet("color: #666;")
-        main_layout.addWidget(self.sessions_label)
-        
-        # Downtime timer display (separate, smaller)
-        downtime_container = QWidget()
-        downtime_layout = QVBoxLayout()
-        downtime_layout.setSpacing(5)
-        downtime_layout.setContentsMargins(0, 15, 0, 0)
-        
-        downtime_title = QLabel("💤 Downtime")
-        downtime_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        downtime_title_font = QFont()
-        downtime_title_font.setPointSize(11)
-        downtime_title.setFont(downtime_title_font)
-        downtime_title.setStyleSheet("color: #999;")
-        downtime_layout.addWidget(downtime_title)
-        
+        sf = QFont()
+        sf.setPointSize(12)
+        self.sessions_label.setFont(sf)
+        self.sessions_label.setStyleSheet(f"color: {COLORS['text_sec']};")
+        root.addWidget(self.sessions_label)
+
+        # ── Control buttons ───────────────────────────────────────────────────
+        btn_row = QHBoxLayout()
+        btn_row.setSpacing(8)
+
+        self.start_button = self._make_button("▶  Start",  COLORS["success"],    "#059669", tip="Start  [Space]")
+        self.pause_button = self._make_button("⏸  Pause",  COLORS["warning"],    "#d97706", tip="Pause  [Space]")
+        self.reset_button = self._make_button("⏹  Reset",  COLORS["danger"],     "#dc2626", tip="Reset  [R]")
+        self.skip_button  = self._make_button("⏭  Skip",   COLORS["short_break"],"#0284c7", tip="Skip   [S]")
+
+        self.start_button.clicked.connect(self.start_timer)
+        self.pause_button.clicked.connect(self.pause_timer)
+        self.reset_button.clicked.connect(self.reset_timer)
+        self.skip_button.clicked.connect(self.skip_timer)
+
+        self.pause_button.setEnabled(False)
+
+        for btn in (self.start_button, self.pause_button,
+                    self.reset_button, self.skip_button):
+            btn_row.addWidget(btn)
+
+        root.addLayout(btn_row)
+
+        # ── Mute toggle ───────────────────────────────────────────────────────
+        mute_row = QHBoxLayout()
+        mute_row.addStretch()
+        self.mute_button = QPushButton("🔊  Mute")
+        self.mute_button.setToolTip("Toggle mute  [M]")
+        self.mute_button.setFixedHeight(32)
+        self.mute_button.setFixedWidth(110)
+        self.mute_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {COLORS['text_sec']};
+                border: 1.5px solid {COLORS['border']};
+                border-radius: 16px;
+                font-size: 12px;
+                font-weight: 600;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS['border']};
+                color: {COLORS['text']};
+            }}
+            QPushButton:pressed {{
+                background-color: {COLORS['accent_light']};
+                color: {COLORS['accent']};
+                border-color: {COLORS['accent_border']};
+            }}
+        """)
+        self.mute_button.clicked.connect(self.toggle_mute)
+        mute_row.addWidget(self.mute_button)
+        mute_row.addStretch()
+        root.addLayout(mute_row)
+
+        # ── Downtime display ──────────────────────────────────────────────────
+        self.downtime_container = QWidget()
+        dt_layout = QVBoxLayout(self.downtime_container)
+        dt_layout.setSpacing(4)
+        dt_layout.setContentsMargins(0, 8, 0, 0)
+
+        dt_title = QLabel("💤 Downtime")
+        dt_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        dtf = QFont()
+        dtf.setPointSize(11)
+        dt_title.setFont(dtf)
+        dt_title.setStyleSheet(f"color: {COLORS['text_muted']};")
+        dt_layout.addWidget(dt_title)
+
         self.downtime_label = QLabel("00:00")
         self.downtime_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        downtime_font = QFont()
-        downtime_font.setPointSize(24)
-        downtime_font.setBold(True)
-        self.downtime_label.setFont(downtime_font)
-        self.downtime_label.setStyleSheet("color: #9e9e9e;")
-        downtime_layout.addWidget(self.downtime_label)
-        
-        downtime_container.setLayout(downtime_layout)
-        self.downtime_container = downtime_container  # Store reference
-        main_layout.addWidget(downtime_container)
-        
-        # Set initial visibility
-        if self.settings.enable_downtime:
-            downtime_container.setVisible(True)
-        else:
-            downtime_container.setVisible(False)
-        
-        # Control buttons
-        button_layout = QHBoxLayout()
-        button_layout.setSpacing(10)
-        
-        self.start_button = QPushButton("▶ Start")
-        self.start_button.clicked.connect(self.start_timer)
-        self.start_button.setMinimumHeight(45)
-        self.start_button.setMinimumWidth(120)
-        button_layout.addWidget(self.start_button)
-        
-        self.pause_button = QPushButton("⏸ Pause")
-        self.pause_button.setObjectName("pauseBtn")
-        self.pause_button.clicked.connect(self.pause_timer)
-        self.pause_button.setMinimumHeight(45)
-        self.pause_button.setMinimumWidth(120)
-        self.pause_button.setEnabled(False)
-        button_layout.addWidget(self.pause_button)
-        
-        self.reset_button = QPushButton("⏹ Reset")
-        self.reset_button.setObjectName("resetBtn")
-        self.reset_button.clicked.connect(self.reset_timer)
-        self.reset_button.setMinimumHeight(45)
-        self.reset_button.setMinimumWidth(120)
-        button_layout.addWidget(self.reset_button)
-        
-        self.skip_button = QPushButton("⏭ Skip")
-        self.skip_button.setObjectName("skipBtn")
-        self.skip_button.clicked.connect(self.skip_timer)
-        self.skip_button.setMinimumHeight(45)
-        self.skip_button.setMinimumWidth(120)
-        button_layout.addWidget(self.skip_button)
-        
-        main_layout.addLayout(button_layout)
-        
-        # Mute button
-        mute_layout = QHBoxLayout()
-        mute_layout.addStretch()
-        self.mute_button = QPushButton("🔊 Mute")
-        self.mute_button.setObjectName("muteBtn")
-        self.mute_button.clicked.connect(self.toggle_mute)
-        self.mute_button.setMinimumHeight(35)
-        self.mute_button.setMinimumWidth(100)
-        mute_layout.addWidget(self.mute_button)
-        mute_layout.addStretch()
-        main_layout.addLayout(mute_layout)
-        
-        # Spacer
-        main_layout.addStretch()
-        
-        self.setLayout(main_layout)
+        dlf = QFont()
+        dlf.setPointSize(22)
+        dlf.setBold(True)
+        self.downtime_label.setFont(dlf)
+        self.downtime_label.setStyleSheet(f"color: {COLORS['text_muted']};")
+        dt_layout.addWidget(self.downtime_label)
+
+        self.downtime_container.setVisible(self.settings.enable_downtime)
+        root.addWidget(self.downtime_container)
+
         self._update_display()
-        self._apply_state_colors()
-        self._update_icon()  # Set initial icon
-        self._update_ui_for_size()  # Set initial UI state based on size
-    
-    def _create_emoji_icon(self, emoji: str) -> QIcon:
-        """Create an icon from an emoji."""
-        # Create a pixmap
-        pixmap = QPixmap(32, 32)
-        pixmap.fill(QColor(0, 0, 0, 0))  # Transparent background
-        
-        # Draw emoji on pixmap
-        painter = QPainter(pixmap)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        font = QFont()
-        font.setPointSize(20)
-        font.setBold(True)
-        painter.setFont(font)
-        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, emoji)
-        painter.end()
-        
-        return QIcon(pixmap)
-    
-    def _create_text_icon(self, text: str, color: QColor = None) -> QIcon:
-        """Create an icon with text showing minutes."""
-        # Default color (blue) if not specified
-        if color is None:
-            color = QColor(70, 130, 180)
-        
-        # Create a larger pixmap for better text visibility
-        pixmap = QPixmap(64, 64)
-        pixmap.fill(QColor(255, 255, 255, 0))  # Transparent background
-        
-        painter = QPainter(pixmap)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # Draw background circle with specified color
-        painter.setBrush(QColor(color.red(), color.green(), color.blue(), 220))  # With transparency
-        painter.setPen(QColor(color.red(), color.green(), color.blue(), 255))
-        painter.drawEllipse(2, 2, 60, 60)
-        
-        # Draw text
-        font = QFont()
-        font.setPointSize(16)
-        font.setBold(True)
-        painter.setFont(font)
-        painter.setPen(QColor(255, 255, 255))  # White text
-        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, text)
-        painter.end()
-        
-        return QIcon(pixmap)
-    
-    def _update_icon(self):
-        """Update the app icon to show time left in minutes."""
-        # Calculate minutes remaining
-        minutes = self.remaining_seconds // 60
-        
-        # Determine color based on timer state
-        if self.state == TimerState.WORK:
-            icon_color = QColor(198, 40, 40)  # Red
-        elif self.state == TimerState.SHORT_BREAK:
-            icon_color = QColor(21, 101, 192)  # Blue
-        elif self.state == TimerState.LONG_BREAK:
-            icon_color = QColor(46, 125, 50)  # Green
-        else:  # PAUSED or other states
-            icon_color = QColor(97, 97, 97)  # Gray
-        
-        # Create icon with minutes text and appropriate color
-        icon = self._create_text_icon(str(minutes), icon_color)
-        
-        # Update window icon
+        self._apply_state_style()
+        self._update_icon()
+        self._update_ui_for_size()
+
+    @staticmethod
+    def _make_button(text: str, color: str, hover: str, tip: str = "") -> QPushButton:
+        """Return a styled control button."""
+        btn = QPushButton(text)
+        btn.setToolTip(tip)
+        btn.setMinimumHeight(40)
+        btn.setMinimumWidth(100)
+        btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {color};
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 13px;
+            }}
+            QPushButton:hover  {{ background-color: {hover}; }}
+            QPushButton:pressed{{ background-color: {hover}; }}
+            QPushButton:disabled {{
+                background-color: {COLORS['border']};
+                color: {COLORS['text_muted']};
+            }}
+        """)
+        return btn
+
+    # ── Icon helpers ──────────────────────────────────────────────────────────
+
+    def _create_battery_icon(self, minutes: int, ratio: float, color: QColor) -> QIcon:
+        """Return a taskbar/tray icon showing remaining minutes."""
+        fill_ratio   = max(0.0, min(1.0, ratio))
+        minutes_text = str(max(0, minutes))
+        if len(minutes_text) > 2:
+            minutes_text = "99+"
+
+        def _render(size: int) -> QPixmap:
+            pixmap = QPixmap(size, size)
+            pixmap.fill(QColor(255, 255, 255, 0))
+            p = QPainter(pixmap)
+            p.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+            margin = max(1, size // 10)
+            rect_x, rect_y = margin, margin
+            rect_w = size - margin * 2
+            rect_h = size - margin * 2
+            radius = max(2, size // 8)
+
+            p.setBrush(QColor(255, 255, 255, 245))
+            p.setPen(QColor(color.red(), color.green(), color.blue(), 230))
+            p.drawRoundedRect(rect_x, rect_y, rect_w, rect_h, radius, radius)
+
+            bar_margin = max(2, size // 8)
+            bar_h      = max(2, size // 8)
+            bar_x      = rect_x + bar_margin
+            bar_w      = rect_w - bar_margin * 2
+            bar_y      = rect_y + rect_h - bar_h - bar_margin
+
+            p.setBrush(QColor(230, 230, 230))
+            p.setPen(Qt.PenStyle.NoPen)
+            p.drawRoundedRect(bar_x, bar_y, bar_w, bar_h, 1, 1)
+
+            if minutes > 0:
+                fill_w = max(1, int(bar_w * fill_ratio))
+                p.setBrush(QColor(color.red(), color.green(), color.blue(), 230))
+                p.drawRoundedRect(bar_x, bar_y, fill_w, bar_h, 1, 1)
+
+            font = QFont()
+            if size <= 20:
+                font.setPointSize(max(7, size // 2))
+            elif size <= 32:
+                font.setPointSize(max(9, size // 2))
+            else:
+                font.setPointSize(max(12, size // 3))
+            font.setBold(True)
+            p.setFont(font)
+            p.setPen(QColor(20, 20, 20))
+            text_rect = pixmap.rect().adjusted(0, 0, 0, -max(3, size // 6))
+            p.drawText(text_rect, Qt.AlignmentFlag.AlignCenter, minutes_text)
+            p.end()
+            return pixmap
+
+        icon = QIcon()
+        for s in (16, 20, 24, 32, 40, 48, 64):
+            icon.addPixmap(_render(s))
+        return icon
+
+    def _update_icon(self) -> None:
+        color_map = {
+            TimerState.WORK:        QColor(COLORS["work"]),
+            TimerState.SHORT_BREAK: QColor(COLORS["short_break"]),
+            TimerState.LONG_BREAK:  QColor(COLORS["long_break"]),
+        }
+        icon_color   = color_map.get(self.state, QColor(COLORS["text_sec"]))
+        total_secs   = max(1, self._get_timer_duration())
+        ratio        = self.remaining_seconds / total_secs
+        minutes      = self.remaining_seconds // 60
+        icon         = self._create_battery_icon(minutes, ratio, icon_color)
+
         self.setWindowIcon(icon)
-        
-        # Update tray icon if available
+        app = QApplication.instance()
+        if app:
+            app.setWindowIcon(icon)
         if self.tray_icon:
             self.tray_icon.setIcon(icon)
-    
-    def _setup_tray(self):
-        """Setup system tray icon."""
-        if QSystemTrayIcon.isSystemTrayAvailable():
-            self.tray_icon = QSystemTrayIcon(self)
-            
-            # Create tray menu
-            tray_menu = QMenu()
-            
-            show_action = QAction("Show", self)
-            show_action.triggered.connect(self.show)
-            tray_menu.addAction(show_action)
-            
-            quit_action = QAction("Quit", self)
-            quit_action.triggered.connect(QApplication.instance().quit)
-            tray_menu.addAction(quit_action)
-            
-            self.tray_icon.setContextMenu(tray_menu)
-            self.tray_icon.activated.connect(self._tray_icon_activated)
-            self.tray_icon.show()
-            
-            # Set initial icon
-            self._update_icon()
-    
-    def _tray_icon_activated(self, reason):
-        """Handle tray icon activation."""
+
+    # ── Tray ──────────────────────────────────────────────────────────────────
+
+    def _setup_tray(self) -> None:
+        if not QSystemTrayIcon.isSystemTrayAvailable():
+            return
+        self.tray_icon = QSystemTrayIcon(self)
+        menu = QMenu()
+        show_action = QAction("Show", self)
+        show_action.triggered.connect(self.show)
+        menu.addAction(show_action)
+        quit_action = QAction("Quit", self)
+        quit_action.triggered.connect(QApplication.instance().quit)
+        menu.addAction(quit_action)
+        self.tray_icon.setContextMenu(menu)
+        self.tray_icon.activated.connect(self._tray_icon_activated)
+        self.tray_icon.show()
+        self._update_icon()
+
+    def _tray_icon_activated(self, reason) -> None:
         if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
             self.show()
             self.raise_()
             self.activateWindow()
-    
-    def _update_display(self):
-        """Update the timer display."""
-        # Update main timer
-        minutes = self.remaining_seconds // 60
-        seconds = self.remaining_seconds % 60
-        self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
-        
-        # Update work sessions
+
+    # ── Display helpers ───────────────────────────────────────────────────────
+
+    def _state_display_text(self) -> str:
+        return {
+            TimerState.WORK:        "Work Time",
+            TimerState.SHORT_BREAK: "Short Break",
+            TimerState.LONG_BREAK:  "Long Break",
+            TimerState.DOWNTIME:    "Downtime",
+            TimerState.PAUSED:      "Paused",
+        }.get(self.state, "")
+
+    def _state_color_hex(self) -> str:
+        color_map = {
+            TimerState.WORK:        COLORS["work"],
+            TimerState.SHORT_BREAK: COLORS["short_break"],
+            TimerState.LONG_BREAK:  COLORS["long_break"],
+            TimerState.DOWNTIME:    COLORS["downtime"] if "downtime" in COLORS else COLORS["text_sec"],
+            TimerState.PAUSED:      COLORS["text_sec"],
+        }
+        return color_map.get(self.state, COLORS["text_sec"])
+
+    def _get_first_pending_todo(self) -> str:
+        try:
+            todos = self.db.get_todos()
+            for t in todos:
+                if not t.get("completed"):
+                    return t.get("task") or ""
+        except Exception:
+            pass
+        return ""
+
+    def _update_display(self) -> None:
+        mins = self.remaining_seconds // 60
+        secs = self.remaining_seconds % 60
+        time_text  = f"{mins:02d}:{secs:02d}"
+        state_text = self._state_display_text()
+        color_hex  = self._state_color_hex()
+
+        total    = max(1, self._get_timer_duration())
+        progress = self.remaining_seconds / total
+
+        self.ring.update_state(time_text, state_text, progress, color_hex)
+
         self.sessions_label.setText(f"Work Sessions: {self.work_sessions}")
-        
-        # Update downtime timer (always visible if downtime is enabled)
-        if hasattr(self, 'downtime_label'):
-            if self.settings.enable_downtime:
-                downtime_minutes = self.downtime_seconds // 60
-                downtime_seconds = self.downtime_seconds % 60
-                self.downtime_label.setText(f"{downtime_minutes:02d}:{downtime_seconds:02d}")
-                
-                # Highlight if downtime exceeds threshold
-                if self.downtime_seconds >= self.settings.downtime_notify_threshold:
-                    self.downtime_label.setStyleSheet("color: #ff9800; font-weight: bold;")
-                else:
-                    self.downtime_label.setStyleSheet("color: #9e9e9e;")
+        self.session_dots.set_sessions(self.work_sessions)
+
+        # Downtime display
+        if hasattr(self, "downtime_label") and self.settings.enable_downtime:
+            dm = self.downtime_seconds // 60
+            ds = self.downtime_seconds % 60
+            self.downtime_label.setText(f"{dm:02d}:{ds:02d}")
+            if self.downtime_seconds >= self.settings.downtime_notify_threshold:
+                self.downtime_label.setStyleSheet(f"color: {COLORS['warning']}; font-weight: bold;")
             else:
-                self.downtime_label.setText("--:--")
-                self.downtime_label.setStyleSheet("color: #ccc;")
-        
-        # Update icon to show minutes remaining
+                self.downtime_label.setStyleSheet(f"color: {COLORS['text_muted']};")
+        elif hasattr(self, "downtime_label"):
+            self.downtime_label.setText("--:--")
+            self.downtime_label.setStyleSheet(f"color: {COLORS['border']};")
+
         self._update_icon()
-    
-    def _apply_state_colors(self):
-        """Apply color coding based on timer state."""
-        base_style = """
-            QWidget {
-                background-color: #ffffff;
-            }
-            QLabel#state_label {
-                padding: 15px;
-                border-radius: 10px;
-                font-weight: bold;
-            }
-            QLabel#timer_label {
-                padding: 20px;
-                border-radius: 15px;
-                background-color: #f8f9fa;
-                border: 3px solid #e0e0e0;
-            }
-            QPushButton {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 6px;
-                font-weight: bold;
-                font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #3d8b40;
-            }
-            QPushButton:disabled {
-                background-color: #cccccc;
-            }
-            QPushButton#pauseBtn {
-                background-color: #ff9800;
-            }
-            QPushButton#pauseBtn:hover {
-                background-color: #e68900;
-            }
-            QPushButton#resetBtn {
-                background-color: #f44336;
-            }
-            QPushButton#resetBtn:hover {
-                background-color: #da190b;
-            }
-            QPushButton#skipBtn {
-                background-color: #2196F3;
-            }
-            QPushButton#skipBtn:hover {
-                background-color: #0b7dda;
-            }
-            QPushButton#muteBtn {
-                background-color: #757575;
-            }
-            QPushButton#muteBtn:hover {
-                background-color: #616161;
-            }
-            QPushButton#muteBtn:pressed {
-                background-color: #424242;
-            }
-        """
-        
-        if self.state == TimerState.WORK:
-            state_style = base_style + """
-                QLabel#state_label {
-                    background-color: #ffebee;
-                    color: #c62828;
-                    border: 2px solid #ef5350;
-                }
-                QLabel#timer_label {
-                    color: #c62828;
-                    border-color: #ef5350;
-                }
-            """
-            self.setStyleSheet(state_style)
-            self.state_label.setText("⏱ Work Time")
-            # Show downtime timer (it tracks in background)
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(self.settings.enable_downtime)
-        elif self.state == TimerState.SHORT_BREAK:
-            state_style = base_style + """
-                QLabel#state_label {
-                    background-color: #e3f2fd;
-                    color: #1565c0;
-                    border: 2px solid #42a5f5;
-                }
-                QLabel#timer_label {
-                    color: #1565c0;
-                    border-color: #42a5f5;
-                }
-            """
-            self.setStyleSheet(state_style)
-            self.state_label.setText("☕ Short Break")
-            # Show downtime timer (it tracks in background)
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(self.settings.enable_downtime)
-        elif self.state == TimerState.LONG_BREAK:
-            state_style = base_style + """
-                QLabel#state_label {
-                    background-color: #e8f5e9;
-                    color: #2e7d32;
-                    border: 2px solid #66bb6a;
-                }
-                QLabel#timer_label {
-                    color: #2e7d32;
-                    border-color: #66bb6a;
-                }
-            """
-            self.setStyleSheet(state_style)
-            self.state_label.setText("🌴 Long Break")
-            # Show downtime timer (it tracks in background)
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(self.settings.enable_downtime)
-        else:
-            state_style = base_style + """
-                QLabel#state_label {
-                    background-color: #f5f5f5;
-                    color: #616161;
-                    border: 2px solid #9e9e9e;
-                }
-                QLabel#timer_label {
-                    color: #616161;
-                    border-color: #9e9e9e;
-                }
-            """
-            self.setStyleSheet(state_style)
-            self.state_label.setText("⏸ Paused")
-            # Show downtime timer if enabled
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(self.settings.enable_downtime)
-        
-        # Update icon when state changes
+        self._update_schedule_indicator()
+        self.mini_tick.emit(time_text, state_text, color_hex,
+                            self._mini_task_text, self.timer.isActive())
+
+    def _apply_state_style(self) -> None:
+        """Keep the background neutral — the ring handles all state colour."""
+        self.setStyleSheet(f"QWidget {{ background-color: {COLORS['surface']}; }}")
+        if hasattr(self, "downtime_container"):
+            self.downtime_container.setVisible(self.settings.enable_downtime)
         self._update_icon()
-    
+
+    # ── Timer duration helpers ────────────────────────────────────────────────
+
     def _get_timer_duration(self) -> int:
-        """Get timer duration in seconds for current state."""
+        return {
+            TimerState.WORK:        self.settings.work_time,
+            TimerState.SHORT_BREAK: self.settings.short_break,
+            TimerState.LONG_BREAK:  self.settings.long_break,
+        }.get(self.state, 0)
+
+    def _get_next_state(self) -> str:
         if self.state == TimerState.WORK:
-            return self.settings.work_time
-        elif self.state == TimerState.SHORT_BREAK:
-            return self.settings.short_break
-        elif self.state == TimerState.LONG_BREAK:
-            return self.settings.long_break
-        return 0
-    
-    def _get_next_state(self):
-        """Get the next timer state without changing current state."""
-        if self.state == TimerState.WORK:
-            # Calculate what the next break will be after incrementing work_sessions
-            next_session_count = self.work_sessions + 1
-            if next_session_count % 4 == 0:
-                return 'long_break'
-            else:
-                return 'short_break'
-        elif self.state in [TimerState.SHORT_BREAK, TimerState.LONG_BREAK]:
-            return 'work'
-        return 'work'
-    
-    def _next_state(self):
-        """Move to the next timer state."""
+            return "long_break" if (self.work_sessions + 1) % 4 == 0 else "short_break"
+        return "work"
+
+    def _next_state(self) -> None:
         if self.state == TimerState.WORK:
             self.work_sessions += 1
-            if self.work_sessions % 4 == 0:
-                self.state = TimerState.LONG_BREAK
-            else:
-                self.state = TimerState.SHORT_BREAK
-        elif self.state in [TimerState.SHORT_BREAK, TimerState.LONG_BREAK]:
+            self.state = (TimerState.LONG_BREAK
+                          if self.work_sessions % 4 == 0
+                          else TimerState.SHORT_BREAK)
+        elif self.state in (TimerState.SHORT_BREAK, TimerState.LONG_BREAK):
             self.state = TimerState.WORK
-        
         self.remaining_seconds = self._get_timer_duration()
         self._update_display()
-        self._apply_state_colors()
-    
+        self._apply_state_style()
+
+    # ── Audio helpers ─────────────────────────────────────────────────────────
+
     def _has_sound_for_state(self, state_name: str) -> bool:
-        """Check if there's a sound configured for the given state."""
-        if state_name == 'work':
-            return bool(self.settings.alarm_sound_path and os.path.exists(self.settings.alarm_sound_path))
-        elif state_name == 'short_break':
-            return bool(self.settings.short_break_sound_path and os.path.exists(self.settings.short_break_sound_path))
-        elif state_name == 'long_break':
-            return bool(self.settings.long_break_sound_path and os.path.exists(self.settings.long_break_sound_path))
-        return False
-    
-    def start_timer(self):
-        """Start the timer."""
-        # Stop downtime tracking when starting timer
-        if self.is_downtime_active:
-            self._stop_downtime()
-        
-        # Resume from pause
-        if self.state == TimerState.PAUSED:
-            self.state = self.previous_state
-        
-        # Reset if timer is at zero
-        if self.remaining_seconds == 0:
-            self.remaining_seconds = self._get_timer_duration()
-        
-        self.timer.start(1000)
-        self.start_button.setEnabled(False)
-        self.pause_button.setEnabled(True)
-        self._apply_state_colors()
-    
-    def pause_timer(self):
-        """Pause the timer."""
-        self.timer.stop()
-        self.previous_state = self.state
-        self.state = TimerState.PAUSED
-        
-        self.start_button.setEnabled(True)
-        self.pause_button.setEnabled(False)
-        self._apply_state_colors()
-    
-    def reset_timer(self):
-        """Reset the timer."""
-        self.timer.stop()
-        self._stop_downtime()
-        
-        self.state = TimerState.WORK
-        self.remaining_seconds = self._get_timer_duration()
-        
-        self.start_button.setEnabled(True)
-        self.pause_button.setEnabled(False)
-        self._update_display()
-        self._apply_state_colors()
-    
-    def skip_timer(self):
-        """Skip to the next timer state."""
-        self.timer.stop()
-        self._stop_downtime()
-        self._next_state()
-        self.start_button.setEnabled(True)
-        self.pause_button.setEnabled(False)
-        
-        # Auto-start if enabled
-        if self.settings.auto_start:
-            self.start_timer()
-    
-    def toggle_mute(self):
-        """Toggle mute state for all alarms."""
-        self.muted = not self.muted
-        if self.muted:
-            self.mute_button.setText("🔇 Unmute")
-            # Stop any currently playing alarm
-            if self.media_player and self.media_player.isPlaying():
-                self.media_player.stop()
-        else:
-            self.mute_button.setText("🔊 Mute")
-    
-    def _update_timer(self):
-        """Update timer countdown."""
-        # Track downtime in background if active
-        if self.is_downtime_active:
-            self.downtime_seconds += 1
-            self._check_downtime_notification()
-            self._update_display()
-        
-        # Handle regular timer countdown
-        if self.remaining_seconds > 0:
-            self.remaining_seconds -= 1
-            self._update_display()
-            
-            # Play tick sound in the last 5 seconds
-            if 0 < self.remaining_seconds <= 5 and not self.muted:
-                self._play_tick()
-            
+        paths = {
+            "work":        self.settings.alarm_sound_path,
+            "short_break": self.settings.short_break_sound_path,
+            "long_break":  self.settings.long_break_sound_path,
+        }
+        p = paths.get(state_name, "")
+        return bool(p and os.path.exists(p))
+
+    def _pause_system_media(self) -> None:
+        """Send a media play/pause keystroke to pause browser/music apps (Windows)."""
+        if platform.system() != "Windows":
             return
-        
-        # Timer completed - handle completion
-        if not self.is_downtime_active:
-            self._handle_timer_completion()
-    
-    def _generate_tick_sound(self):
-        """Generate a short tick WAV file and return its path."""
-        if hasattr(self, '_tick_sound_path') and os.path.exists(self._tick_sound_path):
+        try:
+            import ctypes
+            VK_MEDIA_PLAY_PAUSE = 0xB3
+            KEYEVENTF_KEYUP     = 0x0002
+            u32 = ctypes.windll.user32
+            u32.keybd_event(VK_MEDIA_PLAY_PAUSE, 0, 0, 0)
+            u32.keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_KEYUP, 0)
+        except Exception:
+            pass
+
+    def _get_sound_path(self, state_name: str):
+        sound_map = {
+            "work":        self.settings.alarm_sound_path,
+            "short_break": self.settings.short_break_sound_path,
+            "long_break":  self.settings.long_break_sound_path,
+            "downtime":    self.settings.downtime_sound_path,
+        }
+        p = sound_map.get(state_name) or self.settings.alarm_sound_path
+        return p if (p and os.path.exists(p)) else None
+
+    def _generate_tick_sound(self) -> str:
+        if hasattr(self, "_tick_sound_path") and os.path.exists(self._tick_sound_path):
             return self._tick_sound_path
-        
-        # Generate a short, crisp tick sound
         sample_rate = 44100
-        duration = 0.08  # 80ms — short and crisp
-        frequency = 1200  # Hz — a sharp click tone
-        n_samples = int(sample_rate * duration)
-        
+        duration    = 0.08
+        frequency   = 1200
+        n_samples   = int(sample_rate * duration)
         samples = []
         for i in range(n_samples):
-            t = i / sample_rate
-            # Quick attack, fast decay envelope
+            t        = i / sample_rate
             envelope = math.exp(-t * 60)
-            value = envelope * math.sin(2 * math.pi * frequency * t)
-            # Add a click transient at the start
+            value    = envelope * math.sin(2 * math.pi * frequency * t)
             if i < 80:
                 value += envelope * 0.5 * math.sin(2 * math.pi * 2400 * t)
-            sample = int(value * 32767 * 0.7)
-            sample = max(-32768, min(32767, sample))
-            samples.append(struct.pack('<h', sample))
-        
-        # Write to a temp WAV file
-        tick_path = os.path.join(tempfile.gettempdir(), 'pomo_tick.wav')
-        with wave.open(tick_path, 'w') as wf:
+            sample = max(-32768, min(32767, int(value * 32767 * 0.7)))
+            samples.append(struct.pack("<h", sample))
+        tick_path = os.path.join(tempfile.gettempdir(), "pomo_tick.wav")
+        with wave.open(tick_path, "w") as wf:
             wf.setnchannels(1)
             wf.setsampwidth(2)
             wf.setframerate(sample_rate)
-            wf.writeframes(b''.join(samples))
-        
+            wf.writeframes(b"".join(samples))
         self._tick_sound_path = tick_path
         return tick_path
-    
-    def _play_tick(self):
-        """Play a short tick sound."""
+
+    def _play_tick(self) -> None:
         try:
             tick_path = self._generate_tick_sound()
             self.tick_player.setSource(QUrl.fromLocalFile(tick_path))
             self.tick_player.play()
-        except Exception as e:
-            print(f"Error playing tick sound: {e}")
-    
-    def _check_downtime_notification(self):
-        """Check if downtime exceeds threshold and notify if needed."""
-        if not (self.settings.enable_downtime and self.settings.downtime_notify_threshold > 0):
-            return
-        
-        intervals_passed = self.downtime_seconds // self.settings.downtime_notify_threshold
-        threshold_time = intervals_passed * self.settings.downtime_notify_threshold
-        
-        if intervals_passed > 0 and threshold_time > self.last_notification_time:
-            self.last_notification_time = threshold_time
-            self._notify_downtime_exceeded()
-    
-    def _notify_downtime_exceeded(self):
-        """Show notification when downtime exceeds threshold."""
-        has_sound = (self.settings.downtime_sound_path and 
-                    os.path.exists(self.settings.downtime_sound_path))
-        self._show_alarm_dialog('downtime', play_sound=has_sound and not self.muted)
-    
-    def _handle_timer_completion(self):
-        """Handle timer completion - show alarm and transition to next state."""
-        self.timer_completed.emit(self.state.value)
-        
-        # Determine which desktop the NEXT state needs
-        next_state = self._get_next_state()
-        
-        # Switch virtual desktop if enabled — go to the desktop for the next state
+        except Exception:
+            pass
+
+    # ── Public timer controls ─────────────────────────────────────────────────
+
+    def start_timer(self) -> None:
+        self._pause_system_media()
+        if self.is_downtime_active:
+            self._stop_downtime()
+        if self.state == TimerState.PAUSED:
+            self.state = self.previous_state
+        if self.remaining_seconds == 0:
+            self.remaining_seconds = self._get_timer_duration()
+        self.timer.start(1000)
+        self.start_button.setEnabled(False)
+        self.pause_button.setEnabled(True)
+        self._apply_state_style()
+
+        # Move window to the configured virtual desktop for this phase
         if self.settings.switch_desktop:
-            if next_state == 'work':
-                target_desktop = self.settings.work_desktop
-            else:
-                target_desktop = self.settings.break_desktop
-            self._switch_to_desktop(target_desktop)
-        
-        # Show alarm for next state
-        has_sound = self._has_sound_for_state(next_state)
-        self._show_alarm_dialog(next_state, play_sound=has_sound and not self.muted)
-        
-        # Move to next state
+            target = (self.settings.work_desktop
+                      if self.state == TimerState.WORK
+                      else self.settings.break_desktop)
+            self._switch_to_desktop(target)
+
+    def pause_timer(self) -> None:
+        self.timer.stop()
+        self.previous_state = self.state
+        self.state          = TimerState.PAUSED
+        self.start_button.setEnabled(True)
+        self.pause_button.setEnabled(False)
+        self._apply_state_style()
+        self._update_display()
+
+    def reset_timer(self) -> None:
+        self.timer.stop()
+        self._stop_downtime()
+        self.state             = TimerState.WORK
+        self.remaining_seconds = self._get_timer_duration()
+        self.start_button.setEnabled(True)
+        self.pause_button.setEnabled(False)
+        self._update_display()
+        self._apply_state_style()
+
+    def skip_timer(self) -> None:
+        self.timer.stop()
+        self._stop_downtime()
         self._next_state()
         self.start_button.setEnabled(True)
         self.pause_button.setEnabled(False)
-        
-        # Auto-start or start downtime tracking
+        if self.settings.auto_start:
+            self.start_timer()
+
+    def toggle_mute(self) -> None:
+        self.muted = not self.muted
+        if self.muted:
+            self.mute_button.setText("🔇  Unmute")
+            if self.media_player and self.media_player.isPlaying():
+                self.media_player.stop()
+        else:
+            self.mute_button.setText("🔊  Mute")
+
+    # ── Keyboard shortcuts ────────────────────────────────────────────────────
+
+    def keyPressEvent(self, event) -> None:
+        key = event.key()
+        if key == Qt.Key.Key_Space:
+            if self.timer.isActive():
+                self.pause_timer()
+            else:
+                self.start_timer()
+        elif key == Qt.Key.Key_R:
+            self.reset_timer()
+        elif key == Qt.Key.Key_S:
+            self.skip_timer()
+        elif key == Qt.Key.Key_M:
+            self.toggle_mute()
+        else:
+            super().keyPressEvent(event)
+
+    # ── Timer tick ────────────────────────────────────────────────────────────
+
+    def _update_timer(self) -> None:
+        if self.is_downtime_active:
+            self.downtime_seconds += 1
+            self._check_downtime_notification()
+            self._update_display()
+
+        if self.remaining_seconds > 0:
+            self.remaining_seconds -= 1
+            self._update_display()
+            if 0 < self.remaining_seconds <= 5 and not self.muted:
+                self._play_tick()
+            return
+
+        if not self.is_downtime_active:
+            self._handle_timer_completion()
+
+    def _check_downtime_notification(self) -> None:
+        if not (self.settings.enable_downtime
+                and self.settings.downtime_notify_threshold > 0):
+            return
+        threshold = self.settings.downtime_notify_threshold
+        intervals = self.downtime_seconds // threshold
+        if intervals > 0 and intervals * threshold > self.last_notification_time:
+            self.last_notification_time = intervals * threshold
+            self._notify_downtime_exceeded()
+
+    def _notify_downtime_exceeded(self) -> None:
+        has_sound = bool(self.settings.downtime_sound_path
+                         and os.path.exists(self.settings.downtime_sound_path))
+        self._show_alarm_dialog("downtime", play_sound=has_sound and not self.muted)
+
+    def _handle_timer_completion(self) -> None:
+        if getattr(self, '_completing', False):
+            return
+        self._completing = True
+        try:
+            self._handle_timer_completion_inner()
+        finally:
+            self._completing = False
+
+    def _handle_timer_completion_inner(self) -> None:
+        duration = self._get_timer_duration()
+        self.db.log_session(self.state.value, duration)
+
+        self.timer_completed.emit(self.state.value)
+        next_state = self._get_next_state()
+
+        if self.settings.switch_desktop:
+            target = (self.settings.work_desktop
+                      if next_state == "work"
+                      else self.settings.break_desktop)
+            self._switch_to_desktop(target)
+
+        has_sound = self._has_sound_for_state(next_state)
+        self._show_alarm_dialog(next_state, play_sound=has_sound and not self.muted)
+
+        self._next_state()
+        self.start_button.setEnabled(True)
+        self.pause_button.setEnabled(False)
+
         if self.settings.auto_start:
             self.start_timer()
         elif self.settings.enable_downtime:
             self._start_downtime()
         else:
             self.timer.stop()
-    
-    def _switch_to_desktop(self, target_desktop: int):
-        """Switch to a specific virtual desktop number (1-based).
-        
-        Uses Win+Ctrl+Left/Right arrow keys to navigate.
-        To avoid drift from manual desktop switches, we first go all the way
-        left to desktop 1, then step right to the target desktop.
-        """
+
+    # ── Desktop switching (Windows) ───────────────────────────────────────────
+
+    def _switch_to_desktop(self, target_desktop: int) -> None:
+        """Navigate to a virtual desktop number (1-based) in a background thread."""
+        if platform.system() != "Windows":
+            return
+        self._desktop_thread = _DesktopSwitchThread(target_desktop)
+        self._desktop_thread.done.connect(self.desktop_switched)
+        self._desktop_thread.start()
+
+    def _bring_window_to_front(self) -> None:
         try:
-            if platform.system() == 'Windows':
+            if platform.system() == "Windows":
                 import ctypes
-                import time
-                
-                user32 = ctypes.windll.user32
-                
-                # Key codes
-                VK_LWIN = 0x5B
-                VK_CONTROL = 0x11
-                VK_LEFT = 0x25
-                VK_RIGHT = 0x27
-                KEYEVENTF_KEYUP = 0x0002
-                
-                def _press_desktop_switch(arrow_key):
-                    """Send one Win+Ctrl+Arrow keystroke."""
-                    user32.keybd_event(VK_LWIN, 0, 0, 0)
-                    user32.keybd_event(VK_CONTROL, 0, 0, 0)
-                    user32.keybd_event(arrow_key, 0, 0, 0)
-                    user32.keybd_event(arrow_key, 0, KEYEVENTF_KEYUP, 0)
-                    user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
-                    user32.keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0)
-                    time.sleep(0.3)
-                
-                # Step 1: Go all the way left to guarantee we're on desktop 1.
-                # Press Win+Ctrl+Left 10 times (extra presses on desktop 1 are no-ops).
-                max_desktops = 10
-                for _ in range(max_desktops):
-                    _press_desktop_switch(VK_LEFT)
-                
-                # Step 2: Step right (target_desktop - 1) times to land on the target.
-                for _ in range(target_desktop - 1):
-                    _press_desktop_switch(VK_RIGHT)
-                
-                # After switching, bring the app window to the front
-                QTimer.singleShot(500, self._bring_window_to_front)
-                
-        except Exception as e:
-            print(f"Error switching desktop: {e}")
-    
-    def _bring_window_to_front(self):
-        """Bring the app window to the front on the current desktop."""
-        try:
-            if platform.system() == 'Windows':
-                import ctypes
-                
-                # Get the window handle
                 hwnd = int(self.winId())
-                
-                user32 = ctypes.windll.user32
-                
-                # Show window and bring to front
-                SW_SHOW = 5
-                user32.ShowWindow(hwnd, SW_SHOW)
-                user32.SetForegroundWindow(hwnd)
-                
-            # Also use Qt methods
-            self.show()
-            self.raise_()
-            self.activateWindow()
-        except Exception as e:
-            print(f"Error bringing window to front: {e}")
-    
-    def _get_sound_path(self, state_name: str) -> str:
-        """Get sound path for given state."""
-        sound_map = {
-            'work': self.settings.alarm_sound_path,
-            'short_break': self.settings.short_break_sound_path,
-            'long_break': self.settings.long_break_sound_path,
-            'downtime': self.settings.downtime_sound_path
-        }
-        sound_path = sound_map.get(state_name)
-        
-        # Fallback to work sound if specific sound not set
-        if not sound_path:
-            sound_path = self.settings.alarm_sound_path
-        
-        return sound_path if (sound_path and os.path.exists(sound_path)) else None
-    
-    def _show_alarm_dialog(self, state_name: str, play_sound: bool = True):
-        """Show alarm dialog and play sound."""
+                ctypes.windll.user32.ShowWindow(hwnd, 5)
+                ctypes.windll.user32.SetForegroundWindow(hwnd)
+        except Exception:
+            pass
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    # ── Alarm dialog ──────────────────────────────────────────────────────────
+
+    def _show_alarm_dialog(self, state_name: str, play_sound: bool = True) -> None:
         state_display = {
-            'work': '⏱ Work Time',
-            'short_break': '☕ Short Break',
-            'long_break': '🌴 Long Break',
-            'downtime': '💤 Downtime'
+            "work":        "Work Time",
+            "short_break": "Short Break",
+            "long_break":  "Long Break",
+            "downtime":    "Downtime",
         }
-        display_name = state_display.get(state_name, 'Timer')
-        
-        # Play sound if requested
+        display_name = state_display.get(state_name, "Timer")
+
         if play_sound:
             sound_path = self._get_sound_path(state_name)
             if sound_path:
                 try:
                     self.media_player.setSource(QUrl.fromLocalFile(sound_path))
                     self.media_player.play()
-                except Exception as e:
-                    print(f"Error playing alarm sound: {e}")
-        
-        # Bring window to front
+                except Exception:
+                    pass
+
         if self.isMinimized():
             self.showNormal()
         self.raise_()
         self.activateWindow()
-        
-        # Show dialog
+
         self.alarm_dialog = AlarmDialog(self, display_name, self.media_player)
         self.alarm_dialog.exec()
-        
-        # Stop alarm after dialog closes
         if self.media_player:
             self.media_player.stop()
-    
-    def _start_downtime(self):
-        """Start downtime tracking in background."""
-        self.is_downtime_active = True
-        self.downtime_seconds = 0
+
+    # ── Downtime tracking ─────────────────────────────────────────────────────
+
+    def _start_downtime(self) -> None:
+        self.is_downtime_active     = True
+        self.downtime_seconds       = 0
         self.last_notification_time = 0
-        self.remaining_seconds = 0
-        # Keep timer running to track downtime
+        self.remaining_seconds      = 0
         if not self.timer.isActive():
             self.timer.start(1000)
-    
-    def _stop_downtime(self):
-        """Stop downtime tracking."""
-        self.is_downtime_active = False
-        self.downtime_seconds = 0
+
+    def _stop_downtime(self) -> None:
+        self.is_downtime_active     = False
+        self.downtime_seconds       = 0
         self.last_notification_time = 0
-    
-    def _load_state(self):
-        """Load timer state from settings."""
-        self.state = TimerState.WORK
+
+    # ── State load / refresh ──────────────────────────────────────────────────
+
+    def _load_state(self) -> None:
+        self.state             = TimerState.WORK
         self.remaining_seconds = self._get_timer_duration()
-        self.previous_state = self.state
+        self.previous_state    = self.state
         self._update_display()
-        self._apply_state_colors()
-    
-    def refresh_settings(self):
-        """Refresh settings from database."""
+        self._apply_state_style()
+
+    def refresh_settings(self) -> None:
+        """Reload settings from the database (called after Settings dialog closes)."""
         self.settings = self._load_settings()
-        # Update downtime container visibility
-        if hasattr(self, 'downtime_container'):
+        if hasattr(self, "downtime_container"):
             self.downtime_container.setVisible(self.settings.enable_downtime)
         if not self.timer.isActive():
             self._load_state()
-    
-    def resizeEvent(self, event):
-        """Handle window resize event to show/hide elements based on size."""
+
+    # ── Responsive compact mode ───────────────────────────────────────────────
+
+    def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
         self._update_ui_for_size()
-    
-    def _update_ui_for_size(self):
-        """Update UI visibility based on window size."""
-        height = self.height()
-        width = self.width()
-        
-        # Threshold for compact mode (only show timer)
-        compact_threshold = 200
-        
-        # If window is very small, only show timer
-        if height < compact_threshold or width < 300:
-            # Hide all elements except timer
-            if hasattr(self, 'state_label'):
-                self.state_label.setVisible(False)
-            if hasattr(self, 'sessions_label'):
-                self.sessions_label.setVisible(False)
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(False)
-            # Hide buttons
-            if hasattr(self, 'start_button'):
-                self.start_button.setVisible(False)
-            if hasattr(self, 'pause_button'):
-                self.pause_button.setVisible(False)
-            if hasattr(self, 'reset_button'):
-                self.reset_button.setVisible(False)
-            if hasattr(self, 'skip_button'):
-                self.skip_button.setVisible(False)
-            if hasattr(self, 'mute_button'):
-                self.mute_button.setVisible(False)
-            
-            # Adjust timer font size for compact mode
-            timer_font = QFont()
-            timer_font.setPointSize(min(48, max(24, int(height * 0.3))))
-            timer_font.setBold(True)
-            self.timer_label.setFont(timer_font)
-            
-            # Reduce margins for compact mode
-            layout = self.layout()
-            if layout:
-                layout.setContentsMargins(10, 10, 10, 10)
-                layout.setSpacing(5)
-        else:
-            # Show all elements in normal mode
-            if hasattr(self, 'state_label'):
-                self.state_label.setVisible(True)
-            if hasattr(self, 'sessions_label'):
-                self.sessions_label.setVisible(True)
-            if hasattr(self, 'downtime_container'):
-                self.downtime_container.setVisible(self.settings.enable_downtime)
-            # Show buttons
-            if hasattr(self, 'start_button'):
-                self.start_button.setVisible(True)
-            if hasattr(self, 'pause_button'):
-                self.pause_button.setVisible(True)
-            if hasattr(self, 'reset_button'):
-                self.reset_button.setVisible(True)
-            if hasattr(self, 'skip_button'):
-                self.skip_button.setVisible(True)
-            if hasattr(self, 'mute_button'):
-                self.mute_button.setVisible(True)
-            
-            # Restore normal timer font size
-            timer_font = QFont()
-            timer_font.setPointSize(72)
-            timer_font.setBold(True)
-            self.timer_label.setFont(timer_font)
-            
-            # Restore normal margins
-            layout = self.layout()
-            if layout:
-                layout.setContentsMargins(40, 40, 40, 40)
-                layout.setSpacing(25)
-    
-    def closeEvent(self, event):
-        """Handle window close event."""
+
+    def _update_ui_for_size(self) -> None:
+        compact = self.height() < 200 or self.width() < 300
+        for attr in ("schedule_now_label", "sessions_label", "session_dots",
+                     "downtime_container", "start_button", "pause_button",
+                     "reset_button", "skip_button", "mute_button"):
+            widget = getattr(self, attr, None)
+            if widget:
+                widget.setVisible(not compact)
+
+    def closeEvent(self, event) -> None:
         if self.tray_icon and self.tray_icon.isVisible():
             self.hide()
             event.ignore()
         else:
             event.accept()
-

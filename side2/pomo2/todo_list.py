@@ -13,23 +13,10 @@ from PyQt6.QtGui import QFont, QColor, QIcon, QPixmap, QPainter
 from datetime import datetime
 from database import Database
 from models import Todo
+from theme import COLORS
 
-
-# ── Color Palette ─────────────────────────────────────────────────────────────
-COLORS = {
-    "bg":          "#f0f2f5",
-    "card":        "#ffffff",
-    "text":        "#1a1a2e",
-    "text_sec":    "#6b7280",
-    "accent":      "#6366f1",   # Indigo
-    "accent_hover":"#4f46e5",
-    "success":     "#10b981",   # Emerald
-    "warning":     "#f59e0b",   # Amber
-    "danger":      "#ef4444",   # Red
-    "border":      "#e5e7eb",
-    "input_bg":    "#f9fafb",
-    "shadow":      "#00000018",
-}
+# "card" alias used throughout this file
+COLORS.setdefault("card", COLORS["surface"])
 
 PRIORITY = {
     1: {"label": "Low",    "color": "#10b981", "bg": "#ecfdf5", "border": "#6ee7b7", "icon": "○"},
