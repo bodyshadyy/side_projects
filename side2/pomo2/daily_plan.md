@@ -1,22 +1,22 @@
-# Daily Plan — 2026-05-04
+# Daily Plan — 2026-05-05
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
-| — | No scheduled events today |
+| — | No events scheduled today |
 
-> ⚠️ **Past-due items to review:** Your urgent section lists a **Quiz (due 2026-04-29)** and **Exams (week of 2026-04-28)** — both dates have passed. Update `long_term_tasks.md` to mark them done or remove them.
+> ⚠️ **Past-due items to review:** The urgent section lists a **Quiz (due 2026-04-29)** and **Exams (week of 2026-04-28)** — both dates have passed. Mark them done or remove them from `long_term_tasks.md`.
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% done, only "Welcome to the Course" video left (1 min). Finish it today and close out the course. ~5 min
-2. **The Nuts and Bolts of Machine Learning** — Only 9% complete; next is a 60-min feature engineering lab — highest-leverage Tier 1 ML task to move the needle on. ~60–75 min
-3. **BigQuery for Data Analysts** — 73% complete, next is "Ingesting and Querying New Datasets" lab (60 min). Strong career signal for ML engineering roles. ~60–75 min
-4. **IBM: Exploratory Data Analysis for Machine Learning** — 57% complete, next is a single Bayesian Hypothesis Testing video. Quick win to maintain momentum. ~15–20 min
-5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete, next is "Building Golang GCP App Engine Microservice" video (5 min). Bridges Go + MLOps — do it right after finishing the Go course. ~10 min
-6. **Algorithms: Divide and Conquer** — 34% complete, next is "Week 2 Overview" reading. Short task that keeps math foundations moving. ~10 min
+1. **Getting Started with Go (Course 1/3)** — 91% complete, one tiny video left ("Welcome to the Course", 1 min). Close it out today and free mental space. ~10 min
+2. **The Nuts and Bolts of Machine Learning** — Only 9% complete and highest-priority Tier 1 ML skill. Next: "Perform feature engineering" lab — 60 min of hands-on ML work. ~60–75 min
+3. **BigQuery for Data Analysts** — 73% complete. Next: "Ingesting and Querying New Datasets" lab (60 min). Strong career signal for ML engineering; calendar is clear so no excuse to skip. ~60–75 min
+4. **IBM: Exploratory Data Analysis for Machine Learning** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video — good mid-day watch. ~20–30 min
+5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete. Next: "Building Golang GCP App Engine Microservice" video (5 min). Bridges Go + MLOps — chain it right after finishing the Go course. ~10 min
+6. **Algorithms: Divide and Conquer (Course 1/4)** — 34% complete. Next: "Week 2 Overview" reading — short task that keeps math foundations moving. ~10 min
 
 ---
 
@@ -24,23 +24,23 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Getting Started with Go — finish remaining video & mark complete |
-| 09:10–09:20 | DevOps/DataOps/MLOps — "Building Golang GCP App Engine Microservice" video (5 min) |
-| 09:20–10:30 | The Nuts and Bolts of ML — "Perform feature engineering" lab (60 min) |
+| 09:00–09:15 | Getting Started with Go — finish final video & mark course complete |
+| 09:15–09:25 | DevOps/DataOps/MLOps — "Building Golang GCP App Engine Microservice" video (5 min) |
+| 09:30–10:30 | The Nuts and Bolts of ML — "Perform feature engineering" lab (60 min) |
 | 10:30–10:45 | Break |
-| 10:45–11:05 | IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing Example" video |
-| 11:05–11:15 | Algorithms: Divide and Conquer — "Week 2 Overview" reading |
-| 11:15–13:00 | Lunch / rest |
+| 10:45–11:10 | IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing Example" video |
+| 11:10–11:20 | Algorithms: Divide and Conquer — "Week 2 Overview" reading |
+| 11:20–13:00 | Lunch / rest |
 | 13:00–14:15 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
-| 14:15–14:30 | Successful Presentation — "Course Updates and Accessibility Support" reading |
-| 14:30–15:00 | Review progress, update long_term_tasks.md |
+| 14:15–14:25 | Successful Presentation — "Course Updates and Accessibility Support" reading |
+| 14:25–15:00 | Review progress, update long_term_tasks.md |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines detected for 2026-05-04 through 2026-05-11.
-- Keep your recurring commitment: **at least 1 Coursera lesson or lab per day**.
+- No hard deadlines detected in calendar or task file for 2026-05-06 through 2026-05-12.
+- Maintain your recurring commitment: **at least 1 Coursera lesson or lab per day**.
 
 ---
 
