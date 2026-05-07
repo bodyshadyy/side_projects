@@ -1,4 +1,4 @@
-# Daily Plan — 2026-05-06
+# Daily Plan — 2026-05-07
 
 > ⚠️ **Past-due items detected:** The "Urgent" tasks (Quiz on 2026-04-29 and Exams week of 2026-04-28) are now over a week past their deadlines. Please mark them complete or remove them from `long_term_tasks.md` so future plans stay accurate.
 
@@ -13,35 +13,37 @@
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3, 91%)** — One 1-min video stands between you and completing a Tier 1 course. Cross this off today for a free win. — ~30 min total to finish remaining content
-2. **BigQuery for Data Analysts lab (73%)** — Next: "Ingesting and Querying New Datasets" lab. At 73%, finishing this block puts you very close to completing a high-priority Tier 1 course. — 60 min
-3. **The Nuts and Bolts of ML — Feature Engineering lab (9%)** — Core ML skill with low progress; deserves a dedicated block while the day is free. — 60 min
-4. **IBM: EDA for ML — Bayesian Hypothesis Testing video (57%)** — Keep momentum on this Tier 1 course; next item is a single video. — ~20 min
-5. **Quick-win sweep** — DevOps/DataOps/MLOps next video (5 min) + Business Writing "Long Documents, in Brief" (2 min) — 15 min total
+1. **Finish "Getting Started with Go" (Course 1/3, 91%)** — One 1-min video stands between you and completing a Tier 1 course. Cross this off today for a free win. ~5 min
+2. **The Nuts and Bolts of ML — Feature Engineering lab (9%)** — Core ML skill, High priority Tier 1, low progress. Full open day is the right time for this 60-min lab. ~60 min
+3. **BigQuery for Data Analysts (73%)** — Next: "Ingesting and Querying New Datasets" lab. At 73%, another 60-min block pushes you close to finishing a Tier 1 course. ~60 min
+4. **IBM: EDA for ML — Bayesian Hypothesis Testing video (57%)** — Keep momentum on this Tier 1 course; next item is a single video. ~20 min
+5. **Algorithms: Divide and Conquer (34%)** — Next: "Week 2 Overview" reading. Quick item to keep math foundations moving. ~20 min
+6. **Quick-win sweep** — DevOps/DataOps/MLOps next video (5 min) + Business Writing "Long Documents, in Brief" (2 min). ~15 min total
 
 ---
 
 ## Suggested Time Blocks
 | Block | Task |
 |-------|------|
-| 09:00–09:30 | Finish "Getting Started with Go" — watch final video + any remaining items, mark course complete |
-| 09:30–10:30 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
-| 10:30–12:00 | The Nuts and Bolts of ML — "Perform feature engineering" lab (60 min) |
+| 09:00–09:10 | Finish "Getting Started with Go" — watch final video, mark course complete |
+| 09:10–10:10 | The Nuts and Bolts of ML — "Perform feature engineering" lab (60 min) |
+| 10:20–11:20 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
+| 11:30–11:50 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing Example" video |
 | 12:00–13:00 | Break / lunch |
-| 13:00–13:20 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing Example" video |
-| 13:20–13:35 | Quick-win sweep: DevOps video (5 min) + Business Writing video (2 min) |
+| 13:00–13:20 | Algorithms: D&C — "Week 2 Overview" reading |
+| 13:20–13:35 | Quick-win sweep: DevOps/MLOps video (5 min) + Business Writing video (2 min) |
 | 13:35–14:00 | Update `long_term_tasks.md`: mark completed items, note new progress percentages |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- No deadlines found in the next 7 days.
+- No deadlines found in the next 7 days (2026-05-07 through 2026-05-14).
 
 ---
 
 ## Notes
 - **Daily minimum:** At least 1 Coursera lesson or lab — met with any single block above.
-- **Biggest ROI today:** The Go course is 91% done — finishing it is essentially free. BigQuery at 73% is similarly close to the finish line.
+- **Biggest ROI today:** Go course is 91% done — finishing it is essentially free. BigQuery at 73% is similarly close. Stack the completions.
 - **Calendar:** Completely clear all week. Ideal window to stack 60-min lab blocks without interruption.
 
 ---
