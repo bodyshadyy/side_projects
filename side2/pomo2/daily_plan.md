@@ -1,55 +1,52 @@
-# Daily Plan — 2026-05-18
-
-> **Note:** The "🚨 Urgent" section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — those dates have passed. Clear them out or mark ✅ on your next review.
+# Daily Plan — 2026-05-19
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
 | — | No events scheduled today |
 
-_Calendar is fully clear — great opportunity for a deep focus day._
+_Calendar is fully clear — excellent opportunity for a deep focus day._
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete, almost done; knocking it out gives a completed course today. Start with "Welcome to the Course" (1 min) and push through whatever remains. **Est: ~30–45 min**
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next is "Welcome to the Course" (1 min video). Finish it off today and claim a completed course. **Est: ~30–45 min**
 
-2. **IBM: Exploratory Data Analysis for Machine Learning** — 57% complete, high Tier 1 priority. Next is "Bayesian Interpretation of Hypothesis Testing Example" — short but conceptually dense, good for a fresh morning mind. **Est: ~45–60 min**
+2. **BigQuery for Data Analysts** — 73% complete, Tier 1. Next: "Ingesting and Querying New Datasets" lab (60 min). Hands-on and directly applicable to ML data work. **Est: ~60–75 min**
 
-3. **The Nuts and Bolts of Machine Learning (Google)** — Only 9% complete despite being Tier 1 priority; needs momentum. Next lab is "Perform Feature Engineering" (hands-on, 60 min). Do this while energy is still high. **Est: ~60–75 min**
+3. **The Nuts and Bolts of Machine Learning (Google)** — Only 9% complete despite being Tier 1; needs momentum. Next lab: "Perform Feature Engineering" (60 min). Do this while energy is high. **Est: ~60–75 min**
 
-4. **BigQuery for Data Analysts** — 73% complete, one lab away from a major milestone. Next: "Ingesting and Querying New Datasets" (60 min). Pairs naturally with the ML lab above — both are applied and hands-on. **Est: ~60–75 min**
+4. **IBM: Exploratory Data Analysis for Machine Learning** — 57% complete, Tier 1. Next: "Bayesian Interpretation of Hypothesis Testing Example" video — conceptually rich, good for an active mind. **Est: ~30–45 min**
 
-5. **Business Writing** — 36% complete; next item is "Long Documents, in Brief" (2 min video) — the fastest possible daily Coursera tick if energy dips late afternoon. **Est: ~10–15 min**
+5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2, highest career leverage. Next: "Building Golang GCP App Engine Microservice" (5 min video). Quick win that also reinforces Go skills from Task 1. **Est: ~10 min**
 
 ---
 
 ## Suggested Time Blocks
-
 | Block | Task |
 |-------|------|
-| 09:00–09:45 | Getting Started with Go — finish remaining videos/quizzes to complete the course |
-| 09:45–10:45 | IBM EDA for ML — Bayesian Hypothesis Testing video + surrounding lessons |
-| 10:45–11:00 | Break |
-| 11:00–12:15 | Nuts and Bolts of ML — "Perform Feature Engineering" lab |
-| 12:15–13:15 | Lunch break |
-| 13:15–14:30 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
-| 14:30–14:45 | Business Writing — "Long Documents, in Brief" video |
-| 14:45–15:00 | Update `long_term_tasks.md`: clear past-due urgent items, mark completions |
+| 09:00–09:45 | Getting Started with Go — push through remaining content to complete the course |
+| 09:45–10:00 | DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video |
+| 10:00–11:15 | BigQuery lab: "Ingesting and Querying New Datasets" |
+| 11:15–11:30 | Break |
+| 11:30–12:30 | Nuts & Bolts of ML — "Perform Feature Engineering" lab (part 1) |
+| 12:30–13:30 | Lunch break |
+| 13:30–14:30 | Nuts & Bolts of ML — "Perform Feature Engineering" lab (part 2 / wrap-up) |
+| 14:30–15:15 | IBM EDA for ML — Bayesian Hypothesis Testing video + surrounding lessons |
+| 15:15–15:30 | Update long_term_tasks.md: mark completions, clean up past-due urgent items |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
+- No deadlines detected on the calendar for 2026-05-19 through 2026-05-26
 
-_No deadlines detected in the next 7 days from your task list or calendar._
-
-> The previous urgent items (quiz 2026-04-29, exams week of 2026-04-28) are **past due** — review and clean up your tasks file.
+> **Housekeeping:** The Urgent section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — both are well past. Clean those up on your next review pass.
 
 ---
 
 ## Daily Recurring Commitment
-- [ ] At least 1 Coursera lesson or lab ✓ _(covered by any single block above)_
+- [ ] At least 1 Coursera lesson or lab ✓ _(any single block above covers this)_
 
 ---
 
