@@ -1,52 +1,60 @@
-# Daily Plan — 2026-05-19
+# Daily Plan — 2026-05-20
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
-| — | No events scheduled today |
+| — | No events scheduled — full day available for deep work |
 
-_Calendar is fully clear — excellent opportunity for a deep focus day._
-
----
-
-## Focus Tasks
-
-1. **Getting Started with Go (Course 1/3)** — 91% complete; next is "Welcome to the Course" (1 min video). Finish it off today and claim a completed course. **Est: ~30–45 min**
-
-2. **BigQuery for Data Analysts** — 73% complete, Tier 1. Next: "Ingesting and Querying New Datasets" lab (60 min). Hands-on and directly applicable to ML data work. **Est: ~60–75 min**
-
-3. **The Nuts and Bolts of Machine Learning (Google)** — Only 9% complete despite being Tier 1; needs momentum. Next lab: "Perform Feature Engineering" (60 min). Do this while energy is high. **Est: ~60–75 min**
-
-4. **IBM: Exploratory Data Analysis for Machine Learning** — 57% complete, Tier 1. Next: "Bayesian Interpretation of Hypothesis Testing Example" video — conceptually rich, good for an active mind. **Est: ~30–45 min**
-
-5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2, highest career leverage. Next: "Building Golang GCP App Engine Microservice" (5 min video). Quick win that also reinforces Go skills from Task 1. **Est: ~10 min**
-
----
-
-## Suggested Time Blocks
-| Block | Task |
-|-------|------|
-| 09:00–09:45 | Getting Started with Go — push through remaining content to complete the course |
-| 09:45–10:00 | DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video |
-| 10:00–11:15 | BigQuery lab: "Ingesting and Querying New Datasets" |
-| 11:15–11:30 | Break |
-| 11:30–12:30 | Nuts & Bolts of ML — "Perform Feature Engineering" lab (part 1) |
-| 12:30–13:30 | Lunch break |
-| 13:30–14:30 | Nuts & Bolts of ML — "Perform Feature Engineering" lab (part 2 / wrap-up) |
-| 14:30–15:15 | IBM EDA for ML — Bayesian Hypothesis Testing video + surrounding lessons |
-| 15:15–15:30 | Update long_term_tasks.md: mark completions, clean up past-due urgent items |
-
----
-
-## Upcoming Deadlines (next 7 days)
-- No deadlines detected on the calendar for 2026-05-19 through 2026-05-26
+> **Upcoming Egyptian Public Holidays (tentative):**
+> - 2026-05-26: Arafat Day
+> - 2026-05-27: Eid al-Adha
+>
+> You have ~5 productive days left before the holiday stretch. Make them count.
 
 > **Housekeeping:** The Urgent section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — both are well past. Clean those up on your next review pass.
 
 ---
 
+## Focus Tasks
+
+1. **Getting Started with Go (Course 1/3)** — 91% complete, one video away from finishing; cross it off today. _(~15 min)_
+2. **Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, only 9% done, needs a big push; a 60-min hands-on lab is a great morning anchor block. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — Tier 1, 73% done; another 60-min lab that moves a near-complete course toward the finish line. _(~60 min)_
+4. **IBM: Exploratory Data Analysis — Bayesian Hypothesis Testing video** — Tier 1, 57% done; short video to keep momentum on a course in progress. _(~20 min)_
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Tier 2 MLOps, only 5 min; easy win that reinforces the Go work from Task 1. _(~5 min)_
+6. **Business Writing — "Long Documents, in Brief" video** — Tier 5, only 2 min; clears a stalled task with minimal cost. _(~2 min)_
+
+---
+
+## Suggested Time Blocks
+
+| Block | Task |
+|-------|------|
+| 09:00–09:20 | **Getting Started with Go** — finish "Welcome to the Course" video and complete Course 1 |
+| 09:20–10:20 | **Nuts and Bolts of ML** — "Perform feature engineering" lab (60 min) |
+| 10:20–10:35 | Break |
+| 10:35–11:35 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
+| 11:35–12:00 | **IBM EDA** — "Bayesian Interpretation of Hypothesis Testing Example" video + review |
+| 12:00–13:00 | Lunch |
+| 13:00–13:15 | **Business Writing** — "Long Documents, in Brief" (2 min) + **Successful Negotiation** — "Self-Assessment and Feedback" reading (10 min) |
+| 13:15–13:25 | **DevOps/DataOps/MLOps** — "Building Golang GCP App Engine Microservice" (5 min) |
+| 13:25–14:15 | **Successful Presentation** — "Course Updates and Accessibility Support" reading + next lesson |
+| 14:15–15:30 | **Algorithms: Divide and Conquer** — "Week 2 Overview" reading + begin Week 2 material |
+| 15:30–16:00 | Review progress, update `long_term_tasks.md` with any completions |
+
+---
+
+## Upcoming Deadlines (next 7 days)
+
+- 2026-05-26: Arafat Day (Egyptian public holiday — tentative); plan a lighter load
+- 2026-05-27: Eid al-Adha (Egyptian public holiday — tentative); expect a holiday
+
+> No Coursera deadlines detected for this week — stay ahead by finishing Tier 1 labs before the holiday break.
+
+---
+
 ## Daily Recurring Commitment
-- [ ] At least 1 Coursera lesson or lab ✓ _(any single block above covers this)_
+- [ ] At least 1 Coursera lesson or lab _(any single block above covers this)_
 
 ---
 
