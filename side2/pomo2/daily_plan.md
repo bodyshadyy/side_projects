@@ -1,28 +1,24 @@
-# Daily Plan — 2026-05-20
+# Daily Plan — 2026-05-22
+
+> **Housekeeping:** The Urgent section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — both are well past. Clean those up on your next weekly review.
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
 | — | No events scheduled — full day available for deep work |
 
-> **Upcoming Egyptian Public Holidays (tentative):**
-> - 2026-05-26: Arafat Day
-> - 2026-05-27: Eid al-Adha
->
-> You have ~5 productive days left before the holiday stretch. Make them count.
-
-> **Housekeeping:** The Urgent section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — both are well past. Clean those up on your next review pass.
+> **Eid al-Adha holiday block starts Tuesday May 26.** You have today + Sunday + Monday (3 focused days) before 4 days of holidays (May 26–29). Make this a strong push on Tier 1.
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete, one video away from finishing; cross it off today. _(~15 min)_
-2. **Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, only 9% done, needs a big push; a 60-min hands-on lab is a great morning anchor block. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — Tier 1, 73% done; another 60-min lab that moves a near-complete course toward the finish line. _(~60 min)_
-4. **IBM: Exploratory Data Analysis — Bayesian Hypothesis Testing video** — Tier 1, 57% done; short video to keep momentum on a course in progress. _(~20 min)_
-5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Tier 2 MLOps, only 5 min; easy win that reinforces the Go work from Task 1. _(~5 min)_
-6. **Business Writing — "Long Documents, in Brief" video** — Tier 5, only 2 min; clears a stalled task with minimal cost. _(~2 min)_
+1. **Getting Started with Go (Course 1/3)** — 91% complete; one video left ("Welcome to the Course", 1 min). Finish and cross off the course today. _(~15 min)_
+2. **Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, only 9% done; a 60-min hands-on lab is the perfect morning anchor to build real momentum before holidays. _(~60–90 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — Tier 1, 73% done; another 60-min lab that pushes a near-complete course toward the finish line. _(~60 min)_
+4. **IBM: Exploratory Data Analysis — Bayesian Hypothesis Testing video** — Tier 1, 57% done; short watch that keeps progress alive on an in-flight course. _(~20 min)_
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Tier 2 (highest career leverage); only 5 min, easy win that reinforces the Go work from task 1. _(~5 min)_
+6. **Business Writing — "Long Documents, in Brief" video** — Tier 5; only 2 min, clears a stalled task at essentially zero cost. _(~2 min)_
 
 ---
 
@@ -30,26 +26,28 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:20 | **Getting Started with Go** — finish "Welcome to the Course" video and complete Course 1 |
+| 09:00–09:20 | **Getting Started with Go** — finish "Welcome to the Course" video, mark Course 1 complete |
 | 09:20–10:20 | **Nuts and Bolts of ML** — "Perform feature engineering" lab (60 min) |
 | 10:20–10:35 | Break |
 | 10:35–11:35 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
 | 11:35–12:00 | **IBM EDA** — "Bayesian Interpretation of Hypothesis Testing Example" video + review |
 | 12:00–13:00 | Lunch |
-| 13:00–13:15 | **Business Writing** — "Long Documents, in Brief" (2 min) + **Successful Negotiation** — "Self-Assessment and Feedback" reading (10 min) |
-| 13:15–13:25 | **DevOps/DataOps/MLOps** — "Building Golang GCP App Engine Microservice" (5 min) |
-| 13:25–14:15 | **Successful Presentation** — "Course Updates and Accessibility Support" reading + next lesson |
+| 13:00–13:10 | **Business Writing** — "Long Documents, in Brief" (2 min) + **Successful Negotiation** — "Self-Assessment and Feedback" reading (10 min) |
+| 13:10–13:20 | **DevOps/DataOps/MLOps** — "Building Golang GCP App Engine Microservice" (5 min) |
+| 13:20–14:15 | **Successful Presentation** — "Course Updates and Accessibility Support" reading + next lesson |
 | 14:15–15:30 | **Algorithms: Divide and Conquer** — "Week 2 Overview" reading + begin Week 2 material |
-| 15:30–16:00 | Review progress, update `long_term_tasks.md` with any completions |
+| 15:30–16:00 | Review progress, update `long_term_tasks.md` with completions |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-05-26: Arafat Day (Egyptian public holiday — tentative); plan a lighter load
-- 2026-05-27: Eid al-Adha (Egyptian public holiday — tentative); expect a holiday
+- 2026-05-26: Arafat Day — Egyptian public holiday, plan a lighter or zero study load
+- 2026-05-27: Eid al-Adha — Egyptian public holiday
+- 2026-05-28: Eid al-Adha Holiday (day 2)
+- 2026-05-29: Eid al-Adha Holiday (day 3)
 
-> No Coursera deadlines detected for this week — stay ahead by finishing Tier 1 labs before the holiday break.
+> No Coursera hard deadlines this week. Use today, Sunday (May 24), and Monday (May 25) to push as many Tier 1 labs as possible before the 4-day break.
 
 ---
 
