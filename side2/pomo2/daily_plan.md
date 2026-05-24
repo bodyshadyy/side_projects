@@ -1,8 +1,8 @@
-# Daily Plan — 2026-05-23
+# Daily Plan — 2026-05-24
 
-> **Note:** Your urgent tasks (Quiz 2026-04-29 and Exams week of 2026-04-28) are now ~3.5 weeks past. Please update `side2/pomo2/long_term_tasks.md` to mark them complete or remove them.
+> **Note:** Your urgent tasks (Quiz 2026-04-29 and Exams week of 2026-04-28) are now ~4 weeks past. Please update `side2/pomo2/long_term_tasks.md` to mark them complete or remove them.
 
-> **Eid al-Adha heads up:** Public holidays run May 26–30 (Arafat Day + 4 Eid days). Today and tomorrow (Sat–Sun) are your best uninterrupted study window before the holiday.
+> **Eid al-Adha heads up:** Public holidays run May 26–30 (Arafat Day + 4 Eid days). Today (Sunday) is your last free uninterrupted day before the holiday block — make it count.
 
 ---
 
@@ -16,11 +16,11 @@ _Egyptian public holidays this week: Arafat Day (May 26), Eid al-Adha (May 27–
 ---
 
 ## Focus Tasks
-1. **Getting Started with Go** (Course 1/3, 91% → finish) — One "Welcome to the Course" video left; finishing it closes the course and builds momentum. ~10 min
+1. **Getting Started with Go** (Course 1/3, 91% → finish) — One "Welcome to the Course" video left; closing this course is a 1-min win that removes it from your plate entirely. ~10 min
 2. **IBM: EDA for Machine Learning** (57% complete) — Watch "Bayesian Interpretation of Hypothesis Testing Example"; keeps Tier 1 momentum going. ~25 min
-3. **Nuts and Bolts of Machine Learning** (9% complete) — Do the "Perform Feature Engineering" lab; this is your most-neglected Tier 1 course. ~60–90 min
-4. **BigQuery for Data Analysts** (73% complete) — Complete "Ingesting and Querying New Datasets" lab; nearly done and high career value. ~60 min
-5. **DevOps, DataOps, MLOps** (Tier 2, 14% complete) — Watch "Building Golang GCP App Engine Microservice" video (5 min); quick win on a high-leverage track. ~10 min
+3. **Nuts and Bolts of Machine Learning** (9% complete) — Do the "Perform Feature Engineering" lab; this is your most-neglected Tier 1 course and a 60-min hands-on lab. ~60–90 min
+4. **BigQuery for Data Analysts** (73% complete) — Complete "Ingesting and Querying New Datasets" lab; nearly done and high direct career value. ~60 min
+5. **DevOps, DataOps, MLOps** (Tier 2, 14% complete) — Watch "Building Golang GCP App Engine Microservice" video (5 min); quick win on the highest-leverage career track. ~10 min
 6. **Algorithms: Divide and Conquer** (34% complete) — Read "Week 2 Overview" to stay warm on math foundations. ~15 min
 
 ---
@@ -28,15 +28,15 @@ _Egyptian public holidays this week: Arafat Day (May 26), Eid al-Adha (May 27–
 ## Suggested Time Blocks
 | Block | Task |
 |-------|------|
-| 09:00–09:15 | Go Course — "Welcome to the Course" video (finish course 1/3) |
-| 09:15–09:45 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
-| 09:45–11:15 | Nuts and Bolts of ML — Feature Engineering lab (60 min) |
-| 11:15–11:30 | Break |
-| 11:30–13:00 | BigQuery for Data Analysts — Ingesting and Querying New Datasets lab |
-| 13:00–14:00 | Lunch break |
-| 14:00–14:15 | DevOps, DataOps, MLOps — GCP App Engine Microservice video (5 min) |
-| 14:15–14:35 | Algorithms — Week 2 Overview reading |
-| 14:35–14:40 | Business Writing — "Long Documents, in Brief" video (2 min) |
+| 09:00–09:10 | Go Course — "Welcome to the Course" video (finish course 1/3) |
+| 09:10–09:40 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
+| 09:40–11:10 | Nuts and Bolts of ML — Feature Engineering lab (60 min) |
+| 11:10–11:25 | Break |
+| 11:25–12:55 | BigQuery for Data Analysts — Ingesting and Querying New Datasets lab (60 min) |
+| 12:55–14:00 | Lunch break |
+| 14:00–14:10 | DevOps, DataOps, MLOps — GCP App Engine Microservice video (5 min) |
+| 14:10–14:30 | Algorithms — Week 2 Overview reading |
+| 14:30–14:35 | Business Writing — "Long Documents, in Brief" video (2 min) |
 | 15:00–15:30 | Review progress, update long_term_tasks.md with any completions |
 
 ---
@@ -48,7 +48,7 @@ _Egyptian public holidays this week: Arafat Day (May 26), Eid al-Adha (May 27–
 - 2026-05-29: **Eid al-Adha Holiday** — Egyptian public holiday
 - 2026-05-30: **Eid al-Adha Holiday** — Egyptian public holiday
 
-_No hard course deadlines in calendar. The 5-day holiday block (May 26–30) means today and tomorrow are your prime study days this week._
+_No hard course deadlines in calendar. The 5-day holiday block (May 26–30) means today is your best study day this week — front-load the labs._
 
 ---
 
