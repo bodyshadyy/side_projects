@@ -1,54 +1,46 @@
-# Daily Plan — 2026-05-24
-
-> **Note:** Your urgent tasks (Quiz 2026-04-29 and Exams week of 2026-04-28) are now ~4 weeks past. Please update `side2/pomo2/long_term_tasks.md` to mark them complete or remove them.
-
-> **Eid al-Adha heads up:** Public holidays run May 26–30 (Arafat Day + 4 Eid days). Today (Sunday) is your last free uninterrupted day before the holiday block — make it count.
-
----
+# Daily Plan — 2026-05-25
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
-| — | No events scheduled today |
+| — | No scheduled events today |
 
-_Egyptian public holidays this week: Arafat Day (May 26), Eid al-Adha (May 27–30)_
+> **Eid al-Adha holiday block starts tomorrow (May 26–31).** Today is your last full, uninterrupted study day before a 6-day holiday stretch. Front-load the labs and long sessions.
 
 ---
 
 ## Focus Tasks
-1. **Getting Started with Go** (Course 1/3, 91% → finish) — One "Welcome to the Course" video left; closing this course is a 1-min win that removes it from your plate entirely. ~10 min
-2. **IBM: EDA for Machine Learning** (57% complete) — Watch "Bayesian Interpretation of Hypothesis Testing Example"; keeps Tier 1 momentum going. ~25 min
-3. **Nuts and Bolts of Machine Learning** (9% complete) — Do the "Perform Feature Engineering" lab; this is your most-neglected Tier 1 course and a 60-min hands-on lab. ~60–90 min
-4. **BigQuery for Data Analysts** (73% complete) — Complete "Ingesting and Querying New Datasets" lab; nearly done and high direct career value. ~60 min
-5. **DevOps, DataOps, MLOps** (Tier 2, 14% complete) — Watch "Building Golang GCP App Engine Microservice" video (5 min); quick win on the highest-leverage career track. ~10 min
-6. **Algorithms: Divide and Conquer** (34% complete) — Read "Week 2 Overview" to stay warm on math foundations. ~15 min
+1. **Finish Getting Started with Go (Course 1/3)** — At 91%, the very next step is a 1-minute "Welcome to the Course" video. Close this course out now and clear it from Tier 1 entirely. ~5 min
+2. **IBM: EDA for Machine Learning** — 57% complete, Tier 1 high priority. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Sustain Tier 1 momentum before the break. ~30 min
+3. **BigQuery for Data Analysts** — 73% complete, Tier 1 high priority. Next: "Ingesting and Querying New Datasets" lab (60 min). Best tackled with unbroken focus — today is perfect. ~60 min
+4. **The Nuts and Bolts of Machine Learning** — 9% complete, Tier 1 high priority. Next: "Perform feature engineering" lab (60 min). The most-neglected Tier 1 course; even one session is meaningful. ~60 min
+5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete, Tier 2. Next: "Building Golang GCP App Engine Microservice" video (5 min). Short next step — easy win to keep the MLOps track alive. ~5 min
 
 ---
 
 ## Suggested Time Blocks
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Go Course — "Welcome to the Course" video (finish course 1/3) |
-| 09:10–09:40 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
-| 09:40–11:10 | Nuts and Bolts of ML — Feature Engineering lab (60 min) |
-| 11:10–11:25 | Break |
-| 11:25–12:55 | BigQuery for Data Analysts — Ingesting and Querying New Datasets lab (60 min) |
-| 12:55–14:00 | Lunch break |
-| 14:00–14:10 | DevOps, DataOps, MLOps — GCP App Engine Microservice video (5 min) |
-| 14:10–14:30 | Algorithms — Week 2 Overview reading |
-| 14:30–14:35 | Business Writing — "Long Documents, in Brief" video (2 min) |
-| 15:00–15:30 | Review progress, update long_term_tasks.md with any completions |
+| 09:00–09:10 | Finish Go Course 1/3 — "Welcome to the Course" video + wrap up |
+| 09:10–09:45 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing Example" |
+| 09:45–11:00 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
+| 11:00–11:15 | Break |
+| 11:15–12:15 | BigQuery — "Ingesting and Querying New Datasets" lab (60 min) |
+| 12:15–13:15 | Lunch break |
+| 13:15–13:20 | MLOps track — "Building Golang GCP App Engine Microservice" video |
+| 13:20–14:00 | Buffer: review progress, update long_term_tasks.md, or start Go Course 2/3 |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- 2026-05-26: **Arafat Day** — Egyptian public holiday, reduced availability
-- 2026-05-27: **Eid al-Adha** — Egyptian public holiday
-- 2026-05-28: **Eid al-Adha Holiday** — Egyptian public holiday
-- 2026-05-29: **Eid al-Adha Holiday** — Egyptian public holiday
-- 2026-05-30: **Eid al-Adha Holiday** — Egyptian public holiday
+- 2026-05-26: Arafat Day — public holiday in Egypt
+- 2026-05-27: Eid al-Adha — public holiday
+- 2026-05-28: Eid al-Adha Holiday — public holiday
+- 2026-05-29: Eid al-Adha Holiday — public holiday
+- 2026-05-30: Eid al-Adha Holiday — public holiday
+- 2026-05-31: Eid al-Adha Holiday — public holiday
 
-_No hard course deadlines in calendar. The 5-day holiday block (May 26–30) means today is your best study day this week — front-load the labs._
+> **Stale items to clean up:** The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" entries in `long_term_tasks.md` are now ~4 weeks past. Mark them complete or remove them on your next weekly review.
 
 ---
 
