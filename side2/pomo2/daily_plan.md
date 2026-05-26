@@ -1,46 +1,51 @@
-# Daily Plan — 2026-05-25
+# Daily Plan — 2026-05-26
 
 ## Today's Calendar
+
 | Time | Event |
 |------|-------|
-| — | No scheduled events today |
+| All day | Arafat Day — Public Holiday (Egypt) |
 
-> **Eid al-Adha holiday block starts tomorrow (May 26–31).** Today is your last full, uninterrupted study day before a 6-day holiday stretch. Front-load the labs and long sessions.
+> **Holiday context:** Eid al-Adha runs May 27–31 (5-day holiday block). Today (Arafat Day) is your last clear, distraction-free day before the break — a great opportunity for a focused study session.
+>
+> **Stale items to clean up:** The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in `long_term_tasks.md` are now ~4 weeks past. Mark them complete or remove them on your next weekly review.
 
 ---
 
 ## Focus Tasks
-1. **Finish Getting Started with Go (Course 1/3)** — At 91%, the very next step is a 1-minute "Welcome to the Course" video. Close this course out now and clear it from Tier 1 entirely. ~5 min
-2. **IBM: EDA for Machine Learning** — 57% complete, Tier 1 high priority. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Sustain Tier 1 momentum before the break. ~30 min
-3. **BigQuery for Data Analysts** — 73% complete, Tier 1 high priority. Next: "Ingesting and Querying New Datasets" lab (60 min). Best tackled with unbroken focus — today is perfect. ~60 min
-4. **The Nuts and Bolts of Machine Learning** — 9% complete, Tier 1 high priority. Next: "Perform feature engineering" lab (60 min). The most-neglected Tier 1 course; even one session is meaningful. ~60 min
-5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete, Tier 2. Next: "Building Golang GCP App Engine Microservice" video (5 min). Short next step — easy win to keep the MLOps track alive. ~5 min
+
+1. **Getting Started with Go — "Welcome to the Course" video** — 91% complete; this is literally 1 minute and clears Tier 1 momentum — *~5 min*
+2. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 core ML; keep the in-progress course moving — *~30 min*
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1; 60-min lab brings you very close to finishing this course — *~60 min*
+4. **The Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — 9% complete, Tier 1 most-neglected; a single hands-on lab session makes a real dent — *~60 min*
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — 14% complete, Tier 2 MLOps track; only 5 minutes, keeps the specialization alive — *~5 min*
 
 ---
 
 ## Suggested Time Blocks
+
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Finish Go Course 1/3 — "Welcome to the Course" video + wrap up |
+| 09:00–09:10 | Go Course 1/3 — "Welcome to the Course" (quick win) |
 | 09:10–09:45 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing Example" |
-| 09:45–11:00 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
-| 11:00–11:15 | Break |
-| 11:15–12:15 | BigQuery — "Ingesting and Querying New Datasets" lab (60 min) |
-| 12:15–13:15 | Lunch break |
-| 13:15–13:20 | MLOps track — "Building Golang GCP App Engine Microservice" video |
-| 13:20–14:00 | Buffer: review progress, update long_term_tasks.md, or start Go Course 2/3 |
+| 09:45–10:50 | Nuts & Bolts of ML — "Perform Feature Engineering" lab |
+| 10:50–11:05 | Break |
+| 11:05–12:05 | BigQuery — "Ingesting and Querying New Datasets" lab |
+| 12:05–13:00 | Lunch / Arafat Day prayer time |
+| 13:00–13:05 | MLOps — "Building Golang GCP App Engine Microservice" video |
+| 13:05–13:30 | Buffer: update long_term_tasks.md, review progress |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- 2026-05-26: Arafat Day — public holiday in Egypt
-- 2026-05-27: Eid al-Adha — public holiday
+
+- 2026-05-27: Eid al-Adha — public holiday (Egypt)
 - 2026-05-28: Eid al-Adha Holiday — public holiday
 - 2026-05-29: Eid al-Adha Holiday — public holiday
 - 2026-05-30: Eid al-Adha Holiday — public holiday
 - 2026-05-31: Eid al-Adha Holiday — public holiday
 
-> **Stale items to clean up:** The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" entries in `long_term_tasks.md` are now ~4 weeks past. Mark them complete or remove them on your next weekly review.
+> No course deadlines in the next 7 days. Eid is a natural rest period — light review or nothing is fine. Come back strong on June 1.
 
 ---
 
