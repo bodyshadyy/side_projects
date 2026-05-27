@@ -1,24 +1,32 @@
-# Daily Plan — 2026-05-26
+# Daily Plan — 2026-05-27
+
+> 🌙 **Eid al-Adha Mubarak!** Today is the first day of Eid al-Adha — a public holiday in Egypt. The holiday continues through May 31. Your personal calendar is completely free. Rest and family time come first, but if you want to study, the day is wide open for deep, uninterrupted work.
+
+> ⚠️ **Housekeeping reminder:** Two urgent tasks from your file (`Quiz — 2026-04-29` and `Exams — Week of 2026-04-28`) are now ~4 weeks past their dates. Please mark them ✅ done or ❌ missed in `long_term_tasks.md` and update the `_Last updated_` date (currently showing 2026-04-24).
+
+---
 
 ## Today's Calendar
 
 | Time | Event |
 |------|-------|
-| All day | Arafat Day — Public Holiday (Egypt) |
+| All day | 🌙 Eid al-Adha (Public Holiday — Egypt) |
 
-> **Holiday context:** Eid al-Adha runs May 27–31 (5-day holiday block). Today (Arafat Day) is your last clear, distraction-free day before the break — a great opportunity for a focused study session.
->
-> **Stale items to clean up:** The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in `long_term_tasks.md` are now ~4 weeks past. Mark them complete or remove them on your next weekly review.
+_No personal events scheduled. Full day is open._
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go — "Welcome to the Course" video** — 91% complete; this is literally 1 minute and clears Tier 1 momentum — *~5 min*
-2. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 core ML; keep the in-progress course moving — *~30 min*
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1; 60-min lab brings you very close to finishing this course — *~60 min*
-4. **The Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — 9% complete, Tier 1 most-neglected; a single hands-on lab session makes a real dent — *~60 min*
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — 14% complete, Tier 2 MLOps track; only 5 minutes, keeps the specialization alive — *~5 min*
+1. **Getting Started with Go (Course 1/3)** — At **91% complete**, this is the closest finish line in your entire list. A single short session today earns you a ✅ and real forward momentum. Next step: "Welcome to the Course" video (1 min — likely a few more after it). **Estimated: 30–60 min**
+
+2. **The Nuts and Bolts of Machine Learning (Google)** — Tier 1 core, but stuck at only **9%** — it's being neglected. Next step: "Perform feature engineering" lab. Hands-on lab = durable ML skill. **Estimated: 60 min**
+
+3. **IBM: Exploratory Data Analysis for ML** — **57% complete**, already over halfway. Next step: "Bayesian Interpretation of Hypothesis Testing Example" video. Short, high-value, keeps momentum. **Estimated: 20–30 min**
+
+4. **BigQuery for Data Analysts (Google Cloud)** — **73% complete**. Next step: "Ingesting and Querying New Datasets" lab. One more lab like this and you're close to finishing. **Estimated: 60 min**
+
+5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2 MLOps track, just **14% complete**. Next step: "Building Golang GCP App Engine Microservice" video (5 min). A 5-minute video has zero excuse — knock it out. **Estimated: 5 min**
 
 ---
 
@@ -26,26 +34,41 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Go Course 1/3 — "Welcome to the Course" (quick win) |
-| 09:10–09:45 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing Example" |
-| 09:45–10:50 | Nuts & Bolts of ML — "Perform Feature Engineering" lab |
-| 10:50–11:05 | Break |
-| 11:05–12:05 | BigQuery — "Ingesting and Querying New Datasets" lab |
-| 12:05–13:00 | Lunch / Arafat Day prayer time |
-| 13:00–13:05 | MLOps — "Building Golang GCP App Engine Microservice" video |
-| 13:05–13:30 | Buffer: update long_term_tasks.md, review progress |
+| 10:00–10:05 | ⚡ DevOps/DataOps/MLOps — 5-min video (instant win) |
+| 10:05–11:00 | 🎯 Finish Getting Started with Go — push to 100% |
+| 11:15–12:15 | 🧠 Nuts and Bolts of ML — "Perform Feature Engineering" lab |
+| 14:00–14:30 | 🔬 IBM EDA for ML — Bayesian Hypothesis Testing video + surrounding content |
+| 15:00–16:00 | 📊 BigQuery — "Ingesting and Querying New Datasets" lab |
+| Evening | 🌙 Rest, family, Eid celebration |
+
+_Total focused study: ~3.5 hours. Leaves morning prayers, lunch, and the full evening free._
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-05-27: Eid al-Adha — public holiday (Egypt)
-- 2026-05-28: Eid al-Adha Holiday — public holiday
-- 2026-05-29: Eid al-Adha Holiday — public holiday
-- 2026-05-30: Eid al-Adha Holiday — public holiday
-- 2026-05-31: Eid al-Adha Holiday — public holiday
+- 2026-05-27: 🌙 Eid al-Adha (Public Holiday)
+- 2026-05-28: 🌙 Eid al-Adha Holiday
+- 2026-05-29: 🌙 Eid al-Adha Holiday
+- 2026-05-30: 🌙 Eid al-Adha Holiday
+- 2026-05-31: 🌙 Eid al-Adha Holiday
+- 2026-06-01: _(No events — full schedule resumes)_
+- 2026-06-03: _(No events)_
 
-> No course deadlines in the next 7 days. Eid is a natural rest period — light review or nothing is fine. Come back strong on June 1.
+_No course deadlines in the next 7 days. The Eid break is a gift of time — use some of it to push Tier 1 courses forward and return on June 1 with real progress._
+
+---
+
+## Priority Snapshot
+
+| Tier | Course | Progress | Next Action |
+|------|--------|----------|-------------|
+| 🔴 1 | **Getting Started with Go** | **91%** ← finish today! | "Welcome to the Course" + remaining |
+| 🔴 1 | Nuts & Bolts of ML (Google) | 9% | Feature Engineering lab (60 min) |
+| 🔴 1 | IBM EDA for ML | 57% | Bayesian Hypothesis Testing video |
+| 🔴 1 | BigQuery for Data Analysts | 73% | Ingesting Datasets lab (60 min) |
+| 🟠 2 | DevOps, DataOps, MLOps | 14% | GCP App Engine video (5 min) |
+| 🟡 4 | Algorithms: D&C, Sorting | 34% | Week 2 Overview reading |
 
 ---
 
