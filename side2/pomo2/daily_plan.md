@@ -1,26 +1,34 @@
-# Daily Plan — 2026-05-28
+# Daily Plan — 2026-05-29
 
-> **Housekeeping reminder:** Two urgent tasks in your file (`Quiz — 2026-04-29` and `Exams — Week of 2026-04-28`) are now a month past. Mark them ✅ done or ❌ missed in `long_term_tasks.md` and update the `_Last updated_` date (currently showing 2026-04-24).
+> **Housekeeping reminder:** Two urgent tasks in your file (`Quiz — 2026-04-29` and `Exams — Week of 2026-04-28`) are a month past. Mark them ✅ done or ❌ missed in `long_term_tasks.md` on your next weekly review.
 
 ---
 
 ## Today's Calendar
 
-_No events scheduled — wide-open day for deep work._
+| Time | Event |
+|------|-------|
+| All day | Eid al-Adha Holiday (Public holiday — Egypt) |
+| All day (Sat 30) | Eid al-Adha Holiday continues |
+| All day (Sun 31) | Eid al-Adha Holiday continues |
+
+_No personal events scheduled. Three consecutive free days — prime time for deep-work learning sprints._
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — **91% complete**, this is the closest finish line in your entire list. A single session closes it out and earns a real ✅. Next: "Welcome to the Course" video (1 min + remainder). **Estimated: 30–60 min**
+1. **Complete Getting Started with Go (Course 1/3)** — At 91%, only "Welcome to the Course" video (1 min) remains. Cross this off entirely today — quick win, clears mental load, unlocks Course 2/3. **~5–10 min**
 
-2. **IBM: Exploratory Data Analysis for ML** — **57% complete**, good momentum. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Short, high-value, keeps the streak alive. **Estimated: 20–30 min**
+2. **Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, core ML skill, stuck at 9% and getting neglected. The hands-on lab is 60 min and highest-retention. Do this first while energy is high. **~60 min**
 
-3. **BigQuery for Data Analysts (Google Cloud)** — **73% complete**. Next: "Ingesting and Querying New Datasets" lab. Hands-on labs are highest-retention — don't skip. **Estimated: 60 min**
+3. **IBM: Exploratory Data Analysis for ML — Bayesian Hypothesis Testing video** — At 57%, solid momentum. Short video keeps the daily streak alive and deepens ML theory. **~20–30 min**
 
-4. **The Nuts and Bolts of Machine Learning (Google)** — Tier 1 but stuck at only **9%** and getting neglected. Next: "Perform feature engineering" lab. Core ML engineering skill — prioritize today. **Estimated: 60 min**
+4. **BigQuery for Data Analysts — Ingesting and Querying New Datasets lab** — 73% complete, one lab brings this close to the finish line. Practical cloud skill with high ML job relevance. **~60 min**
 
-5. **Algorithms: Divide and Conquer (Course 1/4)** — **34% complete**. Next: "Week 2 Overview" reading. Short bridge into the next module — keeps this track alive. **Estimated: 15–20 min**
+5. **DevOps, DataOps, MLOps — GCP App Engine Microservice video** — Only 5 min; keeps the Tier 2 MLOps track moving at no real cost. **~5 min**
+
+6. **Start Functions, Methods, and Interfaces in Go (Course 2/3)** — Immediately after finishing Course 1/3, read the intro ("STOP - Read This First!"). Carry the momentum forward. **~10 min**
 
 ---
 
@@ -28,35 +36,32 @@ _No events scheduled — wide-open day for deep work._
 
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | ⚡ Getting Started with Go — finish the last 1-min video (and any remainder) |
-| 09:10–10:00 | 🔬 IBM EDA for ML — Bayesian Hypothesis Testing video + surrounding content |
-| 10:15–11:15 | 📊 BigQuery — "Ingesting and Querying New Datasets" lab |
-| 11:30–12:30 | 🧠 Nuts and Bolts of ML — "Perform Feature Engineering" lab |
-| 14:00–14:20 | 📐 Algorithms: D&C — Week 2 Overview reading |
-| 14:20–15:00 | Buffer: review progress, update long_term_tasks.md |
+| 09:00–09:10 | Finish Getting Started with Go — last video, mark course complete |
+| 09:10–09:20 | Start Functions, Methods & Interfaces in Go — read intro material |
+| 09:30–10:30 | Nuts and Bolts of ML — Feature Engineering lab (hands-on) |
+| 10:45–11:15 | IBM EDA for ML — Bayesian Hypothesis Testing video + notes |
+| 11:15–11:20 | DevOps, DataOps, MLOps — 5-min GCP microservice video |
+| 12:00–14:00 | Eid break — family, food, rest |
+| 14:00–15:00 | BigQuery for Data Analysts — Ingesting & Querying New Datasets lab |
+| 15:00–15:30 | Weekly review buffer — update progress in long_term_tasks.md |
 
-_Total focused study: ~3.5 hours._
+_Total focused study: ~3.5 hours across two blocks._
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-_No deadlines found in Google Calendar for May 28 – June 4, 2026._
+_No personal deadlines in Google Calendar for May 29 – June 5, 2026._
 
-- Keep the daily habit: **at least 1 Coursera lesson or lab every day.**
+- 2026-05-29 to 2026-05-31: Eid al-Adha public holiday — three clear days for learning
+- **Recurring:** At least 1 Coursera lesson or lab per day
 
----
-
-## Priority Snapshot
-
-| Tier | Course | Progress | Next Action |
-|------|--------|----------|-------------|
-| 🔴 1 | **Getting Started with Go** | **91%** ← finish today! | Last video(s) |
-| 🔴 1 | IBM EDA for ML | 57% | Bayesian Hypothesis Testing video |
-| 🔴 1 | BigQuery for Data Analysts | 73% | Ingesting Datasets lab (60 min) |
-| 🔴 1 | Nuts & Bolts of ML (Google) | 9% | Feature Engineering lab (60 min) |
-| 🟠 2 | DevOps, DataOps, MLOps | 14% | GCP App Engine Microservice video (5 min) |
-| 🟡 4 | Algorithms: D&C, Sorting | 34% | Week 2 Overview reading |
+### Holiday 3-Day Sprint Suggestion
+| Day | Focus |
+|-----|-------|
+| Fri 29 (today) | Finish Go Course 1/3 + ML Feature Engineering + BigQuery lab |
+| Sat 30 | IBM EDA full module push + Algorithms D&C Week 2 Overview |
+| Sun 31 | Successful Presentation reading + Business Writing + DevOps prereq video |
 
 ---
 
