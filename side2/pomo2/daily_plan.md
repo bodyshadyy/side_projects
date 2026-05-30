@@ -1,6 +1,10 @@
-# Daily Plan — 2026-05-29
+# Daily Plan — 2026-05-30
 
-> **Housekeeping reminder:** Two urgent tasks in your file (`Quiz — 2026-04-29` and `Exams — Week of 2026-04-28`) are a month past. Mark them ✅ done or ❌ missed in `long_term_tasks.md` on your next weekly review.
+> **Eid al-Adha Mubarak!** Today and tomorrow (May 30–31) are public holidays in Egypt.
+> No calendar events scheduled — a fully open day. Use it well.
+
+> ⚠️ The "Urgent" items in `long_term_tasks.md` (Quiz on 2026-04-29 and Exams week of
+> 2026-04-28) are over a month past. Mark them ✅ done or ❌ missed on your next review.
 
 ---
 
@@ -8,27 +12,26 @@
 
 | Time | Event |
 |------|-------|
-| All day | Eid al-Adha Holiday (Public holiday — Egypt) |
-| All day (Sat 30) | Eid al-Adha Holiday continues |
+| All day | Eid al-Adha Holiday (public holiday — Egypt) |
 | All day (Sun 31) | Eid al-Adha Holiday continues |
 
-_No personal events scheduled. Three consecutive free days — prime time for deep-work learning sprints._
+_No personal events scheduled._
 
 ---
 
 ## Focus Tasks
 
-1. **Complete Getting Started with Go (Course 1/3)** — At 91%, only "Welcome to the Course" video (1 min) remains. Cross this off entirely today — quick win, clears mental load, unlocks Course 2/3. **~5–10 min**
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; next item is a 1-minute video. You are one click away from completing a course — do this first for momentum, and it unlocks Course 2/3. **~5 min**
 
-2. **Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, core ML skill, stuck at 9% and getting neglected. The hands-on lab is 60 min and highest-retention. Do this first while energy is high. **~60 min**
+2. **Start "Functions, Methods, and Interfaces in Go" (Course 2/3)** — Read the "STOP - Read This First!" intro immediately after finishing Course 1. Carry the momentum while it's warm. **~10 min**
 
-3. **IBM: Exploratory Data Analysis for ML — Bayesian Hypothesis Testing video** — At 57%, solid momentum. Short video keeps the daily streak alive and deepens ML theory. **~20–30 min**
+3. **IBM: Exploratory Data Analysis for ML** — 57% complete; next: "Bayesian Interpretation of Hypothesis Testing Example" video. Highest-value in-progress ML theory course; short next step, easy to keep rolling. **~30–45 min**
 
-4. **BigQuery for Data Analysts — Ingesting and Querying New Datasets lab** — 73% complete, one lab brings this close to the finish line. Practical cloud skill with high ML job relevance. **~60 min**
+4. **BigQuery for Data Analysts** — 73% complete; next: "Ingesting and Querying New Datasets" lab. A 60-min hands-on lab is ideal on a quiet holiday — no interruptions, cloud skill with direct ML job relevance. **~60–75 min**
 
-5. **DevOps, DataOps, MLOps — GCP App Engine Microservice video** — Only 5 min; keeps the Tier 2 MLOps track moving at no real cost. **~5 min**
+5. **Nuts and Bolts of Machine Learning** — Only 9% complete; next: "Perform feature engineering" lab. This core ML course is dangerously stalled — the holiday is the right moment to push it forward. **~60 min**
 
-6. **Start Functions, Methods, and Interfaces in Go (Course 2/3)** — Immediately after finishing Course 1/3, read the intro ("STOP - Read This First!"). Carry the momentum forward. **~10 min**
+6. **DevOps Prerequisite Course** — 18% complete; next: "Managing System Services in Linux" video (9 min). A quick Tier 6 win to close out the day if energy holds. **~15 min**
 
 ---
 
@@ -36,32 +39,44 @@ _No personal events scheduled. Three consecutive free days — prime time for de
 
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Finish Getting Started with Go — last video, mark course complete |
-| 09:10–09:20 | Start Functions, Methods & Interfaces in Go — read intro material |
-| 09:30–10:30 | Nuts and Bolts of ML — Feature Engineering lab (hands-on) |
-| 10:45–11:15 | IBM EDA for ML — Bayesian Hypothesis Testing video + notes |
-| 11:15–11:20 | DevOps, DataOps, MLOps — 5-min GCP microservice video |
-| 12:00–14:00 | Eid break — family, food, rest |
-| 14:00–15:00 | BigQuery for Data Analysts — Ingesting & Querying New Datasets lab |
-| 15:00–15:30 | Weekly review buffer — update progress in long_term_tasks.md |
+| 09:00–09:10 | **Finish Getting Started with Go** — last 1-min video, mark course complete |
+| 09:10–09:20 | **Start Go Course 2/3** — read "STOP - Read This First!" intro |
+| 09:30–10:15 | **IBM EDA for ML** — Bayesian Hypothesis Testing video + any follow-on material |
+| 10:15–10:30 | Break |
+| 10:30–11:30 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab |
+| 11:30–13:30 | Eid family time / rest / lunch |
+| 13:30–14:30 | **Nuts and Bolts of ML** — "Perform feature engineering" lab (part 1) |
+| 14:30–15:30 | **Nuts and Bolts of ML** — continue / complete lab |
+| 15:30–15:45 | **DevOps Prerequisite** — "Managing System Services in Linux" video (9 min) |
+| 15:45–16:00 | Update `long_term_tasks.md` with today's progress |
 
-_Total focused study: ~3.5 hours across two blocks._
+_Total focused study: ~4 hours across two blocks._
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-_No personal deadlines in Google Calendar for May 29 – June 5, 2026._
+- 2026-05-31: Eid al-Adha Holiday (day 2 — also free, use for continued study sprint)
 
-- 2026-05-29 to 2026-05-31: Eid al-Adha public holiday — three clear days for learning
-- **Recurring:** At least 1 Coursera lesson or lab per day
+_No hard deadlines in your task list for this week._
 
-### Holiday 3-Day Sprint Suggestion
-| Day | Focus |
-|-----|-------|
-| Fri 29 (today) | Finish Go Course 1/3 + ML Feature Engineering + BigQuery lab |
-| Sat 30 | IBM EDA full module push + Algorithms D&C Week 2 Overview |
-| Sun 31 | Successful Presentation reading + Business Writing + DevOps prereq video |
+### Eid Sprint Plan (remaining holiday days)
+| Day | Suggested Focus |
+|-----|----------------|
+| Sat 30 (today) | Finish Go Course 1 + Go Course 2 intro + IBM EDA + BigQuery lab + ML Feature Eng. lab |
+| Sun 31 | Algorithms D&C Week 2 Overview + Successful Presentation reading + Business Writing video |
+
+---
+
+## Weekly Priority Reminder
+
+| Tier | Track | Next Action |
+|------|-------|-------------|
+| 🔴 1 | Core ML | Nuts & Bolts ML feature engineering lab (60 min) |
+| 🔴 1 | Core ML | IBM EDA — Bayesian Hypothesis Testing video |
+| 🔴 1 | Go | Finish Course 1 (1 min!), start Course 2 |
+| 🔴 1 | Cloud | BigQuery — Ingesting & Querying lab (60 min) |
+| 🟠 2 | MLOps | DevOps/DataOps/MLOps — GCP App Engine video (5 min) |
 
 ---
 
