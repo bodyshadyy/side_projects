@@ -1,75 +1,57 @@
-# Daily Plan — 2026-05-31
-
-> **Eid al-Adha Mubarak (Day 2)!** Today is still a public holiday in Egypt.
-> No calendar events scheduled — another fully open day.
+# Daily Plan — 2026-06-01
 
 > ⚠️ The "Urgent" items in `long_term_tasks.md` (Quiz on 2026-04-29, Exams week of 2026-04-28) are over a month past. Mark them ✅ done or ❌ missed on your next review.
 
 ---
 
 ## Today's Calendar
-
 | Time | Event |
 |------|-------|
-| All day | Eid al-Adha Holiday — Day 2 (public holiday — Egypt) |
-
-_No personal events scheduled._
+| — | No events scheduled — full day available |
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; next item is literally a 1-minute video. Close this course today — it unlocks Course 2/3 and removes mental overhead. **~5–10 min**
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next item is a 1-minute video. Close this course today to unlock Course 2/3 and clear mental overhead. _Est: 10–15 min_
 
-2. **Start "Functions, Methods, and Interfaces in Go" (Course 2/3)** — Read the "STOP - Read This First!" intro immediately after finishing Course 1 to carry momentum. **~10 min**
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 high priority, 60-min hands-on lab. Full free day makes this the best time for focused lab work. _Est: 60–75 min_
 
-3. **IBM: Exploratory Data Analysis for ML** — 57% complete; next: "Bayesian Interpretation of Hypothesis Testing Example" video. Highest-value in-progress ML theory course — keep it rolling. **~30–45 min**
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, another 60-min lab. Pair it with the ML lab while momentum is high. _Est: 60–75 min_
 
-4. **Algorithms: Divide and Conquer** — 34% complete; next: "Week 2 Overview" reading. Tier 4 math foundation — holiday is a good time for a lighter reading task. **~15–20 min**
+4. **GitHub Foundation prep** — You have a "github foundation" calendar block on June 8 at 03:00 AM Cairo (7 days away). Review GitHub fundamentals today to avoid last-minute cramming. _Est: 45–60 min_
 
-5. **Successful Presentation** — 64% complete; next: "Course Updates and Accessibility Support" reading. Short admin read to unlock the next real lesson. **~5 min**
+5. **IBM: Exploratory Data Analysis for ML — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, carry-over from yesterday. Keeps Tier 1 moving. _Est: 20–30 min_
 
-6. **Business Writing** — 36% complete; next: "Long Documents, in Brief" video (2 min). Tiny task that maintains daily Coursera habit. **~5 min**
+6. **DevOps Prerequisite Course — "Managing System Services in Linux"** — 18% complete, 9-min video. Quick Tier 2-support win to end the day. _Est: 10–15 min_
 
-7. **DevOps Prerequisite Course** — 18% complete; next: "Managing System Services in Linux" video (9 min). Quick Tier 6 win if energy holds after bigger blocks. **~15 min**
+7. **Business Writing — "Long Documents, in Brief"** — 2-min video. Tack onto any break to maintain the daily habit. _Est: 5 min_
 
 ---
 
 ## Suggested Time Blocks
-
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | **Finish Getting Started with Go** — last 1-min video, mark course complete |
-| 09:10–09:20 | **Start Go Course 2/3** — read "STOP - Read This First!" intro |
-| 09:20–10:05 | **IBM EDA for ML** — Bayesian Hypothesis Testing video + any follow-on |
-| 10:05–10:25 | **Algorithms D&C** — Week 2 Overview reading |
-| 10:25–10:30 | **Successful Presentation** — accessibility reading (5 min) |
-| 10:30–10:35 | **Business Writing** — "Long Documents, in Brief" video (2 min) |
-| 10:35–13:00 | Eid family time / rest / lunch |
-| 13:00–13:15 | **DevOps Prerequisite** — "Managing System Services in Linux" (9 min) |
-| 13:15–13:30 | Update `long_term_tasks.md` with progress + clear past-dated urgent items |
-
-_Total focused study: ~2.5 hours. Light load in respect of the holiday._
+| 09:00–09:15 | Finish "Getting Started with Go" — 1-min video + mark course complete |
+| 09:15–10:30 | Nuts and Bolts of ML — Feature Engineering lab (60 min hands-on) |
+| 10:30–10:45 | Break |
+| 10:45–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
+| 12:00–13:00 | Lunch / rest |
+| 13:00–14:00 | GitHub Foundation prep — review repos, PRs, Actions, security basics |
+| 14:00–14:30 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
+| 14:30–14:45 | DevOps Prerequisite — "Managing System Services in Linux" (9 min) |
+| 14:45–14:50 | Business Writing — "Long Documents, in Brief" (2 min video) |
+| 14:50–15:00 | Update `long_term_tasks.md` with today's progress |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
-
-- No hard deadlines detected in the next 7 days.
-
-_Calendar is clear from 2026-06-01 through 2026-06-07._
+- **2026-06-08**: GitHub Foundation event (03:00–04:00 AM Cairo) — start prep today
 
 ---
 
-## Weekly Priority Reminder
-
-| Tier | Track | Next Action |
-|------|-------|-------------|
-| 🔴 1 | Go | Finish Course 1 (1 min!), then start Course 2/3 |
-| 🔴 1 | Core ML | IBM EDA — Bayesian Hypothesis Testing video |
-| 🔴 1 | Core ML | Nuts & Bolts ML — feature engineering lab (60 min) _(carry over if skipped yesterday)_ |
-| 🔴 1 | Cloud | BigQuery — Ingesting & Querying lab (60 min) _(carry over if skipped yesterday)_ |
-| 🟠 2 | MLOps | DevOps/DataOps/MLOps — GCP App Engine video (5 min) |
+## Recurring Responsibility
+- [ ] At least 1 Coursera lesson or lab completed today _(daily commitment)_
 
 ---
 
