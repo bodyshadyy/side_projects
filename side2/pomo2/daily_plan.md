@@ -1,6 +1,6 @@
-# Daily Plan — 2026-06-01
+# Daily Plan — 2026-06-02
 
-> ⚠️ The "Urgent" items in `long_term_tasks.md` (Quiz on 2026-04-29, Exams week of 2026-04-28) are over a month past. Mark them ✅ done or ❌ missed on your next review.
+> Note: The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
 
 ---
 
@@ -13,17 +13,17 @@
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next item is a 1-minute video. Close this course today to unlock Course 2/3 and clear mental overhead. _Est: 10–15 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next item is a 1-minute video. Close this course today to unlock Course 2/3 and clear it from active tasks. _Est: 10–15 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 high priority, 60-min hands-on lab. Full free day makes this the best time for focused lab work. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% complete. A full free day is the best opportunity for a 60-min hands-on lab. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, another 60-min lab. Pair it with the ML lab while momentum is high. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. Pair with the ML lab while focus is high. _Est: 60–75 min_
 
-4. **GitHub Foundation prep** — You have a "github foundation" calendar block on June 8 at 03:00 AM Cairo (7 days away). Review GitHub fundamentals today to avoid last-minute cramming. _Est: 45–60 min_
+4. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks on June 8–9 at 03:00 Cairo. Review GitHub fundamentals (repos, PRs, Actions, security basics) to stay ready. _Est: 45–60 min_
 
-5. **IBM: Exploratory Data Analysis for ML — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, carry-over from yesterday. Keeps Tier 1 moving. _Est: 20–30 min_
+5. **IBM: Exploratory Data Analysis for ML — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Keep Tier 1 moving. _Est: 20–30 min_
 
-6. **DevOps Prerequisite Course — "Managing System Services in Linux"** — 18% complete, 9-min video. Quick Tier 2-support win to end the day. _Est: 10–15 min_
+6. **DevOps Prerequisite Course — "Managing System Services in Linux"** — 9-min video, quick Tier 6 win to support the MLOps track. _Est: 10–15 min_
 
 7. **Business Writing — "Long Documents, in Brief"** — 2-min video. Tack onto any break to maintain the daily habit. _Est: 5 min_
 
@@ -46,7 +46,8 @@
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- **2026-06-08**: GitHub Foundation event (03:00–04:00 AM Cairo) — start prep today
+- 2026-06-08: github foundation (recurring session, 03:00–04:00 Cairo)
+- 2026-06-09: github foundation (recurring session, 03:00–04:00 Cairo)
 
 ---
 
