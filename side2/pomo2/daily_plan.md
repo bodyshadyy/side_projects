@@ -1,6 +1,6 @@
-# Daily Plan — 2026-06-02
+# Daily Plan — 2026-06-03
 
-> Note: The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
+> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
 
 ---
 
@@ -19,7 +19,7 @@
 
 3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. Pair with the ML lab while focus is high. _Est: 60–75 min_
 
-4. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks on June 8–9 at 03:00 Cairo. Review GitHub fundamentals (repos, PRs, Actions, security basics) to stay ready. _Est: 45–60 min_
+4. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks on June 8–10 at 03:00 Cairo. Review GitHub fundamentals (repos, PRs, Actions, security basics) to stay ready. _Est: 45–60 min_
 
 5. **IBM: Exploratory Data Analysis for ML — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Keep Tier 1 moving. _Est: 20–30 min_
 
@@ -48,6 +48,7 @@
 ## Upcoming Deadlines (next 7 days)
 - 2026-06-08: github foundation (recurring session, 03:00–04:00 Cairo)
 - 2026-06-09: github foundation (recurring session, 03:00–04:00 Cairo)
+- 2026-06-10: github foundation (recurring session, 03:00–04:00 Cairo)
 
 ---
 
