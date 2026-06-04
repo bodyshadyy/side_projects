@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-03
+# Daily Plan — 2026-06-04
 
 > **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
 
@@ -13,19 +13,19 @@
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next item is a 1-minute video. Close this course today to unlock Course 2/3 and clear it from active tasks. _Est: 10–15 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next is a 1-min video. Close this out today; it's essentially done and carrying it as "active" wastes mental overhead. _Est: 10 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% complete. A full free day is the best opportunity for a 60-min hands-on lab. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% complete. A free day is the best window for a focused 60-min lab session. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. Pair with the ML lab while focus is high. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. High-leverage Tier 1 item. _Est: 60–75 min_
 
-4. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks on June 8–10 at 03:00 Cairo. Review GitHub fundamentals (repos, PRs, Actions, security basics) to stay ready. _Est: 45–60 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Short video to maintain momentum on this Tier 1 course. _Est: 20–30 min_
 
-5. **IBM: Exploratory Data Analysis for ML — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Keep Tier 1 moving. _Est: 20–30 min_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, quick win that pairs naturally with finishing the Go course today. _Est: 5–10 min_
 
-6. **DevOps Prerequisite Course — "Managing System Services in Linux"** — 9-min video, quick Tier 6 win to support the MLOps track. _Est: 10–15 min_
+6. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks start June 8 at 03:00 Cairo (daily through Jun 11). Use free time today to review GitHub fundamentals: repos, PRs, Actions, security basics. _Est: 45–60 min_
 
-7. **Business Writing — "Long Documents, in Brief"** — 2-min video. Tack onto any break to maintain the daily habit. _Est: 5 min_
+7. **Business Writing — "Long Documents, in Brief"** — 2-min video, quick Tier 5 habit-keeper. Tack onto any break. _Est: 5 min_
 
 ---
 
@@ -33,22 +33,24 @@
 | Block | Task |
 |-------|------|
 | 09:00–09:15 | Finish "Getting Started with Go" — 1-min video + mark course complete |
-| 09:15–10:30 | Nuts and Bolts of ML — Feature Engineering lab (60 min hands-on) |
+| 09:15–09:20 | DevOps/DataOps/MLOps — 5-min Golang GCP microservice video |
+| 09:20–10:30 | Nuts and Bolts of ML — Feature Engineering lab (60 min hands-on) |
 | 10:30–10:45 | Break |
 | 10:45–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
 | 12:00–13:00 | Lunch / rest |
 | 13:00–14:00 | GitHub Foundation prep — review repos, PRs, Actions, security basics |
 | 14:00–14:30 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
-| 14:30–14:45 | DevOps Prerequisite — "Managing System Services in Linux" (9 min) |
-| 14:45–14:50 | Business Writing — "Long Documents, in Brief" (2 min video) |
-| 14:50–15:00 | Update `long_term_tasks.md` with today's progress |
+| 14:30–14:35 | Business Writing — "Long Documents, in Brief" (2 min video) |
+| 14:35–14:45 | Update `long_term_tasks.md` with today's progress |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
+- 2026-06-08: github foundation (session, 03:00–04:00 Cairo)
 - 2026-06-08: github foundation (recurring session, 03:00–04:00 Cairo)
 - 2026-06-09: github foundation (recurring session, 03:00–04:00 Cairo)
 - 2026-06-10: github foundation (recurring session, 03:00–04:00 Cairo)
+- 2026-06-11: github foundation (recurring session, 03:00–04:00 Cairo)
 
 ---
 
