@@ -1,60 +1,67 @@
-# Daily Plan — 2026-06-04
+# Daily Plan — 2026-06-05
 
-> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
+> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both dates have now passed. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
 ---
 
 ## Today's Calendar
+
 | Time | Event |
 |------|-------|
 | — | No events scheduled — full day available |
+
+_Recurring "github foundation" sessions start Mon Jun 8 at 03:00–04:00 Cairo time through Jun 12._
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next is a 1-min video. Close this out today; it's essentially done and carrying it as "active" wastes mental overhead. _Est: 10 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video away from done. Closing this eliminates an active-course distraction and unlocks Course 2. _Est: 10–15 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% complete. A free day is the best window for a focused 60-min lab session. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at 9%. Today's free schedule is ideal for a focused 60-min hands-on lab. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. High-leverage Tier 1 item. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab from a major Tier 1 milestone. Cloud + ML combo skill, do it while you have a long block. _Est: 60–75 min_
 
-4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Short video to maintain momentum on this Tier 1 course. _Est: 20–30 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Keep this moving; don't let a 57%-done course stall. _Est: 25–35 min_
 
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, quick win that pairs naturally with finishing the Go course today. _Est: 5–10 min_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, a trivial 5-min video that keeps the MLOps track alive. Do it right after finishing the Go course. _Est: 10 min_
 
-6. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks start June 8 at 03:00 Cairo (daily through Jun 11). Use free time today to review GitHub fundamentals: repos, PRs, Actions, security basics. _Est: 45–60 min_
+6. **GitHub Foundation prep** — You have recurring "github foundation" calendar blocks starting Jun 8 (daily, 03:00 Cairo). Use today's free afternoon to review GitHub fundamentals — repos, PRs, Actions, branch protection. _Est: 45–60 min_
 
-7. **Business Writing — "Long Documents, in Brief"** — 2-min video, quick Tier 5 habit-keeper. Tack onto any break. _Est: 5 min_
+7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tack onto a break. _Est: 5 min_
 
 ---
 
 ## Suggested Time Blocks
+
 | Block | Task |
 |-------|------|
-| 09:00–09:15 | Finish "Getting Started with Go" — 1-min video + mark course complete |
-| 09:15–09:20 | DevOps/DataOps/MLOps — 5-min Golang GCP microservice video |
-| 09:20–10:30 | Nuts and Bolts of ML — Feature Engineering lab (60 min hands-on) |
+| 09:00–09:15 | **Getting Started with Go** — watch final 1-min video, mark course complete |
+| 09:15–09:25 | **DevOps/DataOps/MLOps** — 5-min Golang GCP App Engine Microservice video |
+| 09:25–10:30 | **Nuts and Bolts of ML** — Feature Engineering lab (60 min hands-on) |
 | 10:30–10:45 | Break |
-| 10:45–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
+| 10:45–12:00 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab |
 | 12:00–13:00 | Lunch / rest |
-| 13:00–14:00 | GitHub Foundation prep — review repos, PRs, Actions, security basics |
-| 14:00–14:30 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
-| 14:30–14:35 | Business Writing — "Long Documents, in Brief" (2 min video) |
-| 14:35–14:45 | Update `long_term_tasks.md` with today's progress |
+| 13:00–14:00 | **GitHub Foundation prep** — review repos, PRs, Actions, security basics for Jun 8 sessions |
+| 14:00–14:35 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video |
+| 14:35–14:40 | **Business Writing** — "Long Documents, in Brief" (2 min video) |
+| 14:40–15:00 | Update `long_term_tasks.md` with today's completed items |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- 2026-06-08: github foundation (session, 03:00–04:00 Cairo)
-- 2026-06-08: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-09: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-10: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-11: github foundation (recurring session, 03:00–04:00 Cairo)
+
+- 2026-06-08: "github foundation" recurring session (03:00–04:00 Cairo) — Mon
+- 2026-06-09: "github foundation" recurring session (03:00–04:00 Cairo) — Tue
+- 2026-06-10: "github foundation" recurring session (03:00–04:00 Cairo) — Wed
+- 2026-06-11: "github foundation" recurring session (03:00–04:00 Cairo) — Thu
+- 2026-06-12: "github foundation" recurring session (03:00–04:00 Cairo) — Fri
+- _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any upcoming due dates there)_
 
 ---
 
 ## Recurring Responsibility
+
 - [ ] At least 1 Coursera lesson or lab completed today _(daily commitment)_
 
 ---
