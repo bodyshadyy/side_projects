@@ -1,6 +1,6 @@
-# Daily Plan — 2026-06-05
+# Daily Plan — 2026-06-06
 
-> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both dates have now passed. Mark them ✅ done or ❌ missed and clear that section on your next file review.
+> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both are over 5 weeks past. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
 ---
 
@@ -10,25 +10,25 @@
 |------|-------|
 | — | No events scheduled — full day available |
 
-_Recurring "github foundation" sessions start Mon Jun 8 at 03:00–04:00 Cairo time through Jun 12._
+_Recurring "github foundation" sessions run Mon–Sat Jun 8–13 at 03:00–04:00 Cairo time._
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video away from done. Closing this eliminates an active-course distraction and unlocks Course 2. _Est: 10–15 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left ("Welcome to the Course"). Closing this today is a free win that clears it from your active list. _Est: 10 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at 9%. Today's free schedule is ideal for a focused 60-min hands-on lab. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, course stuck at 9%. A free Saturday is perfect for a 60-min hands-on lab with no interruptions. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab from a major Tier 1 milestone. Cloud + ML combo skill, do it while you have a long block. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab separates you from a major cloud/ML milestone. Tackle it back-to-back with the ML lab for compound momentum. _Est: 60–75 min_
 
-4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Keep this moving; don't let a 57%-done course stall. _Est: 25–35 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Keep this moving; a half-done course that stalls wastes the investment. _Est: 25–35 min_
 
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, a trivial 5-min video that keeps the MLOps track alive. Do it right after finishing the Go course. _Est: 10 min_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, a trivial 5-min video that keeps your MLOps track alive. _Est: 10 min_
 
-6. **GitHub Foundation prep** — You have recurring "github foundation" calendar blocks starting Jun 8 (daily, 03:00 Cairo). Use today's free afternoon to review GitHub fundamentals — repos, PRs, Actions, branch protection. _Est: 45–60 min_
+6. **GitHub Foundation prep** — Recurring "github foundation" calendar sessions start Monday Jun 8 at 03:00 Cairo. Use this afternoon to review GitHub fundamentals (repos, PRs, Actions, branch protection, security) so each session is productive. _Est: 45–60 min_
 
-7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tack onto a break. _Est: 5 min_
+7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tag it onto any break. _Est: 5 min_
 
 ---
 
@@ -38,25 +38,26 @@ _Recurring "github foundation" sessions start Mon Jun 8 at 03:00–04:00 Cairo t
 |-------|------|
 | 09:00–09:15 | **Getting Started with Go** — watch final 1-min video, mark course complete |
 | 09:15–09:25 | **DevOps/DataOps/MLOps** — 5-min Golang GCP App Engine Microservice video |
-| 09:25–10:30 | **Nuts and Bolts of ML** — Feature Engineering lab (60 min hands-on) |
+| 09:25–10:30 | **Nuts and Bolts of ML** — "Perform Feature Engineering" lab (60 min) |
 | 10:30–10:45 | Break |
-| 10:45–12:00 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab |
+| 10:45–12:00 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
 | 12:00–13:00 | Lunch / rest |
-| 13:00–14:00 | **GitHub Foundation prep** — review repos, PRs, Actions, security basics for Jun 8 sessions |
-| 14:00–14:35 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video |
+| 13:00–14:00 | **GitHub Foundation prep** — review repos, PRs, Actions, security basics for Jun 8–13 sessions |
+| 14:00–14:35 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video + notes |
 | 14:35–14:40 | **Business Writing** — "Long Documents, in Brief" (2 min video) |
-| 14:40–15:00 | Update `long_term_tasks.md` with today's completed items |
+| 14:40–15:00 | Update `long_term_tasks.md` — tick completed items, clear past urgent tasks |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-06-08: "github foundation" recurring session (03:00–04:00 Cairo) — Mon
-- 2026-06-09: "github foundation" recurring session (03:00–04:00 Cairo) — Tue
-- 2026-06-10: "github foundation" recurring session (03:00–04:00 Cairo) — Wed
-- 2026-06-11: "github foundation" recurring session (03:00–04:00 Cairo) — Thu
-- 2026-06-12: "github foundation" recurring session (03:00–04:00 Cairo) — Fri
-- _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any upcoming due dates there)_
+- 2026-06-08: **github foundation** recurring session — 03:00–04:00 Cairo (Mon)
+- 2026-06-09: **github foundation** recurring session — 03:00–04:00 Cairo (Tue)
+- 2026-06-10: **github foundation** recurring session — 03:00–04:00 Cairo (Wed)
+- 2026-06-11: **github foundation** recurring session — 03:00–04:00 Cairo (Thu)
+- 2026-06-12: **github foundation** recurring session — 03:00–04:00 Cairo (Fri)
+- 2026-06-13: **github foundation** recurring session — 03:00–04:00 Cairo (Sat)
+- _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any due dates there)_
 
 ---
 
