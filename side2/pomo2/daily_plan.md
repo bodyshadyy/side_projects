@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-09
+# Daily Plan — 2026-06-10
 
 > **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both are ~6 weeks past. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
@@ -10,23 +10,23 @@
 |---|---|
 | 03:00–04:00 | github foundation *(recurring — already completed this morning)* |
 
-_No other events today — full day available from ~07:00 onward._
+_No other events today — full day available._
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left. Closing this today is a free win that clears it from your active list. _Est: 10 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left. Closing this today is a free win that clears it from your active Tier 1 list. _Est: 10 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at 9%. A hands-on 60-min lab; most important deep-work block of the day. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at only 9%. A hands-on 60-min lab; most important deep-work block of the day. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab separates you from a major cloud/ML milestone. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab keeps a major cloud/ML milestone moving forward. _Est: 60–75 min_
 
-4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Keep it moving; stalled courses waste investment. _Est: 25–35 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Keep this in-progress course moving; stalled courses waste sunk investment. _Est: 25–35 min_
 
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice"** — Tier 2, a trivial 5-min video to keep your MLOps track alive. _Est: 10 min_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice"** — Tier 2, a 5-min video. Keep the MLOps track alive with minimal time cost. _Est: 10 min_
 
-6. **GitHub Foundation prep** — Recurring "github foundation" sessions run daily this week 03:00–04:00 Cairo. Review or practice today (repos, PRs, Actions, branch protection) so each session stays productive. _Est: 45–60 min_
+6. **GitHub Foundation prep** — Daily recurring session at 03:00–04:00 Cairo. Review or practice today (repos, PRs, Actions, branch protection) so tomorrow's early session stays productive. _Est: 30–45 min_
 
 7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tag it onto any break. _Est: 5 min_
 
@@ -36,26 +36,27 @@ _No other events today — full day available from ~07:00 onward._
 
 | Block (Cairo) | Task |
 |---|---|
-| 07:00–07:15 | **Getting Started with Go** — watch final 1-min video, mark Course 1 complete |
-| 07:15–07:25 | **DevOps/DataOps/MLOps** — 5-min Golang GCP App Engine Microservice video |
-| 07:30–08:30 | **Nuts and Bolts of ML** — "Perform Feature Engineering" lab (60 min, deep work) |
-| 08:30–08:45 | Break |
-| 08:45–09:45 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
-| 09:45–10:30 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video + notes |
-| 10:30–10:35 | **Business Writing** — "Long Documents, in Brief" (2-min video) |
-| 10:35–11:30 | **GitHub Foundation prep** — review/practice for daily sessions |
-| 11:30–11:45 | Update `long_term_tasks.md` — tick completed items, clear past urgent tasks |
+| 09:00–09:10 | **Getting Started with Go** — watch final 1-min video, mark Course 1 complete |
+| 09:10–09:20 | **DevOps/DataOps/MLOps** — "Building Golang GCP App Engine Microservice" (5-min video) |
+| 09:20–10:25 | **Nuts and Bolts of ML** — "Perform Feature Engineering" lab (60 min, deep work) |
+| 10:25–10:40 | Break |
+| 10:40–11:45 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
+| 11:45–12:25 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video + follow-on items |
+| 12:25–12:30 | **Business Writing** — "Long Documents, in Brief" (2-min video) |
+| 12:30–13:30 | Lunch + rest |
+| 13:30–14:15 | **GitHub Foundation prep** — review/practice for tomorrow's 03:00 session |
+| 14:15–14:30 | Update `long_term_tasks.md` — tick completed items, clear past urgent tasks |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-06-10: github foundation session — 03:00–04:00 Cairo (Wed)
 - 2026-06-11: github foundation session — 03:00–04:00 Cairo (Thu)
 - 2026-06-12: github foundation session — 03:00–04:00 Cairo (Fri)
 - 2026-06-13: github foundation session — 03:00–04:00 Cairo (Sat)
 - 2026-06-14: github foundation session — 03:00–04:00 Cairo (Sun)
 - 2026-06-15: github foundation session — 03:00–04:00 Cairo (Mon)
+- 2026-06-16: github foundation session — 03:00–04:00 Cairo (Tue)
 - _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any due dates there)_
 
 ---
