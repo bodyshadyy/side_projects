@@ -15,35 +15,36 @@ _No other events today — full day available._
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, next is a 1-min video. Close this out today; it's essentially done and carrying it as "active" wastes mental overhead. _Est: 10 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left. Closing this today is a free win that removes it from your active Tier 1 list entirely. _Est: 10 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% complete. A free day is the best window for a focused 60-min lab session. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at only 9%. Hands-on 60-min lab; most important deep-work block of the day. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, one lab away from a major milestone. High-leverage Tier 1 item. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab keeps a major cloud/ML milestone moving forward. _Est: 60–75 min_
 
-4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, HIGH priority. Short video to maintain momentum on this Tier 1 course. _Est: 20–30 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Keep this in-progress course moving. _Est: 25–35 min_
 
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, quick win that pairs naturally with finishing the Go course today. _Est: 5–10 min_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice"** — Tier 2, only 5 min. Keep the MLOps track alive with minimal time cost. _Est: 10 min_
 
 6. **GitHub Foundation prep** — Recurring daily session 03:00–04:00 Cairo continues all week. Review today (repos, PRs, Actions, branch protection) so tonight's early session stays sharp. _Est: 30–45 min_
 
-7. **Business Writing — "Long Documents, in Brief"** — 2-min video, quick Tier 5 habit-keeper. Tack onto any break. _Est: 5 min_
+7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tag it onto any break. _Est: 5 min_
 
 ---
 
 ## Suggested Time Blocks
-| Block | Task |
-|-------|------|
-| 09:00–09:15 | Finish "Getting Started with Go" — 1-min video + mark course complete |
-| 09:15–09:20 | DevOps/DataOps/MLOps — 5-min Golang GCP microservice video |
-| 09:20–10:30 | Nuts and Bolts of ML — Feature Engineering lab (60 min hands-on) |
-| 10:30–10:45 | Break |
-| 10:45–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
-| 12:00–13:00 | Lunch / rest |
-| 13:00–14:00 | GitHub Foundation prep — review repos, PRs, Actions, security basics |
-| 14:00–14:30 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
-| 14:30–14:35 | Business Writing — "Long Documents, in Brief" (2 min video) |
-| 14:35–14:45 | Update `long_term_tasks.md` with today's progress |
+
+| Block (Cairo) | Task |
+|---|---|
+| 09:00–09:10 | **Getting Started with Go** — watch final 1-min video, mark Course 1 complete |
+| 09:10–09:20 | **DevOps/DataOps/MLOps** — "Building Golang GCP App Engine Microservice" (5-min video) |
+| 09:20–10:25 | **Nuts and Bolts of ML** — "Perform Feature Engineering" lab (60 min, deep work) |
+| 10:25–10:40 | Break |
+| 10:40–11:45 | **BigQuery for Data Analysts** — "Ingesting and Querying New Datasets" lab (60 min) |
+| 11:45–12:20 | **IBM EDA for ML** — "Bayesian Interpretation of Hypothesis Testing" video |
+| 12:20–12:25 | **Business Writing** — "Long Documents, in Brief" (2-min video) |
+| 12:25–13:25 | Lunch + rest |
+| 13:25–14:10 | **GitHub Foundation prep** — review/practice for tonight's 03:00 session |
+| 14:10–14:25 | Update `long_term_tasks.md` — tick completed items, clear past urgent tasks |
 
 ---
 
