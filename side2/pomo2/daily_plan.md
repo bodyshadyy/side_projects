@@ -1,13 +1,15 @@
-# Daily Plan — 2026-06-04
+# Daily Plan — 2026-06-12
 
-> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — those dates have passed. Mark them ✅ done or ❌ missed on your next file review.
+> **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both are now ~6 weeks past. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
 ---
 
 ## Today's Calendar
-| Time | Event |
-|------|-------|
-| — | No events scheduled — full day available |
+| Time (Cairo) | Event |
+|---|---|
+| 03:00–04:00 | github foundation *(recurring — early morning slot)* |
+
+_No other events today — full day available._
 
 ---
 
@@ -23,7 +25,7 @@
 
 5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" (5 min)** — Tier 2, quick win that pairs naturally with finishing the Go course today. _Est: 5–10 min_
 
-6. **GitHub Foundation prep** — Recurring "github foundation" calendar blocks start June 8 at 03:00 Cairo (daily through Jun 11). Use free time today to review GitHub fundamentals: repos, PRs, Actions, security basics. _Est: 45–60 min_
+6. **GitHub Foundation prep** — Recurring daily session 03:00–04:00 Cairo continues all week. Review today (repos, PRs, Actions, branch protection) so tonight's early session stays sharp. _Est: 30–45 min_
 
 7. **Business Writing — "Long Documents, in Brief"** — 2-min video, quick Tier 5 habit-keeper. Tack onto any break. _Est: 5 min_
 
@@ -46,11 +48,14 @@
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- 2026-06-08: github foundation (session, 03:00–04:00 Cairo)
-- 2026-06-08: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-09: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-10: github foundation (recurring session, 03:00–04:00 Cairo)
-- 2026-06-11: github foundation (recurring session, 03:00–04:00 Cairo)
+- 2026-06-13: github foundation session — 03:00–04:00 Cairo (Sat)
+- 2026-06-14: github foundation session — 03:00–04:00 Cairo (Sun)
+- 2026-06-15: github foundation session — 03:00–04:00 Cairo (Mon)
+- 2026-06-16: github foundation session — 03:00–04:00 Cairo (Tue)
+- 2026-06-17: github foundation session — 03:00–04:00 Cairo (Wed)
+- 2026-06-18: github foundation session — 03:00–04:00 Cairo (Thu)
+- 2026-06-19: github foundation session — 03:00–04:00 Cairo (Fri)
+- _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any due dates there)_
 
 ---
 
