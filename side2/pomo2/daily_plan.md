@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-12
+# Daily Plan — 2026-06-13
 
 > **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both are now ~6 weeks past. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
@@ -15,17 +15,17 @@ _No other events today — full day available._
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left. Closing this today is a free win that removes it from your active Tier 1 list entirely. _Est: 10 min_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete, one 1-min video left. Close this today for a free Tier 1 win. _Est: 10 min_
 
-2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, stuck at only 9%. Hands-on 60-min lab; most important deep-work block of the day. _Est: 60–75 min_
+2. **Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — Tier 1 HIGH priority, only 9% done. Hands-on 60-min lab; most important deep-work block of the day. _Est: 60–75 min_
 
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab keeps a major cloud/ML milestone moving forward. _Est: 60–75 min_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% complete, Tier 1. One lab keeps a major cloud/ML milestone moving. _Est: 60–75 min_
 
-4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Keep this in-progress course moving. _Est: 25–35 min_
+4. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing Example"** — 57% complete, Tier 1 HIGH priority. Maintain momentum on this in-progress course. _Est: 25–35 min_
 
 5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice"** — Tier 2, only 5 min. Keep the MLOps track alive with minimal time cost. _Est: 10 min_
 
-6. **GitHub Foundation prep** — Recurring daily session 03:00–04:00 Cairo continues all week. Review today (repos, PRs, Actions, branch protection) so tonight's early session stays sharp. _Est: 30–45 min_
+6. **GitHub Foundation prep** — Recurring daily session at 03:00–04:00 Cairo continues all week. Review today (repos, PRs, Actions, branch protection) so tonight's session stays sharp. _Est: 30–45 min_
 
 7. **Business Writing — "Long Documents, in Brief"** — 2-min video, Tier 5 quick-win. Tag it onto any break. _Est: 5 min_
 
