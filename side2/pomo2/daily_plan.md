@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-14
+# Daily Plan — 2026-06-15
 
 > **Note:** The 🚨 Urgent section in `long_term_tasks.md` lists a Quiz (2026-04-29) and Exams (week of 2026-04-28) — both are now ~7 weeks past. Mark them ✅ done or ❌ missed and clear that section on your next file review.
 
@@ -49,13 +49,13 @@ _No other events today — full day available for deep work._
 ---
 
 ## Upcoming Deadlines (next 7 days)
-- 2026-06-14: github foundation session — 03:00–04:00 Cairo (Sun)
-- 2026-06-15: github foundation session — 03:00–04:00 Cairo (Mon)
+- 2026-06-15: github foundation session — 03:00–04:00 Cairo (Mon) ✅ done
 - 2026-06-16: github foundation session — 03:00–04:00 Cairo (Tue)
 - 2026-06-17: github foundation session — 03:00–04:00 Cairo (Wed)
 - 2026-06-18: github foundation session — 03:00–04:00 Cairo (Thu)
 - 2026-06-19: github foundation session — 03:00–04:00 Cairo (Fri)
 - 2026-06-20: github foundation session — 03:00–04:00 Cairo (Sat)
+- 2026-06-21: github foundation session — 03:00–04:00 Cairo (Sun)
 - _(No hard task deadlines in long_term_tasks.md for the next 7 days — add any due dates there)_
 
 ---
