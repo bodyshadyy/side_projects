@@ -1,6 +1,6 @@
-# Daily Plan — 2026-06-18
+# Daily Plan — 2026-06-19
 
-> **Note:** `long_term_tasks.md` was last updated 2026-04-24. The "Urgent — This Week" section references late-April dates that have passed. Consider reviewing and updating your goals file so future plans stay accurate.
+> **Note:** `long_term_tasks.md` was last updated 2026-04-24 (almost 2 months ago). The "Urgent — This Week" items (quiz & exams from late April) are outdated. Please review and update your goals file so future plans stay accurate.
 
 ## Today's Calendar
 | Time (Cairo) | Event |
@@ -29,7 +29,7 @@ No other events — full day open for deep work.
 | 13:40–14:00 | Review progress, update long_term_tasks.md |
 
 ## Upcoming Deadlines (next 7 days)
-- No hard deadlines on the calendar through 2026-06-25
+- No hard deadlines on the calendar through 2026-06-26
 - Daily recurring: github foundation (03:00–04:00 Cairo)
 - Standing goal: At least 1 Coursera lesson or lab per day
 
