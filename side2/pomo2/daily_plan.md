@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-20
+# Daily Plan — 2026-06-21
 
 > Your `long_term_tasks.md` was last updated on 2026-04-24 (almost 2 months ago). The "Urgent — This Week" section references April dates that have passed. Please review and update it so future plans stay accurate.
 
@@ -7,35 +7,35 @@
 |------|-------|
 | 03:00–04:00 | github foundation *(recurring)* |
 
-It's **Saturday** — calendar is wide open after the early morning block. Great day for deep, uninterrupted course work.
+It's **Sunday** — calendar is wide open after the early morning block. Great day for deep, uninterrupted course work. If you didn't finish the Go course yesterday, make it today's top priority.
 
 ## Focus Tasks
-1. **Getting Started with Go (Course 1/3)** — 91% complete, finish it today. Only a few items remain — closing this out unlocks Course 2/3. Est: 30–45 min
-2. **IBM: Exploratory Data Analysis for ML** — 57% complete, strong momentum. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Est: 45 min
-3. **BigQuery for Data Analysts** — 73% complete. Complete the "Ingesting and Querying New Datasets" lab (hands-on, good for a weekend). Est: 60 min
-4. **The Nuts and Bolts of ML (Google)** — 9% complete, needs serious attention. Next: "Perform feature engineering" lab. Est: 60 min
-5. **DevOps, DataOps, MLOps (MLOps Course 2/4)** — 14% complete. Quick win: "Building Golang GCP App Engine Microservice" video (5 min).
+1. **Getting Started with Go (Course 1/3)** — 91% complete, finish it today. Only a few items remain — closing this out unlocks Course 2/3 and supports the MLOps track. Est: 30 min
+2. **IBM: Exploratory Data Analysis for ML** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Push toward 65%+. Est: 60 min
+3. **The Nuts and Bolts of ML (Google)** — 9% complete, needs serious attention. Next: "Perform feature engineering" lab (hands-on). Est: 60 min
+4. **BigQuery for Data Analysts** — 73% complete. Next: "Ingesting and Querying New Datasets" lab. Est: 60 min
+5. **DevOps, DataOps, MLOps (MLOps Course 2/4)** — 14% complete. Quick bonus: "Building Golang GCP App Engine Microservice" video (5 min).
 
 ## Suggested Time Blocks
 | Block | Task |
 |-------|------|
-| 09:00–09:45 | Getting Started with Go — push to 100% |
-| 10:00–10:45 | IBM: EDA for ML — Bayesian Hypothesis Testing video + quiz |
-| 10:45–11:00 | Break |
-| 11:00–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
-| 12:00–13:00 | Lunch break |
-| 13:00–14:00 | Nuts and Bolts of ML — "Perform feature engineering" lab |
-| 14:00–14:10 | DevOps, DataOps, MLOps — 5-min video bonus |
-| 14:10–14:30 | Review all tiers, update long_term_tasks.md |
+| 09:00–09:30 | Getting Started with Go — push to 100%, complete the course |
+| 09:30–10:30 | IBM: EDA for ML — Bayesian Hypothesis Testing video + next lessons |
+| 10:30–10:45 | Break |
+| 10:45–11:45 | Nuts and Bolts of ML — "Perform feature engineering" lab |
+| 11:45–12:30 | Lunch break |
+| 12:30–13:30 | BigQuery — "Ingesting and Querying New Datasets" lab |
+| 13:30–13:40 | DevOps, DataOps, MLOps — 5-min video bonus |
+| 13:40–14:00 | Review all tiers, update long_term_tasks.md |
 
 ## Upcoming Deadlines (next 7 days)
-- No hard deadlines on the calendar through 2026-06-27.
+- No hard deadlines on the calendar through 2026-06-28.
 - Daily recurring: github foundation (03:00–04:00 Cairo)
 - **Stale alerts**: The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in your urgent section have long passed — remove or replace them.
 
 ## Quick Wins
 - **Go Course 1/3** at 91% — finish it today, complete a full specialization course
-- **DevOps/DataOps/MLOps** — a single 5-min video for easy Tier 2 progress
+- **DevOps/DataOps/MLOps** — a single 5-min video keeps Tier 2 momentum
 - **BigQuery** at 73% — a couple more sessions this week could close it out
 
 ## Weekly Reminder
