@@ -1,13 +1,13 @@
-# Daily Plan — 2026-06-22
+# Daily Plan — 2026-06-23
 
-> Your `long_term_tasks.md` was last updated on 2026-04-24 (nearly 2 months ago). The "Urgent — This Week" section still references April dates that have passed. Please review and update it so future plans stay accurate.
+> Your `long_term_tasks.md` was last updated on 2026-04-24 (2 months ago). The "Urgent — This Week" section still references April dates. Please review and update it so future plans stay accurate.
 
 ## Today's Calendar
 | Time (Cairo) | Event |
 |------|-------|
 | 03:00–04:00 | github foundation *(recurring)* |
 
-It's **Monday** — start of the week. Calendar is wide open after the early morning block. If the Go course wasn't finished yesterday, today is the day.
+It's **Tuesday** — calendar is wide open after the early morning block. If the Go course wasn't finished yesterday, make it the first thing today.
 
 ## Focus Tasks
 1. **Getting Started with Go (Course 1/3)** — 91% complete, finish it today. Only a few items remain — closing this out unlocks Course 2/3 and supports the MLOps track. Est: 30 min
@@ -29,7 +29,7 @@ It's **Monday** — start of the week. Calendar is wide open after the early mor
 | 13:40–14:00 | Review all tiers, update long_term_tasks.md with current progress |
 
 ## Upcoming Deadlines (next 7 days)
-- No hard deadlines on the calendar through 2026-06-29.
+- No hard deadlines on the calendar through 2026-06-30.
 - Daily recurring: github foundation (03:00–04:00 Cairo)
 - **Stale alerts**: The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in your urgent section have long passed — remove or replace them.
 
