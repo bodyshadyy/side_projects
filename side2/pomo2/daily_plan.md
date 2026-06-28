@@ -1,4 +1,4 @@
-# Daily Plan — 2026-06-27
+# Daily Plan — 2026-06-28
 
 > Your `long_term_tasks.md` was last updated on 2026-04-24 (2+ months ago). The "Urgent — This Week" section still references April dates. Please review and update it so future plans stay accurate.
 
@@ -7,14 +7,14 @@
 |------|-------|
 | 03:00–04:00 | github foundation *(recurring)* |
 
-It's **Saturday** — no meetings, calendar is wide open. The Go course (91%) has been a carry-over for 5 days now. It's a 30-minute finish at most — do it first, no excuses.
+It's **Sunday** — calendar is wide open again. The Go course (91%) is now a **day 6 carry-over**. This is the #1 priority — it's 30 minutes of work standing between you and completion. No more delays.
 
 ## Focus Tasks
-1. **Getting Started with Go (Course 1/3)** — 91% complete. **Day 5 carry-over. Finish it first thing — before opening anything else.** This unlocks Course 2/3 and feeds the MLOps track. Est: 30 min
-2. **IBM: Exploratory Data Analysis for ML** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Saturday is ideal for pushing this toward 65%+. Est: 90 min
-3. **BigQuery for Data Analysts** — 73% complete. Next: "Ingesting and Querying New Datasets" lab (60 min). Hands-on lab — perfect for a Saturday deep-work block. Est: 90 min
-4. **The Nuts and Bolts of ML (Google)** — 9% complete, needs serious momentum. Next: "Perform feature engineering" lab (60 min). Est: 60 min
-5. **DevOps, DataOps, MLOps (MLOps Course 2/4)** — 14% complete. Quick win: "Building Golang GCP App Engine Microservice" video (5 min). Free points.
+1. **Getting Started with Go (Course 1/3)** — 91% complete. **Day 6 carry-over. Non-negotiable: finish it before anything else.** Unlocks Course 2/3 and feeds the MLOps track. Est: 30 min
+2. **IBM: Exploratory Data Analysis for ML** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Weekend target was 65%+ — push hard today. Est: 90 min
+3. **BigQuery for Data Analysts** — 73% complete. Next: "Ingesting and Querying New Datasets" lab (60 min). Weekend target was 80%+ — this lab gets you there. Est: 90 min
+4. **The Nuts and Bolts of ML (Google)** — 9% complete. Next: "Perform feature engineering" lab (60 min). Still needs serious momentum. Est: 60 min
+5. **DevOps, DataOps, MLOps (MLOps Course 2/4)** — 14% complete. Quick win: "Building Golang GCP App Engine Microservice" video (5 min). Easy points if you have spare time.
 
 ## Suggested Time Blocks
 | Block | Task |
@@ -30,16 +30,16 @@ It's **Saturday** — no meetings, calendar is wide open. The Go course (91%) ha
 | 15:10–15:30 | Update `long_term_tasks.md` — remove stale April deadlines, update percentages |
 
 ## Upcoming Deadlines (next 7 days)
-- No hard deadlines on the calendar through 2026-07-04.
+- No hard deadlines on the calendar through 2026-07-05.
 - Daily recurring: github foundation (03:00–04:00 Cairo)
 - **Stale alerts**: The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in your urgent section have long passed — remove or replace them.
 
-## Weekend Goals
-- **Go Course 1/3** at 91% — finish it TODAY (day 5 carry-over, no more delays)
-- **BigQuery** at 73% — target 80%+ by end of weekend
-- **IBM EDA** at 57% — target 65%+ by end of weekend
-- **Nuts and Bolts of ML** at 9% — target 15%+ by end of weekend
-- Saturday has extra time — use it for the longer labs that are hard to fit on weekdays
+## Weekend Checkpoint
+- **Go Course 1/3** at 91% — day 6 carry-over, MUST finish today
+- **BigQuery** at 73% — weekend target 80%+, the lab today gets you there
+- **IBM EDA** at 57% — weekend target 65%+, today is your last weekend push
+- **Nuts and Bolts of ML** at 9% — weekend target 15%+, the lab today helps
+- Sunday is the last weekend day — finish what Saturday started
 - Daily goal: at least 1 Coursera lesson or lab
 - Weekly: review progress across all tiers, update `long_term_tasks.md`
 
