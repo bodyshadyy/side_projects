@@ -1,47 +1,38 @@
-# Daily Plan — 2026-06-29
-
-> Your `long_term_tasks.md` was last updated on 2026-04-24 (2+ months ago). The "Urgent — This Week" section still references April dates. Please review and update it so future plans stay accurate.
+# Daily Plan — 2026-06-30
 
 ## Today's Calendar
 | Time (Cairo) | Event |
-|------|-------|
-| 03:00–04:00 | github foundation *(recurring)* |
+|--------------|-------|
+| 03:00–04:00  | github foundation (recurring) |
 
-It's **Monday** — new week, fresh start. The Go course (91%) is now a **day 7 carry-over**. This is one short session away from completion and has been lingering for a full week. No more excuses — knock it out first thing.
+> No other scheduled events today — the rest of the day is free for deep work.
 
 ## Focus Tasks
-1. **Getting Started with Go (Course 1/3)** — 91% complete. **Day 7 carry-over. Do this FIRST — before anything else.** It's ~30 min of work. Completing it unlocks Course 2/3 (Functions, Methods, Interfaces) and feeds the MLOps track. Est: 30 min
-2. **IBM: Exploratory Data Analysis for ML** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Core ML skill — push toward 65% this week. Est: 60 min
-3. **BigQuery for Data Analysts** — 73% complete. Next: "Ingesting and Querying New Datasets" lab (60 min). Cloud data skills directly support ML engineering roles. Est: 60 min
-4. **The Nuts and Bolts of ML (Google)** — 9% complete. Next: "Perform feature engineering" lab (60 min). Needs serious momentum — aim to break 15% this week. Est: 60 min
-5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete. Quick win: "Building Golang GCP App Engine Microservice" video (5 min). Easy progress if you have spare time.
+1. **Go: Getting Started — Final Video** — Course is at 91%; next item is "Welcome to the Course" (1 min). Finish this today to officially close Course 1 and unlock momentum for Go Course 2. Est. 5–10 min
+2. **Machine Learning: Feature Engineering Lab** — Nuts & Bolts of ML is only 9% done. This 60-min lab is the immediate next step and builds core hands-on ML skill. Est. 60 min
+3. **BigQuery for Data Analysts — Lab** — At 73%, one lab ("Ingesting and Querying New Datasets", 60 min) keeps this on track. Cloud query skills are directly job-relevant. Est. 60 min
+4. **IBM EDA for ML — Bayesian Hypothesis Testing Video** — Course is 57% complete; this video is the next gate. Steady progress here pays off quickly. Est. 20–30 min
+5. **DevOps Prerequisite — Managing System Services in Linux** — Quick 9-min video that chips away at the DevOps foundation supporting the MLOps track. Est. 10 min
 
 ## Suggested Time Blocks
-| Block | Task |
-|-------|------|
-| 09:00–09:30 | Getting Started with Go — **finish the course (100%)** |
-| 09:30–09:45 | Break |
-| 09:45–10:45 | IBM: EDA for ML — Bayesian Hypothesis Testing video + next lessons |
-| 10:45–11:00 | Break |
-| 11:00–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab |
-| 12:00–13:00 | Lunch break |
-| 13:00–14:00 | Nuts and Bolts of ML — "Perform feature engineering" lab |
-| 14:00–14:10 | DevOps, DataOps, MLOps — 5-min video quick win |
-| 14:10–14:30 | Update `long_term_tasks.md` — remove stale April deadlines, update percentages |
+| Block (Cairo) | Task |
+|---------------|------|
+| 09:00–09:10   | Go: Getting Started — final video + mark complete |
+| 09:15–10:15   | ML: Nuts and Bolts — Feature Engineering Lab (60 min) |
+| 10:30–11:30   | BigQuery — Ingesting & Querying New Datasets Lab (60 min) |
+| 13:00–13:30   | IBM EDA for ML — Bayesian Interpretation of Hypothesis Testing video |
+| 14:00–14:15   | DevOps Prerequisite — Managing System Services in Linux (9 min) |
+| 15:00–15:15   | Update long_term_tasks.md with today's progress |
 
 ## Upcoming Deadlines (next 7 days)
-- No hard deadlines on the calendar through 2026-07-06.
-- Daily recurring: github foundation (03:00–04:00 Cairo)
-- **Stale alerts**: The "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in your urgent section have long passed — remove or replace them.
+- No calendar deadlines found for Jul 1–7, 2026.
+- ⚠️ **Stale entries**: "Quiz (2026-04-29)" and "Exams (week of 2026-04-28)" in your urgent section are **past-due by 2+ months**. Please update or remove them from long_term_tasks.md so future plans stay accurate.
 
-## Weekly Goals (2026-06-29 → 2026-07-05)
-- **Go Course 1/3** at 91% — **finish today (Monday)**. This has carried over all last week.
-- **IBM EDA** at 57% — target 70% by Friday
-- **BigQuery** at 73% — target 85% by Friday
-- **Nuts and Bolts of ML** at 9% — target 20% by Friday
-- **Update `long_term_tasks.md`** — it's 2 months stale. Clean it up today.
-- Daily goal: at least 1 Coursera lesson or lab
-- Weekly: review progress across all tiers
+---
+
+### Daily Recurring Reminder
+- Complete **at least 1 Coursera lesson or lab** (today's plan covers multiple — aim for tasks 1–3 at minimum).
+- Weekly: Review progress across all tiers and update `long_term_tasks.md` (last updated 2026-04-24).
 
 ---
 _Generated by your daily planning agent_
