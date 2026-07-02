@@ -1,6 +1,6 @@
-# Daily Plan — 2026-07-01
+# Daily Plan — 2026-07-02
 
-> **Note:** The "Urgent — This Week" section in `long_term_tasks.md` still lists a Quiz (2026-04-29) and Exams (2026-04-28) — those dates have passed by over 2 months. Update the file to remove or archive them so future plans stay accurate.
+> **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are now over 2 months past. Open the file and mark them done or remove them to keep the list accurate.
 
 ---
 
@@ -8,27 +8,21 @@
 
 | Time (Cairo) | Event |
 |---|---|
-| 03:00–04:00 | github foundation _(recurring — already passed)_ |
-
-> Tomorrow (2026-07-02) is a public holiday in Egypt: **Day off for June 30 Revolution**. Consider a lighter schedule or using the day for longer labs.
+| 03:00–04:00 | github foundation _(recurring daily block)_ |
 
 ---
 
 ## Focus Tasks
 
-1. **Complete "Getting Started with Go" (Course 1/3)** — At 91%, next item is a 1-min "Welcome to the Course" video. Finish it today and close out the course. _~5 min_
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next item is a 1-min "Welcome to the Course" video. Finish the course today for a quick win that unlocks Course 2. _~15 min_
 
-2. **BigQuery for Data Analysts — Ingesting & Querying New Datasets lab** — Tier 1, 73% done, 60-min lab is the next unlock. Completing it pushes you close to finishing a high-priority Google Cloud credential. _~60 min_
+2. **The Nuts and Bolts of Machine Learning** — Tier 1, only 9% complete; next is the "Perform Feature Engineering" lab (60 min). Hands-on core ML skill directly critical to your career path. _~60 min_
 
-3. **ML Nuts and Bolts — Perform Feature Engineering lab** — Tier 1, only 9% complete; this lab is the next gate. Feature engineering is a core ML skill. _~60 min_
+3. **IBM: EDA for Machine Learning** — 57% complete; next is the "Bayesian Interpretation of Hypothesis Testing" video. Builds statistical intuition needed across all ML work. _~20–30 min_
 
-4. **IBM EDA for Machine Learning — Bayesian Hypothesis Testing video** — At 57%, steady daily progress needed. Next item is a single video, easy to knock out between labs. _~20–30 min_
+4. **BigQuery for Data Analysts** — 73% complete; next is "Ingesting and Querying New Datasets" lab (60 min). Strong cloud/data skill for ML engineering and nearly done. _~60 min_
 
-5. **DevOps/DataOps/MLOps — "Building Golang GCP App Engine Microservice" video** — Tier 2 MLOps track, only a 5-min video next. Tiny push with outsized career leverage. _~5 min_
-
-6. **Successful Presentation — Course Updates reading** — Tier 1, 64% done, next item is a short reading that clears the blocker for the next lesson. _~5 min_
-
-7. **Algorithms: D&C — Week 2 Overview reading** — Tier 4, 34% done. Short reading to keep math foundations moving. _~10 min_
+5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete; next is a 5-min "Building Golang GCP App Engine Microservice" video. Tiny time cost, keeps MLOps track momentum. _~5 min_
 
 ---
 
@@ -36,18 +30,19 @@
 
 | Block | Task |
 |---|---|
-| 09:00–09:15 | Quick wins: Finish Go Course 1 (1-min video) + DevOps/MLOps 5-min video + Successful Presentation reading |
-| 09:15–09:45 | IBM EDA — Bayesian Hypothesis Testing video + Algorithms Week 2 Overview reading |
-| 10:00–11:00 | BigQuery lab — Ingesting & Querying New Datasets (60 min, focused block) |
-| 11:15–12:15 | ML Nuts and Bolts — Perform Feature Engineering lab (60 min, focused block) |
-| 12:15–12:30 | Daily review: mark completed items in `long_term_tasks.md`, note what's next |
+| 08:00–08:20 | Getting Started with Go — finish remaining videos (91% → 100%) |
+| 08:20–08:30 | DevOps, DataOps, MLOps — watch 5-min Golang GCP App Engine video |
+| 09:00–10:00 | Nuts and Bolts of ML — "Perform Feature Engineering" lab (60 min) |
+| 10:30–11:00 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
+| 11:00–12:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
+| 12:00–12:30 | Review progress, update `long_term_tasks.md`, clear the past-due urgent items |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- _No hard task deadlines in this window._
-- 2026-07-02: Public holiday (Day off for June 30 Revolution) — lighter or catch-up day
+- _No hard task deadlines detected in this window._
+- Recurring daily: github foundation block (03:00–04:00 Cairo) every day through 2026-07-08.
 
 ---
 
