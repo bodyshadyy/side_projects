@@ -1,6 +1,6 @@
-# Daily Plan — 2026-07-02
+# Daily Plan — 2026-07-03
 
-> **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are now over 2 months past. Open the file and mark them done or remove them to keep the list accurate.
+> **Note:** The two items in the 🚨 Urgent section (Quiz 2026-04-29, Exams week of 2026-04-28) are **2+ months past their dates** — open `long_term_tasks.md` and mark them complete or remove them.
 
 ---
 
@@ -10,19 +10,21 @@
 |---|---|
 | 03:00–04:00 | github foundation _(recurring daily block)_ |
 
+_Rest of the day is wide open — ideal for a long focused work session._
+
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete; next item is a 1-min "Welcome to the Course" video. Finish the course today for a quick win that unlocks Course 2. _~15 min_
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next is a 1-min video. Close this course out today for a clean win and to unlock Course 2. _~10 min_
 
-2. **The Nuts and Bolts of Machine Learning** — Tier 1, only 9% complete; next is the "Perform Feature Engineering" lab (60 min). Hands-on core ML skill directly critical to your career path. _~60 min_
+2. **The Nuts and Bolts of Machine Learning** (Google) — Tier 1, only 9% done; next is the "Perform Feature Engineering" lab (60 min). Hands-on core ML skill — highest priority to advance. _~60 min_
 
-3. **IBM: EDA for Machine Learning** — 57% complete; next is the "Bayesian Interpretation of Hypothesis Testing" video. Builds statistical intuition needed across all ML work. _~20–30 min_
+3. **IBM: EDA for Machine Learning** — 57% complete; next is the "Bayesian Interpretation of Hypothesis Testing" video. Builds statistical depth needed across all ML work. _~20–30 min_
 
-4. **BigQuery for Data Analysts** — 73% complete; next is "Ingesting and Querying New Datasets" lab (60 min). Strong cloud/data skill for ML engineering and nearly done. _~60 min_
+4. **BigQuery for Data Analysts** (Google Cloud) — 73% complete; next is "Ingesting and Querying New Datasets" lab (60 min). Strong cloud/data querying skill nearly at the finish line. _~60 min_
 
-5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete; next is a 5-min "Building Golang GCP App Engine Microservice" video. Tiny time cost, keeps MLOps track momentum. _~5 min_
+5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete; next is a 5-min "Building Golang GCP App Engine Microservice" video. Tiny time cost, keeps the highest-career-leverage track moving. _~5 min_
 
 ---
 
@@ -30,19 +32,21 @@
 
 | Block | Task |
 |---|---|
-| 08:00–08:20 | Getting Started with Go — finish remaining videos (91% → 100%) |
-| 08:20–08:30 | DevOps, DataOps, MLOps — watch 5-min Golang GCP App Engine video |
-| 09:00–10:00 | Nuts and Bolts of ML — "Perform Feature Engineering" lab (60 min) |
-| 10:30–11:00 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
-| 11:00–12:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
-| 12:00–12:30 | Review progress, update `long_term_tasks.md`, clear the past-due urgent items |
+| 09:00–09:15 | Getting Started with Go — finish remaining items (91% → 100%) |
+| 09:15–09:20 | DevOps, DataOps, MLOps — watch 5-min Golang GCP App Engine video |
+| 09:30–10:30 | Nuts and Bolts of ML — "Perform Feature Engineering" lab (60 min) |
+| 11:00–11:30 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
+| 12:00–13:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
+| 13:00–13:30 | Update `long_term_tasks.md` — mark completed items, refresh progress percentages, clear past-due urgent section |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- _No hard task deadlines detected in this window._
-- Recurring daily: github foundation block (03:00–04:00 Cairo) every day through 2026-07-08.
+- _No hard task deadlines found in the next 7 days._
+- Recurring: **github foundation** block (03:00–04:00 Cairo) daily through 2026-07-10.
+
+> The week is completely clear — good time to push hard on Tier 1 and potentially finish **Getting Started with Go** entirely.
 
 ---
 
