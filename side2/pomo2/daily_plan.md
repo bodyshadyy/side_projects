@@ -1,30 +1,25 @@
-# Daily Plan — 2026-07-05
-
-> The two items in the 🚨 Urgent section (Quiz 2026-04-29, Exams week of 2026-04-28) are **2+ months past their dates** — open `long_term_tasks.md` and mark them complete or remove them.
-
----
+# Daily Plan — 2026-07-06
 
 ## Today's Calendar
-
 | Time (Cairo) | Event |
 |---|---|
 | 03:00–04:00 | github foundation _(recurring daily block)_ |
 
-_Rest of the day is wide open — solid Sunday session ahead._
+_Rest of the day is open — solid Monday session ahead._
 
 ---
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete; next is a 1-min "Welcome to the Course" video. This has been pending since yesterday — close it out for a clean win and unlock Course 2. _~5 min_
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next is a 1-min "Welcome to the Course" video. Close this course today — it's basically done. Finishing unlocks Course 2/3. _~5 min_
 
-2. **The Nuts and Bolts of Machine Learning** (Google) — Tier 1, only 9% done; next is the "Perform Feature Engineering" lab (60 min). Most important hands-on ML block of the day. _~60 min_
+2. **The Nuts and Bolts of Machine Learning** (Google) — Tier 1, only 9% done; next is the "Perform Feature Engineering" lab (60 min). The most impactful hands-on ML block of the day. _~60 min_
 
-3. **IBM: EDA for Machine Learning** — 57% complete; next is the "Bayesian Interpretation of Hypothesis Testing" video. Deepens statistical reasoning directly used in ML model evaluation. _~20–30 min_
+3. **IBM: EDA for Machine Learning** — 57% complete; next is "Bayesian Interpretation of Hypothesis Testing" video. Deepens statistical intuition directly applied in ML. _~20–30 min_
 
-4. **BigQuery for Data Analysts** (Google Cloud) — 73% complete; next is "Ingesting and Querying New Datasets" lab (60 min). Nearly at the finish line on a strong cloud/data skill. _~60 min_
+4. **BigQuery for Data Analysts** (Google Cloud) — 73% complete; next is "Ingesting and Querying New Datasets" lab (60 min). Nearly at the finish line on a high-value cloud/data skill. _~60 min_
 
-5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete; next is a 5-min "Building Golang GCP App Engine Microservice" video. Tiny cost, keeps the highest-career-leverage track alive. _~5 min_
+5. **DevOps, DataOps, MLOps (Course 2/4)** — 14% complete; next is a 5-min "Building Golang GCP App Engine Microservice" video. Tiny cost, keeps the top-career-leverage MLOps track alive. _~5 min_
 
 6. **Algorithms: Divide and Conquer (Course 1/4)** — 34% complete; next is "Week 2 Overview" reading. Math foundation that sharpens ML intuition. _~15 min_
 
@@ -34,23 +29,23 @@ _Rest of the day is wide open — solid Sunday session ahead._
 
 | Block | Task |
 |---|---|
-| 09:00–09:05 | Getting Started with Go — finish 1-min "Welcome to the Course" video (course 1/3 complete!) |
-| 09:05–09:15 | DevOps, DataOps, MLOps — watch 5-min Golang GCP App Engine Microservice video |
+| 09:00–09:10 | Getting Started with Go — finish "Welcome to the Course" video (course 1/3 done!) |
+| 09:10–09:20 | DevOps, DataOps, MLOps — watch 5-min Golang GCP App Engine Microservice video |
 | 09:30–10:30 | Nuts and Bolts of ML — "Perform Feature Engineering" lab (60 min) |
-| 10:45–11:15 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video + follow-up content |
-| 11:30–12:30 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
+| 10:45–11:15 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
+| 11:30–12:30 | BigQuery — "Ingesting and Querying New Datasets" lab (60 min) |
 | 13:00–13:20 | Algorithms — "Week 2 Overview" reading |
-| 13:20–13:40 | Successful Presentation — "Course Updates and Accessibility Support" reading |
-| 14:00–14:30 | Update `long_term_tasks.md` — clear past-due urgent items, mark any completed courses |
+| 13:20–13:35 | Successful Presentation — "Course Updates and Accessibility Support" reading |
+| 14:00–14:30 | Update `long_term_tasks.md` — clear the April urgent items (Quiz/Exams are 2+ months past) |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
 - _No hard task deadlines found in the next 7 days._
-- Recurring: **github foundation** block (03:00–04:00 Cairo) — Mon 2026-07-06, Tue 2026-07-07.
+- Recurring: **github foundation** block — Mon 2026-07-06 (today), Tue 2026-07-07.
 
-> The week is wide open — push hard on Tier 1. Getting Started with Go is essentially done (1 min video); finishing it unlocks **Functions, Methods, and Interfaces in Go** (Course 2/3).
+> The week is wide open. Finishing Go Course 1/3 today (just 1 video!) clears the slate and unlocks **Functions, Methods, and Interfaces in Go** (Course 2/3). Push hard on Tier 1.
 
 ---
 
