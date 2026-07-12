@@ -1,6 +1,6 @@
-# Daily Plan — 2026-07-11
+# Daily Plan — 2026-07-12
 
-> **Note:** The urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week of 2026-04-28) are now ~2.5 months past. Consider updating `side2/pomo2/long_term_tasks.md` with current urgent deadlines and goals.
+> **Note:** The urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week of 2026-04-28) are ~2.5 months past. Update `side2/pomo2/long_term_tasks.md` with current deadlines so future plans stay accurate.
 
 ## Today's Calendar
 | Time | Event |
@@ -9,30 +9,29 @@
 
 ## Focus Tasks
 
-Today is **Saturday** — a clear day with no calendar obligations. Full study day. Prioritize Tier 1 (highest career leverage) and chip away at near-completion items.
+Today is **Sunday** — no calendar obligations, full day available. Prioritize Tier 1 near-completion items and carry Tier 2 momentum.
 
-1. **The Nuts and Bolts of Machine Learning** — Only 9% complete; a lab session today builds foundational ML fluency directly tied to your career. Do the "Perform Feature Engineering" lab. — ~60 min
-2. **BigQuery for Data Analysts** — 73% complete, very close to done. Next: "Ingesting and Querying New Datasets" lab. Finishing this would be a real win today. — ~60 min
-3. **Getting Started with Go** — 91% complete, nearly finished. Next video is just 1 min — get it done and close out Course 1. — ~15–30 min
-4. **IBM: Exploratory Data Analysis for ML** — 57% complete. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Short watch that keeps momentum. — ~20–30 min
-5. **Successful Presentation** — 64% complete. Next item is a short reading. Quick win to keep this moving. — ~10–15 min
-6. **DevOps, DataOps, MLOps** (Tier 2) — If Tier 1 items are done, do the "Building Golang GCP App Engine Microservice" video (5 min). MLOps is highest career leverage after core ML. — ~5–10 min
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next item is a 1-min video. Finish this today to close out Course 1 and unlock Course 2. — ~15–30 min
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Only 9% done; a 60-min lab makes real progress on this core Tier 1 course. — ~60–90 min
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; another 60-min lab puts this very close to completion. — ~60–90 min
+4. **IBM: Exploratory Data Analysis for ML — Bayesian Hypothesis Testing video** — 57% done; a short video keeps momentum on Tier 1. — ~15–30 min
+5. **Algorithms: Divide and Conquer — Week 2 Overview** — 34% done; a short reading that unlocks the next module in the math foundations track. — ~10–15 min
+6. **DevOps, DataOps, MLOps — Golang GCP App Engine Microservice video** — 14% done; 5-min video, highest career leverage after core ML. — ~5–10 min
 
 ## Suggested Time Blocks
 | Block | Task |
 |-------|------|
-| 09:00–10:00 | BigQuery lab — "Ingesting and Querying New Datasets" (Tier 1, close to done) |
-| 10:00–10:15 | Break |
-| 10:15–11:15 | ML Nuts & Bolts — "Perform Feature Engineering" lab (Tier 1, core skill) |
-| 11:15–11:30 | Getting Started with Go — finish last video, complete Course 1 (Tier 1) |
-| 11:30–12:00 | IBM EDA — Bayesian Hypothesis Testing video (Tier 1) |
-| 12:00–13:00 | Lunch break |
-| 13:00–13:15 | Successful Presentation — next reading (Tier 1, quick) |
-| 13:15–13:25 | DevOps/DataOps/MLOps — Golang GCP microservice video (Tier 2) |
-| 13:25–14:00 | Review & update long_term_tasks.md with new deadlines/progress |
+| 09:00–09:30 | Getting Started with Go — finish remaining video + close out Course 1 |
+| 09:30–11:00 | ML Nuts & Bolts — "Perform Feature Engineering" lab (Tier 1) |
+| 11:00–11:15 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
+| 11:15–11:30 | Algorithms Div & Conquer — "Week 2 Overview" reading |
+| 11:30–12:00 | Break |
+| 12:00–13:30 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
+| 13:30–13:45 | DevOps/DataOps/MLOps — Golang GCP microservice video (5 min + buffer) |
+| 13:45–14:15 | Weekly review: update long_term_tasks.md progress + mark completed items |
 
 ## Upcoming Deadlines (next 7 days)
-- No calendar events or deadlines detected for 2026-07-11 through 2026-07-18.
+- No calendar events or deadlines detected for 2026-07-12 through 2026-07-19.
 - *(Recurring commitment: at least 1 Coursera lesson or lab per day — satisfied by this plan.)*
 
 ---
