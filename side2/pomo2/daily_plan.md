@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-13
+# Daily Plan — 2026-07-14
 
 ## Today's Calendar
 | Time | Event |
@@ -9,7 +9,7 @@
 
 ## Focus Tasks
 
-Today is **Monday** — clear calendar, full day available. Push through Tier 1 labs and close out the nearly-finished Go course.
+Today is **Tuesday** — clear calendar, full day available. Push through Tier 1 labs and close out the nearly-finished Go course.
 
 1. **Getting Started with Go (Course 1/3)** — 91% complete; next item is a 1-min "Welcome to the Course" video. Finish and close out Course 1 today. — ~5 min
 2. **The Nuts and Bolts of Machine Learning** (Google, 9%) — lowest completion among Tier 1 items; next: "Perform feature engineering" lab. Core skill, high priority. — ~60 min
@@ -31,7 +31,7 @@ Today is **Monday** — clear calendar, full day available. Push through Tier 1 
 | 14:20–14:45 | Weekly review: update progress in long_term_tasks.md, mark completed items |
 
 ## Upcoming Deadlines (next 7 days)
-- No calendar events or task deadlines detected for 2026-07-13 through 2026-07-20.
+- No calendar events or task deadlines detected for 2026-07-14 through 2026-07-21.
 - *(Recurring: at least 1 Coursera lesson or lab per day — satisfied by this plan.)*
 
 ---
