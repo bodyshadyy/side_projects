@@ -1,38 +1,53 @@
-# Daily Plan — 2026-07-14
+# Daily Plan — 2026-07-15
 
 ## Today's Calendar
 | Time | Event |
 |------|-------|
-| — | No events scheduled today |
+| — | No events scheduled today — full open day |
 
 > **Note on past urgent tasks:** The "Urgent" section of `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — these are ~2.5 months past. Mark them done or remove them so future plans stay accurate.
+>
+> **Upcoming holiday:** Revolution Day (Egyptian public holiday) on **2026-07-23** — plan lighter study or rest day next Wednesday.
+
+---
 
 ## Focus Tasks
 
-Today is **Tuesday** — clear calendar, full day available. Push through Tier 1 labs and close out the nearly-finished Go course.
+Today is **Wednesday** — clear calendar, full day available. Prioritize finishing the Go course and pushing the two 60-min Tier 1 labs.
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete; next item is a 1-min "Welcome to the Course" video. Finish and close out Course 1 today. — ~5 min
-2. **The Nuts and Bolts of Machine Learning** (Google, 9%) — lowest completion among Tier 1 items; next: "Perform feature engineering" lab. Core skill, high priority. — ~60 min
-3. **BigQuery for Data Analysts** (Google Cloud, 73%) — next: "Ingesting and Querying New Datasets" lab. Another 60-min lab puts this very close to done. — ~60 min
-4. **IBM: Exploratory Data Analysis for ML** (57%) — next: "Bayesian Interpretation of Hypothesis Testing" video. Short item keeps Tier 1 momentum. — ~20–30 min
-5. **DevOps, DataOps, MLOps** (Tier 2, 14%) — next: "Building Golang GCP App Engine Microservice" video (5 min); pairs well right after finishing the Go course. — ~15 min
-6. **Algorithms: Divide and Conquer** (Tier 4, 34%) — next: "Week 2 Overview" reading. Short theory item, good wind-down task. — ~15 min
+1. **Getting Started with Go (Course 1/3)** — 91% complete; next: "Welcome to the Course" video (1 min). Finish and close out Course 1 today — the win will take 30–60 min total to wrap the remaining module cleanly. _~45 min_
+
+2. **The Nuts and Bolts of Machine Learning** (Google, 9%) — Most behind among Tier 1 courses; next: "Perform feature engineering" lab (60 min). Core applied ML skill, highest urgency to accelerate. _~60–75 min_
+
+3. **BigQuery for Data Analysts** (Google Cloud, 73%) — next: "Ingesting and Querying New Datasets" lab (60 min). One strong session pushes this past 80% and keeps cloud ML skills current. _~60–75 min_
+
+4. **IBM: Exploratory Data Analysis for ML** (57%) — next: "Bayesian Interpretation of Hypothesis Testing Example" video. Short item, good theory reinforcement, keeps Tier 1 momentum. _~20–30 min_
+
+5. **DevOps, DataOps, MLOps** (Tier 2, 14%) — next: "Building Golang GCP App Engine Microservice" video (5 min). Tiny effort; pairs naturally after finishing the Go course today. _~10 min_
+
+---
 
 ## Suggested Time Blocks
+
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Getting Started with Go — "Welcome to the Course" (1 min) → course complete |
-| 09:10–10:10 | The Nuts and Bolts of ML — "Perform feature engineering" lab |
-| 10:20–11:20 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
-| 11:30–12:00 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
-| 12:00–13:30 | Lunch / break |
-| 13:30–13:45 | DevOps, DataOps, MLOps — Golang GCP microservice video + buffer |
-| 14:00–14:20 | Algorithms: Divide and Conquer — "Week 2 Overview" reading |
-| 14:20–14:45 | Weekly review: update progress in long_term_tasks.md, mark completed items |
+| 08:00–08:15 | DevOps/DataOps/MLOps — "Building Golang GCP App Engine" video (5 min) + notes |
+| 08:15–09:00 | IBM EDA for ML — Bayesian Hypothesis Testing video + review |
+| 09:00–10:15 | The Nuts and Bolts of ML — "Perform feature engineering" lab (deep focus) |
+| 10:15–10:30 | Break |
+| 10:30–11:45 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
+| 11:45–12:30 | Getting Started with Go — Finish remaining module, complete Course 1 |
+| 12:30–13:30 | Lunch / break |
+| 13:30–14:30 | Buffer: overflow from any lab, or begin Go Course 2/3 intro reading |
+| 14:30–14:45 | Weekly hygiene: update long_term_tasks.md (mark Go Course 1 complete, update % progress) |
+
+---
 
 ## Upcoming Deadlines (next 7 days)
-- No calendar events or task deadlines detected for 2026-07-14 through 2026-07-21.
+
+- No hard deadlines found for 2026-07-15 through 2026-07-22.
 - *(Recurring: at least 1 Coursera lesson or lab per day — satisfied by this plan.)*
+- **2026-07-23:** Revolution Day (Egyptian public holiday) — plan rest or light review only.
 
 ---
 
