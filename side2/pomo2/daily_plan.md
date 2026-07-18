@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-17
+# Daily Plan — 2026-07-18
 
 > **Note:** The Urgent section in `long_term_tasks.md` lists a quiz (2026-04-29) and exams (week of 2026-04-28) — both are ~3 months past. Please clear or archive those entries.
 
@@ -10,19 +10,25 @@
 |------|-------|
 | — | No scheduled events — full day available |
 
+> **Saturday** — calendar is clear. Strong day for lab-heavy work.
+
 ---
 
 ## Focus Tasks
 
-1. **Finish Getting Started with Go (Course 1/3)** — At 91%, only the final "Welcome to the Course" video (~1 min) remains. Closing a course out is a quick momentum win and unlocks Tier 3. *Est: 5–15 min.*
+1. **Finish Getting Started with Go (Course 1/3)** — At 91%, only the final "Welcome to the Course" video (~1 min) remains. Close this out today — it's literally one click. Unlocks Tier 3 Go courses. *Est: 5 min.*
 
-2. **IBM: Exploratory Data Analysis for Machine Learning** — At 57%, next is "Bayesian Interpretation of Hypothesis Testing Example" video. Short, high-value, keeps a Tier 1 course moving. *Est: 20–30 min.*
+2. **The Nuts and Bolts of Machine Learning (Google)** — "Perform feature engineering" lab (60 min). Most behind Tier 1 course at only 9% — needs sustained push. Hands-on applied ML skill. *Est: 60 min.*
 
-3. **The Nuts and Bolts of Machine Learning (Google)** — "Perform feature engineering" lab. Only 9% complete — this is the most behind Tier 1 course and needs sustained attention. The lab is hands-on and builds a core applied ML skill. *Est: 60 min.*
+3. **BigQuery for Data Analysts (Google Cloud)** — "Ingesting and Querying New Datasets" lab (60 min). At 73%, one more lab session pushes this close to done. Core ML data pipeline skill. *Est: 60 min.*
 
-4. **BigQuery for Data Analysts (Google Cloud)** — "Ingesting and Querying New Datasets" lab. At 73%, one more session pushes this close to completion. BigQuery is directly relevant to ML data pipeline work. *Est: 60 min.*
+4. **IBM: Exploratory Data Analysis for Machine Learning** — "Bayesian Interpretation of Hypothesis Testing Example" video. 57% done, keep momentum on this Tier 1 course. *Est: 20–30 min.*
 
-5. **Algorithms: Divide and Conquer (Course 1/4)** — "Week 2 Overview" reading. At 34%, a short reading to re-engage the algorithms track. Good mental variety after back-to-back labs. *Est: 15–20 min.*
+5. **DevOps, DataOps, MLOps (Course 2/4)** — "Building Golang GCP App Engine Microservice" video (5 min). Natural pairing with finishing Go today. *Est: 5 min.*
+
+6. **Algorithms: Divide and Conquer (Course 1/4)** — "Week 2 Overview" reading. At 34%, a light re-engagement with the algorithm track. Good for an afternoon low-energy slot. *Est: 15–20 min.*
+
+7. **Business Writing** — "Long Documents, in Brief" video (2 min). Dead-easy win during any break. *Est: 2 min.*
 
 ---
 
@@ -30,18 +36,20 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:15 | Getting Started with Go — "Welcome to the Course" video (close it out!) |
-| 09:15–09:45 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
-| 10:00–11:00 | Google ML — "Perform feature engineering" lab |
-| 11:15–12:15 | BigQuery — "Ingesting and Querying New Datasets" lab |
-| 13:30–14:00 | Algorithms: D&C — "Week 2 Overview" reading + light review |
-| 14:00–14:30 | Housekeeping: update `long_term_tasks.md`, mark completed items, weekly review |
+| 09:00–09:10 | Getting Started with Go — final video (mark course complete!) |
+| 09:10–10:15 | Google ML — "Perform feature engineering" lab |
+| 10:30–11:30 | BigQuery — "Ingesting and Querying New Datasets" lab |
+| 11:45–12:15 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video |
+| 13:30–13:35 | DevOps/DataOps/MLOps — GCP App Engine Microservice video |
+| 13:35–13:37 | Business Writing — "Long Documents, in Brief" video |
+| 14:00–14:20 | Algorithms: D&C — "Week 2 Overview" reading |
+| 14:20–15:00 | Housekeeping: update `long_term_tasks.md`, mark completed items |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-07-23: **Revolution Day** (Egyptian public holiday) — lighter study day; plan ahead
+- 2026-07-23: **Revolution Day** (Egyptian public holiday) — lighter study day; plan passive learning (videos only, skip labs)
 
 *(No course deadlines in the next 7 days — maintain the daily habit: at least 1 lesson or lab.)*
 
@@ -51,7 +59,7 @@
 
 - [ ] Complete **Getting Started with Go** — literally 1 video away
 - [ ] Clear the expired April quiz/exam entries from `long_term_tasks.md`
-- [ ] Update `long_term_tasks.md` with any Coursera items already finished
+- [ ] Update `long_term_tasks.md` with any Coursera items finished since April 24
 
 ---
 
