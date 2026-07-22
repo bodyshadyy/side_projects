@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-21
+# Daily Plan — 2026-07-22
 
 > **Note:** `long_term_tasks.md` was last updated 2026-04-24 (nearly 3 months ago). The "Urgent" tasks (Quiz 2026-04-29, Exams week of 2026-04-28) have expired. **Please update the file with current goals** so future plans stay accurate.
 
@@ -36,7 +36,7 @@
 | 11:15–11:30 | MLOps Course 2 — "Building Golang GCP App Engine Microservice" video (5 min) + buffer |
 | 12:15–13:00 | Break / lunch |
 | 13:00–14:15 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
-| 14:15–14:45 | Update `long_term_tasks.md` — mark completed items, add any new deadlines |
+| 14:15–14:30 | Update `long_term_tasks.md` — mark completed items, add any new deadlines |
 
 ---
 
