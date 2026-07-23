@@ -1,6 +1,6 @@
-# Daily Plan — 2026-07-22
+# Daily Plan — 2026-07-23
 
-> **Note:** `long_term_tasks.md` was last updated 2026-04-24 (nearly 3 months ago). The "Urgent" tasks (Quiz 2026-04-29, Exams week of 2026-04-28) have expired. **Please update the file with current goals** so future plans stay accurate.
+> **Note:** `long_term_tasks.md` was last updated 2026-04-24 (3 months ago). The "Urgent" tasks (Quiz 2026-04-29, Exams week 2026-04-28) are expired. **Please update the file with current goals** so future plans stay accurate.
 
 ---
 
@@ -14,15 +14,15 @@
 
 ## Focus Tasks
 
-1. **Finish Getting Started with Go (Course 1/3)** — At 91%, only the "Welcome to the Course" video (~1 min) stands between you and a completed course. Close it out immediately — instant win, one item cleared from Tier 1. *~5 min*
+1. **Finish Getting Started with Go (Course 1/3)** — At 91%, only the remaining content stands between you and a completed course. Close it out immediately — instant win, one Tier 1 item cleared. *~30–45 min*
 
-2. **IBM: Exploratory Data Analysis for Machine Learning** — At 57%, this is a high-priority Tier 1 core ML skill. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Do this while your mind is fresh. *~30–45 min*
+2. **IBM: Exploratory Data Analysis for Machine Learning** — At 57%, strong Tier 1 core ML skill in progress. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Best tackled while mind is fresh. *~30–45 min*
 
-3. **BigQuery for Data Analysts** — At 73%, the next step is a 60-min hands-on lab ("Ingesting and Querying New Datasets"). Practical cloud/SQL skills that directly strengthen ML engineering credentials. *~60–75 min*
+3. **BigQuery for Data Analysts** — At 73%, next step is a 60-min hands-on lab ("Ingesting and Querying New Datasets"). Practical cloud/SQL skills that directly reinforce ML engineering credentials. *~60–75 min*
 
-4. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Still early at 9%, but the next lab (60 min) is hands-on practice and directly applicable to ML work. Tier 1 priority. *~60–75 min*
+4. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Still at 9%, but the next step is a 60-min lab with direct applied ML value. Tier 1 priority, do after BigQuery if energy allows. *~60–75 min*
 
-5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2 is your highest career-leverage tier after Tier 1 is cleared. Next: "Building Golang GCP App Engine Microservice" video (5 min). Short, and combines Go + cloud skills. *~10–15 min*
+5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2 highest career-leverage track. Next: "Building Golang GCP App Engine Microservice" video (5 min). Short, combines Go + cloud — easy progress. *~10 min*
 
 ---
 
@@ -30,29 +30,21 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:10 | Go Course 1/3 — watch final video, mark complete |
-| 09:10–09:55 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video + continue |
-| 10:00–11:15 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
-| 11:15–11:30 | MLOps Course 2 — "Building Golang GCP App Engine Microservice" video (5 min) + buffer |
-| 12:15–13:00 | Break / lunch |
-| 13:00–14:15 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
-| 14:15–14:30 | Update `long_term_tasks.md` — mark completed items, add any new deadlines |
+| 09:00–09:45 | Getting Started with Go (Course 1/3) — finish remaining content, mark complete |
+| 10:00–10:45 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video + continue |
+| 11:00–12:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
+| 12:00–13:00 | Break / lunch |
+| 13:00–14:00 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
+| 14:00–14:10 | MLOps Course 2 — "Building Golang GCP App Engine Microservice" video (5 min) |
+| 14:10–14:30 | Update `long_term_tasks.md` — mark completed items, add new deadlines |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-07-23: **Revolution Day** (Egyptian public holiday) — plan for lighter study; short readings or videos only, skip 60-min labs
+_No personal course deadlines found on calendar for the next 7 days._
 
-_No personal course deadlines found on calendar for the next 7 days. Consider adding Coursera target dates to your calendar._
-
----
-
-## Weekly Context
-
-- **Revolution Day (July 23, Thursday)** is a national holiday — great day for light reading or rest.
-- **Tier 1 completions within reach this week:** Go Course 1/3 (today!), BigQuery (1–2 more sessions), IBM EDA (a few more sessions).
-- **Recurring commitment:** at least 1 Coursera lesson or lab per day — today's plan covers 4–5 items across Tiers 1 and 2.
+> **Today is July 23 — Revolution Day (Egyptian national holiday).** Consider lighter study if celebrating; short videos and readings over 60-min labs. The suggested blocks above can be trimmed to Tier 1 videos only.
 
 ---
 
