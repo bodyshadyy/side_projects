@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-23
+# Daily Plan — 2026-07-24
 
 > **Note:** `long_term_tasks.md` was last updated 2026-04-24 (3 months ago). The "Urgent" tasks (Quiz 2026-04-29, Exams week 2026-04-28) are expired. **Please update the file with current goals** so future plans stay accurate.
 
@@ -14,15 +14,17 @@
 
 ## Focus Tasks
 
-1. **Finish Getting Started with Go (Course 1/3)** — At 91%, only the remaining content stands between you and a completed course. Close it out immediately — instant win, one Tier 1 item cleared. *~30–45 min*
+1. **Getting Started with Go (Course 1/3) — CLOSE IT OUT** — At 91%, this is a trivial finish. It's been sitting at 91% for days. Completing it today clears a Tier 1 item and gives momentum heading into the weekend. *~30–45 min*
 
-2. **IBM: Exploratory Data Analysis for Machine Learning** — At 57%, strong Tier 1 core ML skill in progress. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Best tackled while mind is fresh. *~30–45 min*
+2. **IBM: Exploratory Data Analysis for Machine Learning** — At 57%, this is the highest-progress active Tier 1 ML course. Next: "Bayesian Interpretation of Hypothesis Testing Example" video. Core ML theory — do it while fresh. *~30–45 min*
 
-3. **BigQuery for Data Analysts** — At 73%, next step is a 60-min hands-on lab ("Ingesting and Querying New Datasets"). Practical cloud/SQL skills that directly reinforce ML engineering credentials. *~60–75 min*
+3. **BigQuery for Data Analysts** — At 73%, one hands-on lab away from a major milestone. Next: "Ingesting and Querying New Datasets" lab (60 min). Practical SQL + cloud skills, direct ML engineering value. *~60–75 min*
 
-4. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Still at 9%, but the next step is a 60-min lab with direct applied ML value. Tier 1 priority, do after BigQuery if energy allows. *~60–75 min*
+4. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — At 9%, the next step is a 60-min hands-on lab. Feature engineering is one of the most used skills in ML pipelines — worth prioritizing after BigQuery. *~60–75 min*
 
-5. **DevOps, DataOps, MLOps (Course 2/4)** — Tier 2 highest career-leverage track. Next: "Building Golang GCP App Engine Microservice" video (5 min). Short, combines Go + cloud — easy progress. *~10 min*
+5. **DevOps, DataOps, MLOps (Course 2/4)** — Just 5 min for the next video ("Building Golang GCP App Engine Microservice"). Combines Go + GCP knowledge from today's other tasks — natural cap to the day. *~10 min*
+
+6. **Update `long_term_tasks.md`** — It's been 3 months since the last update. Spend 10 min marking completed items and adding any new goals or deadlines. Keeps future plans accurate. *~10–15 min*
 
 ---
 
@@ -30,21 +32,21 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–09:45 | Getting Started with Go (Course 1/3) — finish remaining content, mark complete |
-| 10:00–10:45 | IBM EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video + continue |
-| 11:00–12:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
+| 09:00–09:45 | Getting Started with Go — finish and mark complete |
+| 10:00–10:45 | IBM EDA for ML — Bayesian Interpretation video + continue module |
+| 11:00–12:00 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab |
 | 12:00–13:00 | Break / lunch |
-| 13:00–14:00 | Nuts & Bolts of ML — "Perform feature engineering" lab (60 min) |
-| 14:00–14:10 | MLOps Course 2 — "Building Golang GCP App Engine Microservice" video (5 min) |
-| 14:10–14:30 | Update `long_term_tasks.md` — mark completed items, add new deadlines |
+| 13:00–14:00 | Nuts & Bolts of ML — "Perform Feature Engineering" lab |
+| 14:00–14:10 | MLOps Course 2 — "Building Golang GCP App Engine Microservice" video |
+| 14:10–14:25 | Update `long_term_tasks.md` with current progress and new items |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-_No personal course deadlines found on calendar for the next 7 days._
+_No deadlines found on calendar for 2026-07-24 through 2026-07-31._
 
-> **Today is July 23 — Revolution Day (Egyptian national holiday).** Consider lighter study if celebrating; short videos and readings over 60-min labs. The suggested blocks above can be trimmed to Tier 1 videos only.
+> The April exam/quiz deadlines in `long_term_tasks.md` are expired. Update the file with any active deadlines so they appear here.
 
 ---
 
