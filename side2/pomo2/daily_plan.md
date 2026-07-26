@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-25
+# Daily Plan — 2026-07-26
 
 > **Note:** The "Urgent" items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates have passed. Update or clear them in your goals file. File was last updated 2026-04-24.
 
@@ -8,17 +8,17 @@
 |------|-------|
 | — | No events scheduled today |
 
-Free Saturday — ideal for deep, focused study sessions.
+Free Sunday — ideal for deep, focused study sessions.
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete with just one video left; close this out for a clean Tier 1 win today. _(~15–30 min)_
-2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Core ML skill at highest-priority Tier 1; hands-on practice has compound career value. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab pushes this close to completion. _(~60–75 min)_
-4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Directly strengthens ML theory and keeps your daily Coursera streak alive. _(~20–30 min)_
-5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Short 5-min video bridging Go + MLOps; two active tracks at once. _(~5–10 min)_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete with just one 1-min video left; close this out today for a clean Tier 1 win. _(~5 min)_
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Core ML skill at highest-priority Tier 1; hands-on practice has strong career value. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab pushes this close to completion. _(~60 min)_
+4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course and keeps the daily Coursera streak. _(~20 min)_
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Short 5-min video bridging Go + MLOps; two active tracks at once. _(~5 min)_
 6. **Algorithms: Divide & Conquer — Week 2 Overview** — Light reading, keeps breadth ticking; good cool-down between heavier labs. _(~15 min)_
 
 ---
@@ -27,22 +27,22 @@ Free Saturday — ideal for deep, focused study sessions.
 
 | Block | Task |
 |-------|------|
-| 09:00–09:30 | Finish "Getting Started with Go" — complete final video(s) and mark done |
-| 09:30–09:40 | DevOps/DataOps/MLOps — Golang GCP Microservice video (5 min) |
-| 09:40–10:40 | ML Nuts & Bolts — Feature Engineering Lab (60 min) |
-| 10:40–10:55 | Break |
-| 10:55–12:00 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
-| 12:00–13:00 | Lunch / rest |
-| 13:00–13:30 | IBM EDA — Bayesian Hypothesis Testing video + any follow-up reading |
-| 13:30–13:45 | Algorithms — Week 2 Overview reading |
-| 13:45–14:00 | Update `long_term_tasks.md` — mark completed items, add any new deadlines |
-| 14:00+ | Optional: Successful Presentation or Business Writing (low-effort Tier 5) |
+| 09:00–09:10 | Finish "Getting Started with Go" — final 1-min video, mark course complete |
+| 09:10–09:15 | DevOps/DataOps/MLOps — Golang GCP Microservice video (5 min) |
+| 09:15–10:15 | ML Nuts & Bolts — Perform Feature Engineering Lab (60 min deep focus) |
+| 10:15–10:30 | Break |
+| 10:30–11:30 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
+| 11:30–12:30 | Lunch / rest |
+| 12:30–12:50 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
+| 12:50–13:05 | Algorithms — Week 2 Overview reading |
+| 13:05–13:20 | Update `long_term_tasks.md` — mark completed items, add any current deadlines |
+| 13:20+ | Optional: Successful Presentation or Business Writing (low-effort Tier 5) |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines detected on your calendar for 2026-07-25 through 2026-08-01.
+- No hard deadlines detected on your calendar for 2026-07-26 through 2026-08-02.
 - _(Stale urgent items from April have been flagged above — update `long_term_tasks.md` with any current deadlines.)_
 
 ---
