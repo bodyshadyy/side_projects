@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-26
+# Daily Plan — 2026-07-27
 
 > **Note:** The "Urgent" items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates have passed. Update or clear them in your goals file. File was last updated 2026-04-24.
 
@@ -8,18 +8,18 @@
 |------|-------|
 | — | No events scheduled today |
 
-Free Sunday — ideal for deep, focused study sessions.
+Free Monday — excellent for deep focus. If yesterday's tasks weren't completed, carry them forward.
 
 ---
 
 ## Focus Tasks
 
 1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete with just one 1-min video left; close this out today for a clean Tier 1 win. _(~5 min)_
-2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Core ML skill at highest-priority Tier 1; hands-on practice has strong career value. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab pushes this close to completion. _(~60 min)_
-4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course and keeps the daily Coursera streak. _(~20 min)_
-5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — Short 5-min video bridging Go + MLOps; two active tracks at once. _(~5 min)_
-6. **Algorithms: Divide & Conquer — Week 2 Overview** — Light reading, keeps breadth ticking; good cool-down between heavier labs. _(~15 min)_
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Lowest completion (9%) among active Tier 1 courses; hands-on lab builds core ML skill. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps this course on track. _(~60 min)_
+4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course; keeps daily Coursera streak alive. _(~20 min)_
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — 5-min video; bridges Go skills directly into the MLOps track. _(~5 min)_
+6. **Update `long_term_tasks.md`** — Clear stale April deadlines; add any current external deadlines so the planner stays accurate. _(~10 min)_
 
 ---
 
@@ -34,15 +34,14 @@ Free Sunday — ideal for deep, focused study sessions.
 | 10:30–11:30 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
 | 11:30–12:30 | Lunch / rest |
 | 12:30–12:50 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
-| 12:50–13:05 | Algorithms — Week 2 Overview reading |
-| 13:05–13:20 | Update `long_term_tasks.md` — mark completed items, add any current deadlines |
-| 13:20+ | Optional: Successful Presentation or Business Writing (low-effort Tier 5) |
+| 12:50–13:00 | Update `long_term_tasks.md` — clear stale items, add real deadlines |
+| 13:00+ | Optional: Algorithms Week 2 Overview or Successful Presentation reading |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines detected on your calendar for 2026-07-26 through 2026-08-02.
+- No hard deadlines detected on your calendar for 2026-07-27 through 2026-08-03.
 - _(Stale urgent items from April have been flagged above — update `long_term_tasks.md` with any current deadlines.)_
 
 ---
