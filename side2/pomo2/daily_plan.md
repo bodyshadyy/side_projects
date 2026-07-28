@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-27
+# Daily Plan — 2026-07-28
 
 > **Note:** The "Urgent" items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates have passed. Update or clear them in your goals file. File was last updated 2026-04-24.
 
@@ -8,16 +8,16 @@
 |------|-------|
 | — | No events scheduled today |
 
-Free Monday — excellent for deep focus. If yesterday's tasks weren't completed, carry them forward.
+Free Tuesday — calendar is clear all week. Great day for sustained deep-focus study blocks.
 
 ---
 
 ## Focus Tasks
 
 1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete with just one 1-min video left; close this out today for a clean Tier 1 win. _(~5 min)_
-2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Lowest completion (9%) among active Tier 1 courses; hands-on lab builds core ML skill. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps this course on track. _(~60 min)_
-4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course; keeps daily Coursera streak alive. _(~20 min)_
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Lowest completion (9%) among active Tier 1 courses; hands-on lab is highest-leverage ML skill work. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps this on track to finish soon. _(~60 min)_
+4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course; keeps daily Coursera streak going. _(~20 min)_
 5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice** — 5-min video; bridges Go skills directly into the MLOps track. _(~5 min)_
 6. **Update `long_term_tasks.md`** — Clear stale April deadlines; add any current external deadlines so the planner stays accurate. _(~10 min)_
 
@@ -41,7 +41,7 @@ Free Monday — excellent for deep focus. If yesterday's tasks weren't completed
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines detected on your calendar for 2026-07-27 through 2026-08-03.
+- No hard deadlines detected on your calendar for 2026-07-28 through 2026-08-04.
 - _(Stale urgent items from April have been flagged above — update `long_term_tasks.md` with any current deadlines.)_
 
 ---
