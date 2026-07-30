@@ -1,6 +1,6 @@
-# Daily Plan — 2026-07-29
+# Daily Plan — 2026-07-30
 
-> **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates have passed. Update or clear them. File was last updated 2026-04-24.
+> **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates are long past. Clear them and update the file (last edited 2026-04-24).
 
 ## Today's Calendar
 
@@ -8,18 +8,18 @@
 |------|-------|
 | — | No events scheduled today |
 
-Free Wednesday — calendar is clear all week. Another full day for deep-focus study.
+Free Thursday — calendar is clear for the full week ahead. Wide-open day for deep-focus study.
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; yesterday's plan had this first — close it out today for a real Tier 1 completion. _(~30–60 min)_
-2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — 9% complete, lowest among active Tier 1 courses; hands-on feature engineering is core ML work. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done, one lab keeps it on track to finish this week. _(~60 min)_
-4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course; keeps daily Coursera streak alive. _(~20 min)_
-5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice video** — 5-min video; pairs Go completion with the MLOps track. _(~5 min)_
-6. **Update `long_term_tasks.md`** — Clear stale April deadlines, mark anything completed, set accurate current state. _(~10 min)_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; closing it out earns a real Tier 1 completion and unlocks the full Go specialization. _(~30–60 min)_
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — 9% complete, the most under-invested active Tier 1 course; hands-on lab = high-retention learning. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps the week-end finish realistic. _(~60 min)_
+4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course and keeps the daily Coursera streak. _(~20 min)_
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice video** — 5-min video that pairs naturally with Go completion and moves the MLOps track. _(~5 min)_
+6. **Update `long_term_tasks.md`** — Clear the stale April deadlines, mark anything finished since April 24, and set accurate progress numbers. _(~10 min)_
 
 ---
 
@@ -27,22 +27,22 @@ Free Wednesday — calendar is clear all week. Another full day for deep-focus s
 
 | Block | Task |
 |-------|------|
-| 09:00–10:00 | Finish "Getting Started with Go" (Course 1/3) — close it out |
+| 09:00–10:00 | Finish "Getting Started with Go" (Course 1/3) |
 | 10:00–10:05 | DevOps/DataOps/MLOps — Golang GCP Microservice video (5 min) |
 | 10:05–11:05 | ML Nuts & Bolts — Perform Feature Engineering Lab (60 min deep focus) |
 | 11:05–11:20 | Break |
 | 11:20–12:20 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
 | 12:20–13:20 | Lunch / rest |
 | 13:20–13:40 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
-| 13:40–13:50 | Update `long_term_tasks.md` — clear stale items, mark completions |
-| 14:00+ | Optional: Algorithms Week 2 Overview reading or Business Writing video (2 min) |
+| 13:40–13:50 | Update `long_term_tasks.md` — clear stale items, log progress |
+| 14:00+ | Optional: Algorithms Week 2 Overview reading, or Successful Presentation next reading |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines detected on your calendar for 2026-07-29 through 2026-08-05.
-- _(Update `long_term_tasks.md` with any current external deadlines so future plans stay accurate.)_
+- No hard deadlines on the calendar for 2026-07-30 through 2026-08-06.
+- _(Add any external deadlines to `long_term_tasks.md` so future plans stay accurate.)_
 
 ---
 
