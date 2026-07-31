@@ -1,4 +1,4 @@
-# Daily Plan — 2026-07-30
+# Daily Plan — 2026-07-31
 
 > **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates are long past. Clear them and update the file (last edited 2026-04-24).
 
@@ -8,15 +8,15 @@
 |------|-------|
 | — | No events scheduled today |
 
-Free Thursday — calendar is clear for the full week ahead. Wide-open day for deep-focus study.
+Free Friday — calendar is clear for the full week ahead. Wide-open day for deep-focus study.
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; closing it out earns a real Tier 1 completion and unlocks the full Go specialization. _(~30–60 min)_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; one video left ("Welcome to the Course", ~1 min). Closing it earns a real Tier 1 completion and unlocks the full Go specialization. _(~5–15 min)_
 2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — 9% complete, the most under-invested active Tier 1 course; hands-on lab = high-retention learning. _(~60 min)_
-3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps the week-end finish realistic. _(~60 min)_
+3. **BigQuery for Data Analysts — Ingesting and Querying New Datasets Lab** — 73% done; one lab keeps momentum toward finishing this week. _(~60 min)_
 4. **IBM: EDA for ML — Bayesian Interpretation of Hypothesis Testing video** — Advances the 57%-complete Tier 1 course and keeps the daily Coursera streak. _(~20 min)_
 5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice video** — 5-min video that pairs naturally with Go completion and moves the MLOps track. _(~5 min)_
 6. **Update `long_term_tasks.md`** — Clear the stale April deadlines, mark anything finished since April 24, and set accurate progress numbers. _(~10 min)_
@@ -27,21 +27,21 @@ Free Thursday — calendar is clear for the full week ahead. Wide-open day for d
 
 | Block | Task |
 |-------|------|
-| 09:00–10:00 | Finish "Getting Started with Go" (Course 1/3) |
-| 10:00–10:05 | DevOps/DataOps/MLOps — Golang GCP Microservice video (5 min) |
-| 10:05–11:05 | ML Nuts & Bolts — Perform Feature Engineering Lab (60 min deep focus) |
-| 11:05–11:20 | Break |
-| 11:20–12:20 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
-| 12:20–13:20 | Lunch / rest |
-| 13:20–13:40 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
-| 13:40–13:50 | Update `long_term_tasks.md` — clear stale items, log progress |
+| 09:00–09:15 | Finish "Getting Started with Go" (Course 1/3) |
+| 09:15–09:20 | DevOps/DataOps/MLOps — Golang GCP Microservice video (5 min) |
+| 09:20–10:20 | ML Nuts & Bolts — Perform Feature Engineering Lab (60 min deep focus) |
+| 10:20–10:35 | Break |
+| 10:35–11:35 | BigQuery — Ingesting and Querying New Datasets Lab (60 min) |
+| 11:35–12:35 | Lunch / rest |
+| 12:35–12:55 | IBM EDA — Bayesian Interpretation of Hypothesis Testing video |
+| 12:55–13:05 | Update `long_term_tasks.md` — clear stale items, log progress |
 | 14:00+ | Optional: Algorithms Week 2 Overview reading, or Successful Presentation next reading |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines on the calendar for 2026-07-30 through 2026-08-06.
+- No hard deadlines on the calendar for 2026-07-31 through 2026-08-07.
 - _(Add any external deadlines to `long_term_tasks.md` so future plans stay accurate.)_
 
 ---
