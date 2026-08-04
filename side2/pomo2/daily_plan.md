@@ -1,4 +1,4 @@
-# Daily Plan — 2026-08-03
+# Daily Plan — 2026-08-04
 
 > **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates are long past. Clear them and update the file (last edited 2026-04-24).
 
@@ -8,18 +8,18 @@
 |------|-------|
 | — | No events scheduled today |
 
-Clear Monday — full day available for focused study. No obligations on the calendar through Aug 10.
+Clear Tuesday — full day available for focused study. No obligations on the calendar through Aug 11.
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; next step is the "Welcome to the Course" video (~1 min). Close this out now: it marks the first completed Go course and unlocks Course 2/3. _(~5 min)_
-2. **The Nuts and Bolts of Machine Learning — "Perform feature engineering" lab** — Tier 1, only 9% complete. Feature engineering is one of the highest-leverage practical ML skills; tackle this while morning focus is sharpest. _(~60–75 min)_
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — Tier 1, 73% complete. Directly applicable to ML data pipelines. _(~60 min)_
-4. **IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video** — 57% complete Tier 1 course; keeps the daily Coursera streak alive. _(~20–30 min)_
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — Tier 2 MLOps; a 5-min video that pairs naturally with the Go course work today. _(~5–10 min)_
-6. **Business Writing — "Long Documents, in Brief" video** — Quick 2-min win on a Tier 5 course; good transition task after lunch. _(~5 min)_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; one final 1-min video away from completing the course. Do this first: it's a morale win and unlocks Course 2/3 in the Go track. _(~5 min)_
+2. **The Nuts and Bolts of Machine Learning — "Perform feature engineering" lab** — Tier 1, only 9% complete. Feature engineering is one of the highest-leverage practical ML skills. Morning session is the right time for a 60-min hands-on lab. _(~60–75 min)_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — Tier 1, 73% complete. Directly feeds ML data pipeline skills; one more lab keeps this near the finish line. _(~60 min)_
+4. **IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video** — 57% complete Tier 1 course; a focused video to maintain momentum. _(~20–30 min)_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — Tier 2 MLOps; a 5-min video that pairs naturally with the Go work today. _(~5–10 min)_
+6. **Algorithms: Divide and Conquer — "Week 2 Overview" reading** — Tier 4, 34% complete. Short reading that keeps math foundations advancing. _(~20 min)_
 
 ---
 
@@ -34,15 +34,15 @@ Clear Monday — full day available for focused study. No obligations on the cal
 | 11:00–12:00 | BigQuery — "Ingesting and Querying New Datasets" lab (60 min) |
 | 12:00–13:00 | Lunch break |
 | 13:00–13:30 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
-| 13:30–13:35 | Business Writing — "Long Documents, in Brief" video (2 min) |
-| 13:35–13:50 | Update `long_term_tasks.md` — clear stale April deadlines, log today's progress |
-| 14:00+ | Optional: Algorithms "Week 2 Overview" reading, or Successful Presentation reading |
+| 13:30–13:50 | Algorithms — "Week 2 Overview" reading (20 min) |
+| 13:50–14:00 | Update `long_term_tasks.md` — clear stale April deadlines, log today's progress |
+| 14:00+ | Optional: Business Writing "Long Documents, in Brief" (2 min), Successful Negotiation reading (10 min) |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines on the calendar for 2026-08-03 through 2026-08-10.
+- No hard deadlines on the calendar for 2026-08-04 through 2026-08-11.
 - _(Add any external deadlines to `long_term_tasks.md` so future plans stay accurate.)_
 
 ---
