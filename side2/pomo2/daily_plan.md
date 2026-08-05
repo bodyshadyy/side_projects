@@ -1,6 +1,6 @@
-# Daily Plan — 2026-08-04
+# Daily Plan — 2026-08-05
 
-> **Note:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates are long past. Clear them and update the file (last edited 2026-04-24).
+> ⚠️ **Reminder:** The 🚨 Urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are from April — those dates are long past. Clear them and update the file (last edited 2026-04-24).
 
 ## Today's Calendar
 
@@ -8,18 +8,18 @@
 |------|-------|
 | — | No events scheduled today |
 
-Clear Tuesday — full day available for focused study. No obligations on the calendar through Aug 11.
+Clear Wednesday — full day available for focused study. No obligations on the calendar through Aug 12.
 
 ---
 
 ## Focus Tasks
 
-1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; one final 1-min video away from completing the course. Do this first: it's a morale win and unlocks Course 2/3 in the Go track. _(~5 min)_
-2. **The Nuts and Bolts of Machine Learning — "Perform feature engineering" lab** — Tier 1, only 9% complete. Feature engineering is one of the highest-leverage practical ML skills. Morning session is the right time for a 60-min hands-on lab. _(~60–75 min)_
-3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — Tier 1, 73% complete. Directly feeds ML data pipeline skills; one more lab keeps this near the finish line. _(~60 min)_
-4. **IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video** — 57% complete Tier 1 course; a focused video to maintain momentum. _(~20–30 min)_
-5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — Tier 2 MLOps; a 5-min video that pairs naturally with the Go work today. _(~5–10 min)_
-6. **Algorithms: Divide and Conquer — "Week 2 Overview" reading** — Tier 4, 34% complete. Short reading that keeps math foundations advancing. _(~20 min)_
+1. **Finish "Getting Started with Go" (Course 1/3)** — 91% complete; one final 1-min video away from completing the course. Close it out first for a quick win that unlocks Course 2/3. _(~5 min)_
+2. **The Nuts and Bolts of Machine Learning — "Perform feature engineering" lab** — Tier 1, only 9% complete. Feature engineering is one of the highest-leverage hands-on ML skills; tackle this in a focused morning block. _(~60–75 min)_
+3. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — Tier 1, 73% complete. One more lab pushes this close to done; cloud + ML data pipeline skills directly career-relevant. _(~60 min)_
+4. **IBM: EDA for ML — "Bayesian Interpretation of Hypothesis Testing" video** — 57% complete Tier 1 course; keep momentum going with a focused video. _(~20–30 min)_
+5. **DevOps, DataOps, MLOps — "Building Golang GCP App Engine Microservice" video** — Tier 2 MLOps; 5-min video that pairs naturally with Go course completion today. _(~5–10 min)_
+6. **Algorithms: Divide and Conquer — "Week 2 Overview" reading** — Tier 4, 34% complete. Short reading to keep math foundations moving. _(~20 min)_
 
 ---
 
@@ -42,7 +42,7 @@ Clear Tuesday — full day available for focused study. No obligations on the ca
 
 ## Upcoming Deadlines (next 7 days)
 
-- No hard deadlines on the calendar for 2026-08-04 through 2026-08-11.
+- No hard deadlines on the calendar for 2026-08-05 through 2026-08-12.
 - _(Add any external deadlines to `long_term_tasks.md` so future plans stay accurate.)_
 
 ---
