@@ -1,58 +1,48 @@
-# Daily Plan — 2026-08-11
-
-> **Note:** The urgent items in `long_term_tasks.md` (Quiz 2026-04-29, Exams week 2026-04-28) are past. The file was last updated 2026-04-24 — consider reviewing and updating it with any new priorities.
-
----
+# Daily Plan — 2026-08-12
 
 ## Today's Calendar
-
 | Time | Event |
 |------|-------|
-| — | No scheduled events today |
+| — | No scheduled events today — full day available |
 
-_Your calendar is completely clear — this is a prime deep-work day._
-
----
+> **Upcoming observance:** Aug 15 — Flooding of the Nile (Egyptian cultural observance, not a work blocker)
 
 ## Focus Tasks
 
-1. **Getting Started with Go (Course 1/3)** — 91% complete, next step is just a 1-min video ("Welcome to the Course"). Fast win to push toward completion. ~5 min
-2. **IBM: EDA for Machine Learning** — 57% complete, next: "Bayesian Interpretation of Hypothesis Testing Example" video. Core ML skill with high priority. ~30–45 min
-3. **BigQuery for Data Analysts** — 73% complete, next: "Ingesting and Querying New Datasets" lab. Hands-on lab; best done with a fresh mind. ~60 min
-4. **The Nuts and Bolts of Machine Learning (Google)** — 9% complete, next: "Perform feature engineering" lab. Low progress — needs consistent attention to advance. ~60 min
-5. **DevOps, DataOps, MLOps (MLOps Specialization Course 2/4)** — 14% complete, next: "Building Golang GCP App Engine Microservice" video (5 min). MLOps is high career leverage; short next step, easy to knock out. ~10 min
-6. **Algorithms: Divide and Conquer** — 34% complete, next: "Week 2 Overview" reading. Foundational; short reading to maintain momentum. ~15 min
+1. **Complete "Getting Started with Go" (Course 1/3)** — 91% done; next item is a 1-minute video. Finish it today for a quick win and to close out the course. _Estimated: 15 min (wrap-up + review)_
 
----
+2. **The Nuts and Bolts of Machine Learning — Feature Engineering Lab** — Tier 1, core ML skill, only 9% complete. The next step is a hands-on 60-min lab that will move the needle on the most important track. _Estimated: 60–90 min_
+
+3. **IBM: EDA for Machine Learning — Bayesian Hypothesis Testing video** — Tier 1, 57% complete. Continuing momentum on an active in-progress course builds streak and keeps the finish line in sight. _Estimated: 20–30 min_
+
+4. **BigQuery for Data Analysts — Ingesting and Querying New Datasets lab** — Tier 1, 73% complete. A 60-min lab that directly supports cloud/ML engineering skills. _Estimated: 60–75 min_
+
+5. **DevOps, DataOps, MLOps — Building Golang GCP App Engine Microservice video** — Tier 2, only 5 min. A trivial time cost with high career-leverage payoff; do it between blocks as a cooldown. _Estimated: 5–10 min_
+
+6. **Algorithms: Divide and Conquer — Week 2 Overview reading** — Tier 4, 34% complete. Math/algo foundations; short reading makes it an easy add to the evening. _Estimated: 15–20 min_
 
 ## Suggested Time Blocks
 
 | Block | Task |
 |-------|------|
-| 09:00–09:15 | Getting Started with Go — "Welcome to the Course" video (1 min) + review module |
-| 09:15–10:00 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing Example" video + notes |
-| 10:00–11:30 | BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab (60 min) |
-| 11:30–11:45 | Break |
-| 11:45–12:15 | DevOps/DataOps/MLOps — "Building Golang GCP App Engine Microservice" video + Algorithms "Week 2 Overview" reading |
-| 12:15–13:15 | Lunch break |
-| 13:15–14:45 | Nuts and Bolts of ML — "Perform feature engineering" lab (60 min) |
-| 15:00–15:30 | Review progress, update long_term_tasks.md if any tasks completed |
-
----
+| 09:00–09:15 | Finish "Getting Started with Go" (1-min video + review) |
+| 09:15–10:45 | ML Feature Engineering lab (Google) |
+| 10:45–11:00 | Break |
+| 11:00–11:30 | IBM EDA — Bayesian Hypothesis Testing video |
+| 11:30–11:35 | DevOps/DataOps/MLOps — 5-min Golang GCP video |
+| 11:35–12:00 | Buffer / review notes from morning |
+| 12:00–13:00 | Lunch break |
+| 13:00–14:15 | BigQuery for Data Analysts lab |
+| 14:15–14:30 | Break |
+| 14:30–14:50 | Algorithms — Week 2 Overview reading |
+| 14:50–15:00 | Update long_term_tasks.md with progress |
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-08-15: Flooding of the Nile (Egypt observance — not a study deadline, just a calendar note)
-- No hard academic deadlines detected in calendar for this week
+- No task deadlines detected in the next 7 days.
+- 2026-08-15: Flooding of the Nile observance (cultural, no work impact)
 
-_Reminder: The quiz (2026-04-29) and exams (week of 2026-04-28) listed as urgent in your tasks file are already past. Update the file to remove them and add any current deadlines._
-
----
-
-## Daily Recurring
-- [ ] At least 1 Coursera lesson or lab _(today's plan has 5+ — stay consistent)_
-- [ ] Weekly: Review & update long_term_tasks.md _(file last updated 2026-04-24 — overdue for a refresh)_
+> **Note:** The urgent items listed in long_term_tasks.md (Quiz on 2026-04-29, Exams week of 2026-04-28) appear to be past dates — consider marking them complete or removing them from the file.
 
 ---
-
 _Generated by your daily planning agent_
