@@ -1,31 +1,21 @@
-# Daily Plan — 2026-09-01
-
-> **Note:** The urgent tasks in `long_term_tasks.md` (Quiz & Exams from late April 2026) are now
-> months past their dates. Update the file to reflect current deadlines and goals.
-
----
+# Daily Plan — 2026-09-02
 
 ## Today's Calendar
-
 | Time | Event |
 |------|-------|
-| — | No events scheduled today — full open day |
+| — | No events today — free day for deep work |
+
+> **Tomorrow:** Meeting GoMeddo @ 15:00–15:15 (Cairo time) — Google Meet
 
 ---
 
 ## Focus Tasks
 
-1. **The Nuts and Bolts of Machine Learning** (Google, Tier 1) — Only 9% done but high priority; use this open day to knock out the "Perform Feature Engineering" lab (60 min). Estimated: 60–75 min
-
-2. **IBM: Exploratory Data Analysis for Machine Learning** (Tier 1) — At 57%, close to halfway; next is the "Bayesian Interpretation of Hypothesis Testing Example" video. Estimated: 30–45 min
-
-3. **BigQuery for Data Analysts** (Google Cloud, Tier 1) — At 73%, very close to finishing; next is the "Ingesting and Querying New Datasets" lab (60 min). Estimated: 60–75 min
-
-4. **Getting Started with Go** (Tier 1) — At 91%, almost done; the next item is just "Welcome to the Course" (1 min) — complete this to finish the course. Estimated: 15–20 min total wrap-up
-
-5. **DevOps, DataOps, MLOps** (MLOps Track, Tier 2) — Only 14% done; next is "Building Golang GCP App Engine Microservice" video (5 min). Easy win to maintain momentum. Estimated: 10–15 min
-
-6. **Algorithms: Divide and Conquer** (Tier 4) — At 34%; next is "Week 2 Overview" reading — lightweight task to close out the day mentally. Estimated: 15–20 min
+1. **Getting Started with Go — Finish it** — Only 1 video left ("Welcome to the Course", 1 min). Closing out a 91%-complete Tier 1 course is the highest-ROI move today. ~5 min
+2. **BigQuery for Data Analysts — "Ingesting and Querying New Datasets" lab** — 73% done; one 60-min lab pushes this much further. High career leverage for ML/data engineering. ~60 min
+3. **IBM: EDA for Machine Learning — "Bayesian Interpretation of Hypothesis Testing" video** — 57% complete; keep momentum on this Tier 1 course. ~15–20 min
+4. **The Nuts and Bolts of Machine Learning — "Perform Feature Engineering" lab** — 9% done but high priority (Tier 1, Google). A 60-min lab session meaningfully advances it. ~60 min
+5. **GoMeddo meeting prep** — Skim notes/agenda for tomorrow's 15-min meeting so you're ready. ~10 min
 
 ---
 
@@ -33,31 +23,20 @@
 
 | Block | Task |
 |-------|------|
-| 09:00–10:15 | Feature Engineering Lab — Nuts & Bolts of ML (Google) |
-| 10:15–10:30 | Break |
-| 10:30–11:15 | IBM EDA ML — Bayesian Hypothesis Testing video + next |
-| 11:15–12:00 | BigQuery Lab — Ingesting & Querying New Datasets (Part 1) |
-| 12:00–13:00 | Lunch break |
-| 13:00–14:00 | BigQuery Lab — continue / complete |
-| 14:00–14:30 | Getting Started with Go — wrap up final 9% and finish course |
-| 14:30–14:45 | DevOps/DataOps/MLOps — Golang GCP App Engine Microservice video |
-| 14:45–15:15 | Algorithms: Divide and Conquer — Week 2 Overview reading |
-| 15:15–15:30 | Weekly progress review: update long_term_tasks.md with current status |
+| 09:00–09:15 | Getting Started with Go — final video (done in minutes, then mark complete) |
+| 09:15–10:15 | BigQuery lab — "Ingesting and Querying New Datasets" |
+| 10:30–11:30 | Nuts and Bolts of ML — "Perform Feature Engineering" lab |
+| 11:30–11:50 | IBM EDA — "Bayesian Interpretation of Hypothesis Testing" video |
+| 12:00–12:10 | GoMeddo meeting prep |
+| Afternoon | DevOps Prerequisite Course — "Managing System Services in Linux" (9 min) as a bonus lesson |
 
 ---
 
 ## Upcoming Deadlines (next 7 days)
 
-- 2026-09-03: **Meeting GoMeddo** at 15:00–15:15 (Cairo time) — review agenda / prep if needed
+- 2026-09-03: Meeting GoMeddo @ 15:00–15:15 Cairo time
 
-> No course deadlines detected in next 7 days. All "urgent" items in long_term_tasks.md (Quiz/Exams from April 2026) are expired — please update the file.
-
----
-
-## Recurring Reminder
-
-- Daily goal: Complete **at least 1 Coursera lesson or lab** (today's plan has 5+).
-- Weekly goal: Update `long_term_tasks.md` with current completion percentages.
+> **Note:** The urgent tasks listed in `long_term_tasks.md` (Quiz 2026-04-29, Exams week of 2026-04-28) are months past — please update or remove them from the file so future plans reflect your current deadlines.
 
 ---
 
